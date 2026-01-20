@@ -1,19 +1,26 @@
-import wpilib
-import wpilib.drive
+import typing
 
-JOYSTICK_PORT = 0
-LEFT_MOTOR_CHANNEL = 0
-RIGHT_MOTOR_CHANNEL = 1
+import hal
+import commands2
+
+import robotcontainer
 
 
-class Robot(wpilib.TimedRobot):
-    def robotInit(self):
-        leftMotor = wpilib.PWMSparkMax(LEFT_MOTOR_CHANNEL)
-        rightMotor = wpilib.PWMSparkMax(RIGHT_MOTOR_CHANNEL)
-        self.drive = wpilib.drive.DifferentialDrive(leftMotor, rightMotor)
-        self.stick = wpilib.Joystick(JOYSTICK_PORT)
+class Robot(commands2.TimedCommandRobot):
+    def robotInit(self) -> None:
+        self.autonomousCommand: typing.Optional[commands2.Command] = None
+        self.container = robotcontainer.RobotContainer()
+        hal.report(hal.tResourceType.kResourceType_Framework, 10)
 
-        rightMotor.setInverted(True)
+    def autonomousInit(self) -> None:
+        self.autonomousCommand = self.container.getAutonomousCommand()
 
-    def teleopPeriodic(self):
-        self.drive.arcadeDrive(self.stick.getY(), self.stick.getX())
+        if self.autonomousCommand is not None:
+            self.autonomousCommand.schedule()
+
+    def teleopInit(self) -> None:
+        if self.autonomousCommand is not None:
+            self.autonomousCommand.cancel()
+
+    def testInit(self) -> None:
+        commands2.CommandScheduler.getInstance().cancelAll()
