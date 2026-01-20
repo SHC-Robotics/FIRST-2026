@@ -9,7 +9,7 @@ class CANDriveSubsystem(commands2.Subsystem):
     def __init__(self) -> None:
         super().__init__()
 
-        # create motors for drive
+        # Instantiate motors for drive
         self.leftLeader = rev.SparkMax(
             DriveConstants.LEFT_LEADER_ID, rev.SparkLowLevel.MotorType.kBrushed
         )
@@ -23,7 +23,7 @@ class CANDriveSubsystem(commands2.Subsystem):
             DriveConstants.RIGHT_FOLLOWER_ID, rev.SparkLowLevel.MotorType.kBrushed
         )
 
-        # Set can timeout. Because this project only sets parameters once on
+        # Set CAN timeout. Because this project only sets parameters once on
         # construction, the timeout can be long without blocking robot operation.
         self.leftLeader.setCANTimeout(250)
         self.rightLeader.setCANTimeout(250)
@@ -58,6 +58,7 @@ class CANDriveSubsystem(commands2.Subsystem):
             rev.ResetMode.kResetSafeParameters,
             rev.PersistMode.kPersistParameters,
         )
+
         # Set config to inverted and then apply to left leader. Set Left side
         # inverted so that positive values drive both sides forward
         config.inverted(True)
@@ -67,7 +68,7 @@ class CANDriveSubsystem(commands2.Subsystem):
             rev.PersistMode.kPersistParameters,
         )
 
-        # set up differential drive class
+        # Instantiate differential drive class
         self.drive = DifferentialDrive(self.leftLeader, self.rightLeader)
 
     def driveArcade(self, xSpeed: float, zRotation: float) -> None:

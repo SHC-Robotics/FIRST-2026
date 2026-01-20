@@ -14,8 +14,14 @@ from subsystems.canfuelsubsystem import CANFuelSubsystem
 
 
 class RobotContainer:
+    """
+    The robot container, which stores the robot's subsystems, controllers, binds buttons to commands,
+    and manages autonomous modes.
+    """
+
     def __init__(self) -> None:
-        # The robot's subsystems
+        # The robot's subsystems.
+        # A Subsystem is a collection of motors, sensors, and other hardware objects that are operated on by a Command.
         self.driveSubsystem = CANDriveSubsystem()
         self.fuelSubsystem = CANFuelSubsystem()
 
@@ -41,15 +47,18 @@ class RobotContainer:
         wpilib.SmartDashboard.putData("Autonomous", self.autoChooser)
 
     def configureBindings(self) -> None:
-        # While the left bumper on operator controller is held, intake Fuel
+        # While the left bumper on operator controller is held, run the intake command
+        # on the fuel subsystem.
         self.operatorController.leftBumper().whileTrue(Intake(self.fuelSubsystem))
-        # While the right bumper on the operator controller is held, spin up for 1
-        # second, then launch fuel. When the button is released, stop.
+
+        # While the right bumper on the operator controller is held, run the launch
+        # sequence command on the fuel subsystem.
         self.operatorController.rightBumper().whileTrue(
             LaunchSequence(self.fuelSubsystem)
         )
-        # While the A button is held on the operator controller, eject fuel back out
-        # the intake
+
+        # While the A button is held on the operator controller, run the eject command
+        # on the fuel subsystem.
         self.operatorController.a().whileTrue(Eject(self.fuelSubsystem))
 
         # Set the default command for the drive subsystem to the command provided by

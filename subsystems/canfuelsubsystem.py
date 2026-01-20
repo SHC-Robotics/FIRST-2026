@@ -9,7 +9,7 @@ class CANFuelSubsystem(commands2.Subsystem):
     def __init__(self) -> None:
         super().__init__()
 
-        # create motors for each of the motors on the launcher mechanism
+        # Instantiate each of the motors on the launcher mechanism
         self.intakeLauncherRoller = rev.SparkMax(
             FuelConstants.INTAKE_LAUNCHER_MOTOR_ID,
             rev.SparkLowLevel.MotorType.kBrushed,
@@ -18,10 +18,9 @@ class CANFuelSubsystem(commands2.Subsystem):
             FuelConstants.FEEDER_MOTOR_ID, rev.SparkLowLevel.MotorType.kBrushed
         )
 
-        # put default values for various fuel operations onto the dashboard
-        # all commands using this subsystem pull values from the dashboard to allow
-        # you to tune the values easily, and then replace the values in constants.py
-        # with your new values.
+        # Put default values for various fuel operations onto the dashboard.
+        # All commands using this subsystem pull values from the dashboard to allow
+        # values to be tuned easily. Values in constants.py must be replaced for changes to persist.
         wpilib.SmartDashboard.putNumber(
             "Intaking feeder roller value", FuelConstants.INTAKING_FEEDER_VOLTAGE
         )
@@ -38,7 +37,7 @@ class CANFuelSubsystem(commands2.Subsystem):
             "Spin-up feeder roller value", FuelConstants.SPIN_UP_FEEDER_VOLTAGE
         )
 
-        # create the configuration for the feeder roller, set a current limit and
+        # Create the configuration for the feeder roller, set a current limit and
         # apply the config to the controller
         feederConfig = rev.SparkMaxConfig()
         feederConfig.smartCurrentLimit(FuelConstants.FEEDER_MOTOR_CURRENT_LIMIT)
@@ -48,7 +47,7 @@ class CANFuelSubsystem(commands2.Subsystem):
             rev.PersistMode.kPersistParameters,
         )
 
-        # create the configuration for the launcher roller, set a current limit,
+        # Create the configuration for the launcher roller, set a current limit,
         # set the motor to inverted so that positive values are used for both
         # intaking and launching, and apply the config to the controller
         launcherConfig = rev.SparkMaxConfig()

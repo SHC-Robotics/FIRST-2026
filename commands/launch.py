@@ -6,8 +6,14 @@ from subsystems.canfuelsubsystem import CANFuelSubsystem
 
 
 class Launch(commands2.Command):
+    """
+    A Command that represents the complete action of launching fuel.
+    Requires the fuel subsystem.
+    """
+
     def __init__(self, fuelSubsystem: CANFuelSubsystem) -> None:
         super().__init__()
+
         self.fuelSubsystem = fuelSubsystem
         self.addRequirements(self.fuelSubsystem)
 

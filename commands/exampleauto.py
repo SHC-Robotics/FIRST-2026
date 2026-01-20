@@ -7,6 +7,11 @@ from subsystems.canfuelsubsystem import CANFuelSubsystem
 
 
 class ExampleAuto(commands2.SequentialCommandGroup):
+    """
+    A Command sequence that represents driving for 0.25 seconds then launching fuel for 10 seconds.
+    Requires the drive subsystem and fuel subsystem.
+    """
+
     def __init__(
         self, driveSubsystem: CANDriveSubsystem, fuelSubsystem: CANFuelSubsystem
     ) -> None:

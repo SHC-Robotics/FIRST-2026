@@ -3,9 +3,16 @@ import commands2
 from constants import OperatorConstants
 from subsystems.candrivesubsystem import CANDriveSubsystem
 
+
 class Drive(commands2.Command):
+    """
+    A Command that represents the complete action of driving given input from a joystick.
+    Requires the drive subsystem and the drive controller.
+    """
+
     def __init__(self, driveSubsystem: CANDriveSubsystem, driverController) -> None:
         super().__init__()
+
         self.driveSubsystem = driveSubsystem
         self.controller = driverController
         self.addRequirements(self.driveSubsystem)
