@@ -16,6 +16,14 @@ python3 -m robotpy deploy
 py -3 -m robotpy deploy
 ```
 
+## Controls
+
+- Left joystick: translation
+- Right joystick: rotation
+- Left bumper: intake fuel
+- Right bumper: launch fuel
+- Button A: eject fuel
+
 ## References
 
 - [The RobotPy Documentation](https://robotpy.readthedocs.io/en/stable/index.html)
