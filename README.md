@@ -18,8 +18,13 @@ py -3 -m robotpy deploy
 
 ## Controls
 
+### Driver Controller
+
 - Left joystick: translation
 - Right joystick: rotation
+
+### Operator Controller
+
 - Left bumper: intake fuel
 - Right bumper: launch fuel
 - Button A: eject fuel
