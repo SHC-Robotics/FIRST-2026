@@ -25,7 +25,8 @@ class Launch(commands2.Command):
             )
         )
         self.fuelSubsystem.setFeederRoller(
-            wpilib.SmartDashboard.getNumber(
+            -1
+            * wpilib.SmartDashboard.getNumber(
                 "Launching feeder roller value", FuelConstants.LAUNCHING_FEEDER_VOLTAGE
             )
         )
