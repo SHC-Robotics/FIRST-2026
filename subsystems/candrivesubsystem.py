@@ -70,6 +70,7 @@ class CANDriveSubsystem(commands2.Subsystem):
 
         # Instantiate differential drive class
         self.drive = DifferentialDrive(self.leftLeader, self.rightLeader)
+        self.drive.setMaxOutput(0.5)
 
     def driveArcade(self, xSpeed: float, zRotation: float) -> None:
         self.drive.arcadeDrive(xSpeed, zRotation)
