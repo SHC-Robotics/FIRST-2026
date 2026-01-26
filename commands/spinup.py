@@ -25,7 +25,8 @@ class SpinUp(commands2.Command):
             )
         )
         self.fuelSubsystem.setFeederRoller(
-            wpilib.SmartDashboard.getNumber(
+            -1
+            * wpilib.SmartDashboard.getNumber(
                 "Spin-up feeder roller value", FuelConstants.SPIN_UP_FEEDER_VOLTAGE
             )
         )
