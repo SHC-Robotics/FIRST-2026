@@ -43,5 +43,6 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.rightOut = controls.DutyCycleOut(0)
 
     def driveArcade(self, xSpeed: float, zRotation: float) -> None:
+        xSpeed = -xSpeed
         self.leftLeader.set_control(self.leftOut.with_output(xSpeed + zRotation))
         self.rightLeader.set_control(self.rightOut.with_output(xSpeed - zRotation))
