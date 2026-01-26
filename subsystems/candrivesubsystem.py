@@ -20,12 +20,12 @@ class CANDriveSubsystem(commands2.Subsystem):
         # the robot perform more similarly on different battery voltages.
         config = configs.TalonFXConfiguration()
         config.motor_output.inverted = (
-            configs.config_group.InvertedValue.COUNTER_CLOCKWISE_POSITIVE
+            configs.config_groups.InvertedValue.COUNTER_CLOCKWISE_POSITIVE
         )
         self.leftLeader.configurator.apply(config)
 
         config.motor_output.inverted = (
-            configs.config_group.InvertedValue.CLOCKWISE_POSITIVE
+            configs.config_groups.InvertedValue.CLOCKWISE_POSITIVE
         )
         self.rightLeader.configurator.apply(config)
 
