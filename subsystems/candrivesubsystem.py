@@ -20,12 +20,12 @@ class CANDriveSubsystem(commands2.Subsystem):
         # the robot perform more similarly on different battery voltages.
         config = configs.TalonFXConfiguration()
         config.motor_output.inverted = (
-            configs.config_groups.InvertedValue.COUNTER_CLOCKWISE_POSITIVE
+            configs.config_groups.InvertedValue.CLOCKWISE_POSITIVE
         )
         self.leftLeader.configurator.apply(config)
 
         config.motor_output.inverted = (
-            configs.config_groups.InvertedValue.CLOCKWISE_POSITIVE
+            configs.config_groups.InvertedValue.COUNTER_CLOCKWISE_POSITIVE
         )
         self.rightLeader.configurator.apply(config)
 
@@ -42,9 +42,6 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.leftOut = controls.DutyCycleOut(0)
         self.rightOut = controls.DutyCycleOut(0)
 
-        # Instantiate differential drive class
-        self.drive = DifferentialDrive(self.leftLeader, self.rightLeader)
-        self.drive.setMaxOutput(0.5)
-
     def driveArcade(self, xSpeed: float, zRotation: float) -> None:
-        self.drive.arcadeDrive(xSpeed, zRotation)
+        self.leftLeader.set_control(self.leftOut.with_output(xSpeed + zRotation))
+        self.rightLeader.set_control(self.rightOut.with_output(xSpeed - zRotation))
