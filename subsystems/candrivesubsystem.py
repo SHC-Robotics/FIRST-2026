@@ -1,7 +1,7 @@
 import commands2
-import rev
 from wpilib.drive import DifferentialDrive
 
+from phoenix6 import CANBus, hardware, configs, controls, signals
 from constants import DriveConstants
 
 
@@ -10,63 +10,37 @@ class CANDriveSubsystem(commands2.Subsystem):
         super().__init__()
 
         # Instantiate motors for drive
-        self.leftLeader = rev.SparkMax(
-            DriveConstants.LEFT_LEADER_ID, rev.SparkLowLevel.MotorType.kBrushed
-        )
-        self.leftFollower = rev.SparkMax(
-            DriveConstants.LEFT_FOLLOWER_ID, rev.SparkLowLevel.MotorType.kBrushed
-        )
-        self.rightLeader = rev.SparkMax(
-            DriveConstants.RIGHT_LEADER_ID, rev.SparkLowLevel.MotorType.kBrushed
-        )
-        self.rightFollower = rev.SparkMax(
-            DriveConstants.RIGHT_FOLLOWER_ID, rev.SparkLowLevel.MotorType.kBrushed
-        )
-
-        # Set CAN timeout. Because this project only sets parameters once on
-        # construction, the timeout can be long without blocking robot operation.
-        self.leftLeader.setCANTimeout(250)
-        self.rightLeader.setCANTimeout(250)
-        self.leftFollower.setCANTimeout(250)
-        self.rightFollower.setCANTimeout(250)
+        self.canivore = CANBus("canivore")
+        self.leftLeader = hardware.TalonFX(DriveConstants.LEFT_LEADER_ID)
+        self.leftFollower = hardware.TalonFX(DriveConstants.LEFT_FOLLOWER_ID)
+        self.rightLeader = hardware.TalonFX(DriveConstants.RIGHT_LEADER_ID)
+        self.rightFollower = hardware.TalonFX(DriveConstants.RIGHT_FOLLOWER_ID)
 
         # Create the configuration to apply to motors. Voltage compensation helps
         # the robot perform more similarly on different battery voltages.
-        config = rev.SparkMaxConfig()
-        config.voltageCompensation(12)
-        config.smartCurrentLimit(DriveConstants.DRIVE_MOTOR_CURRENT_LIMIT)
+        config = configs.TalonFXConfiguration()
+        config.motor_output.inverted = (
+            configs.config_group.InvertedValue.COUNTER_CLOCKWISE_POSITIVE
+        )
+        self.leftLeader.configurator.apply(config)
 
-        # Set configuration to follow each leader and then apply it to corresponding
-        # follower.
-        config.follow(self.leftLeader)
-        self.leftFollower.configure(
-            config,
-            rev.ResetMode.kResetSafeParameters,
-            rev.PersistMode.kPersistParameters,
+        config.motor_output.inverted = (
+            configs.config_group.InvertedValue.CLOCKWISE_POSITIVE
         )
-        config.follow(self.rightLeader)
-        self.rightFollower.configure(
-            config,
-            rev.ResetMode.kResetSafeParameters,
-            rev.PersistMode.kPersistParameters,
-        )
+        self.rightLeader.configurator.apply(config)
 
-        # Remove following, then apply config to right leader
-        config.disableFollowerMode()
-        self.rightLeader.configure(
-            config,
-            rev.ResetMode.kResetSafeParameters,
-            rev.PersistMode.kPersistParameters,
+        followLeftRequest = controls.Follower(
+            DriveConstants.LEFT_LEADER_ID, signals.MotorAlignmentValue.ALIGNED
         )
+        self.leftFollower.set_control(followLeftRequest)
 
-        # Set config to inverted and then apply to left leader. Set Left side
-        # inverted so that positive values drive both sides forward
-        config.inverted(True)
-        self.leftLeader.configure(
-            config,
-            rev.ResetMode.kResetSafeParameters,
-            rev.PersistMode.kPersistParameters,
+        followRightRequest = controls.Follower(
+            DriveConstants.RIGHT_LEADER_ID, signals.MotorAlignmentValue.ALIGNED
         )
+        self.rightFollower.set_control(followRightRequest)
+
+        self.leftOut = controls.DutyCycleOut(0)
+        self.rightOut = controls.DutyCycleOut(0)
 
         # Instantiate differential drive class
         self.drive = DifferentialDrive(self.leftLeader, self.rightLeader)
