@@ -1,5 +1,4 @@
 import commands2
-from wpilib.drive import DifferentialDrive
 
 from phoenix6 import CANBus, hardware, configs, controls, signals
 from constants import DriveConstants
