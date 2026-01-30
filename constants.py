@@ -38,5 +38,5 @@ class OperatorConstants:
 
     # This value is multiplied by the joystick value when rotating the robot to
     # help avoid turning too fast and being difficult to control
-    DRIVE_SCALING = 0.7
-    ROTATION_SCALING = 0.8
+    DRIVE_SCALING = 0.5
+    ROTATION_SCALING = 0.5
