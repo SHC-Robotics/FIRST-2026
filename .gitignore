@@ -2,3 +2,4 @@ tests
 __pycache__
 .wpilib
 .DS_Store
+ctre_sim

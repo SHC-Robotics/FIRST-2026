@@ -23,9 +23,9 @@ class FuelConstants:
     # based on exact robot construction.
     # See the Software Guide for tuning information
     INTAKING_FEEDER_VOLTAGE = -12.0
-    INTAKING_INTAKE_VOLTAGE = 10.0
+    INTAKING_INTAKE_VOLTAGE = 8.0
     LAUNCHING_FEEDER_VOLTAGE = 9.0
-    LAUNCHING_LAUNCHER_VOLTAGE = 10.6
+    LAUNCHING_LAUNCHER_VOLTAGE = 8.4
     SPIN_UP_FEEDER_VOLTAGE = -6.0
     SPIN_UP_SECONDS = 1.0
 

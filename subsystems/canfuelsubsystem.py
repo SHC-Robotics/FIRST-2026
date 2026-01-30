@@ -12,7 +12,7 @@ class CANFuelSubsystem(commands2.Subsystem):
         # Instantiate each of the motors on the launcher mechanism
         self.intakeLauncherRoller = rev.SparkMax(
             FuelConstants.INTAKE_LAUNCHER_MOTOR_ID,
-            rev.SparkLowLevel.MotorType.kBrushed,
+            rev.SparkLowLevel.MotorType.kBrushless,
         )
         self.feederRoller = rev.SparkMax(
             FuelConstants.FEEDER_MOTOR_ID, rev.SparkLowLevel.MotorType.kBrushed
@@ -51,7 +51,6 @@ class CANFuelSubsystem(commands2.Subsystem):
         # set the motor to inverted so that positive values are used for both
         # intaking and launching, and apply the config to the controller
         launcherConfig = rev.SparkMaxConfig()
-        launcherConfig.inverted(True)
         launcherConfig.smartCurrentLimit(FuelConstants.LAUNCHER_MOTOR_CURRENT_LIMIT)
         self.intakeLauncherRoller.configure(
             launcherConfig,
