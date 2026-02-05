@@ -15,7 +15,7 @@ class CANFuelSubsystem(commands2.Subsystem):
             rev.SparkLowLevel.MotorType.kBrushless,
         )
         self.feederRoller = rev.SparkMax(
-            FuelConstants.FEEDER_MOTOR_ID, rev.SparkLowLevel.MotorType.kBrushed
+            FuelConstants.FEEDER_MOTOR_ID, rev.SparkLowLevel.MotorType.kBrushless
         )
 
         # Put default values for various fuel operations onto the dashboard.
