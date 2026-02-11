@@ -1,3 +1,6 @@
+from commands.find_object import FindObject
+from subsystems.vision_camera import VisionCamera
+from subsystems.vision_localizer import VisionLocalizer
 import wpilib
 import commands2
 import commands2.button
@@ -24,6 +27,9 @@ class RobotContainer:
         # A Subsystem is a collection of motors, sensors, and other hardware objects that are operated on by a Command.
         self.driveSubsystem = CANDriveSubsystem()
         self.fuelSubsystem = CANFuelSubsystem()
+        self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
+        self.limelightFront = VisionCamera("limelight-front")
+        self.limelightBack = VisionCamera("limelight-back")
 
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(
@@ -69,6 +75,10 @@ class RobotContainer:
         )
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
+
+        findObject = FindObject(self.limelightFront)
+
+        self.operatorController.x().whileTrue(findObject)
 
     def getAutonomousCommand(self) -> commands2.Command:
         return self.autoChooser.getSelected()

@@ -1,7 +1,11 @@
 import commands2
+import navx
 
 from phoenix6 import CANBus, hardware, configs, controls, signals
 from constants import DriveConstants
+from time import sleep
+from wpimath.kinematics import DifferentialDriveOdometry
+from wpimath.geometry import Rotation2d, Pose2d, Translation2d
 
 
 class CANDriveSubsystem(commands2.Subsystem):
@@ -40,6 +44,55 @@ class CANDriveSubsystem(commands2.Subsystem):
 
         self.leftOut = controls.DutyCycleOut(0)
         self.rightOut = controls.DutyCycleOut(0)
+
+        self.leftEncoder = hardware.CANcoder(
+            DriveConstants.LEFT_LEADER_ID, self.canivore
+        )
+        self.rightEncoder = hardware.CANcoder(
+            DriveConstants.RIGHT_LEADER_ID, self.canivore
+        )
+
+        self.gyro = navx.AHRS.create_spi()
+        sleep(1.0)
+
+        self.odometry = DifferentialDriveOdometry(
+            self.gyro.getRotation2d(),
+            self.leftEncoder.get_position() * 1,
+            self.rightEncoder.get_position() * -1,
+        )
+
+        self.odometryHeadingOffset = Rotation2d()
+        self.resetOdometry(Pose2d(0, 0, 0))
+        self.field = wpilib.Field2d()
+
+    def resetOdometry(self, pose):
+        self.gyro.reset()
+        self.odometry.resetPosition(
+            self.gyro.getRotation2d(),
+            self.leftEncoder.get_position() * 1,
+            self.rightEncoder.get_position() * -1,
+        )
+        self.odometryHeadingOffset = (
+            self.odometry.getPose().rotation() - self.getGyroHeading()
+        )
+
+    def getPose(self):
+        return self.odometry.getPose()
+
+    def getGyroHeading(self):
+        return self.gyro.getRotation2d()
+
+    def periodic(self):
+        pose = self.odometry.update(
+            self.gyro.getRotation2d(),
+            self.leftEncoder.get_position() * 1,
+            self.rightEncoder.get_position() * -1,
+        )
+
+        wpilib.SmartDashboard.putNumber("x", pose.x)
+        wpilib.SmartDashboard.putNumber("y", pose.y)
+        wpilib.SmartDashboard.putNumber("heading", pose.rotation().degrees())
+        self.field.setRobotPose(pose)
 
     def driveArcade(self, xSpeed: float, zRotation: float) -> None:
         xSpeed = -xSpeed
