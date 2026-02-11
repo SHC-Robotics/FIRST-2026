@@ -1,4 +1,3 @@
-from commands.find_object import FindObject
 from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
 import wpilib
@@ -75,10 +74,6 @@ class RobotContainer:
         )
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
-
-        findObject = FindObject(self.limelightFront)
-
-        self.operatorController.x().whileTrue(findObject)
 
     def getAutonomousCommand(self) -> commands2.Command:
         return self.autoChooser.getSelected()
