@@ -1,4 +1,5 @@
 import commands2
+import wpilib
 import navx
 
 from phoenix6 import CANBus, hardware, configs, controls, signals
@@ -57,8 +58,8 @@ class CANDriveSubsystem(commands2.Subsystem):
 
         self.odometry = DifferentialDriveOdometry(
             self.gyro.getRotation2d(),
-            self.leftEncoder.get_position() * 1,
-            self.rightEncoder.get_position() * -1,
+            self.leftEncoder.get_position().value * 1,
+            self.rightEncoder.get_position().value * -1,
         )
 
         self.odometryHeadingOffset = Rotation2d()
@@ -69,8 +70,9 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.gyro.reset()
         self.odometry.resetPosition(
             self.gyro.getRotation2d(),
-            self.leftEncoder.get_position() * 1,
-            self.rightEncoder.get_position() * -1,
+            self.leftEncoder.get_position().value * 1,
+            self.rightEncoder.get_position().value * -1,
+            pose,
         )
         self.odometryHeadingOffset = (
             self.odometry.getPose().rotation() - self.getGyroHeading()
@@ -85,8 +87,8 @@ class CANDriveSubsystem(commands2.Subsystem):
     def periodic(self):
         pose = self.odometry.update(
             self.gyro.getRotation2d(),
-            self.leftEncoder.get_position() * 1,
-            self.rightEncoder.get_position() * -1,
+            self.leftEncoder.get_position().value * 1,
+            self.rightEncoder.get_position().value * -1,
         )
 
         wpilib.SmartDashboard.putNumber("x", pose.x)
