@@ -3,6 +3,8 @@ import commands2
 from constants import OperatorConstants
 from subsystems.candrivesubsystem import CANDriveSubsystem
 
+ZERO_THRESHOLD = 0.1
+
 
 class Drive(commands2.Command):
     """
@@ -18,9 +20,17 @@ class Drive(commands2.Command):
         self.addRequirements(self.driveSubsystem)
 
     def execute(self) -> None:
+        leftY = self.controller.getLeftY()
+        if leftY < ZERO_THRESHOLD and leftY > -ZERO_THRESHOLD:
+            leftY = 0
+
+        rightX = self.controller.getRightX()
+        if rightX < ZERO_THRESHOLD and rightX > -ZERO_THRESHOLD:
+            rightX = 0
+
         self.driveSubsystem.driveArcade(
-            -self.controller.getLeftY() * OperatorConstants.DRIVE_SCALING,
-            -self.controller.getRightX() * OperatorConstants.ROTATION_SCALING,
+            -leftY * OperatorConstants.DRIVE_SCALING,
+            -rightX * OperatorConstants.ROTATION_SCALING,
         )
 
     def end(self, interrupted: bool) -> None:
