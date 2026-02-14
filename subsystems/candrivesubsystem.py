@@ -47,6 +47,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         slot0.k_s = 0.1
         slot0.k_i = 0
         slot0.k_d = 0
+
         self.MAX_RPS = 70
         self.leftLeader.configurator.apply(config)
         self.rightLeader.configurator.apply(config)
