@@ -112,15 +112,12 @@ class CANDriveSubsystem(commands2.Subsystem):
         left_percent = xSpeed + zRotation
         right_percent = xSpeed - zRotation
 
-        max_input = max(abs(left_percent), abs(right_percent), 1.0)
-        left_normalized = left_percent / max_input
-        right_normalized = right_percent / max_input
+        left_target_rps = left_percent * self.MAX_RPS
+        right_target_rps = right_percent * self.MAX_RPS
 
-        left_target_rps = left_normalized * self.MAX_RPS
-        right_target_rps = right_normalized * self.MAX_RPS
-
-        #self.leftLeader.set_control(self.leftOut.with_output(xSpeed + zRotation))
-        #self.rightLeader.set_control(self.rightOut.with_output(xSpeed - zRotation))
-
-        self.leftLeader.set_control(self.velocity_request.with_velocity(left_target_rps))
-        self.rightLeader.set_control(self.velocity_request.with_velocity(right_target_rps))
+        self.leftLeader.set_control(
+            self.velocity_request.with_velocity(left_target_rps)
+        )
+        self.rightLeader.set_control(
+            self.velocity_request.with_velocity(right_target_rps)
+        )
