@@ -185,6 +185,9 @@ class CANDriveSubsystem(commands2.Subsystem):
         left_target_rps = left_percent * self.MAX_RPS
         right_target_rps = right_percent * self.MAX_RPS
 
+        print(left_target_rps)
+        print(right_target_rps)
+
         self.leftLeader.set_control(
             self.velocity_request.with_velocity(left_target_rps)
         )
