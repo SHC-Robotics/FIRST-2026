@@ -3,3 +3,4 @@ __pycache__
 .wpilib
 .DS_Store
 ctre_sim
+venv/

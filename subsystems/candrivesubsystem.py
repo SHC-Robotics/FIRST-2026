@@ -2,6 +2,25 @@ import commands2
 
 from phoenix6 import hardware, configs, controls, signals
 from constants import DriveConstants
+from math import pi
+from wpimath.estimator import DifferentialDrivePoseEstimator
+from wpimath.kinematics import DifferentialDriveKinematics, DifferentialDriveWheelSpeeds
+from wpimath.geometry import Pose2d
+import wpilib
+
+import navx
+
+from time import sleep
+
+
+"""
+Math is from
+
+https://v6.docs.ctr-electronics.com/en/stable/docs/api-reference/device-specific/talonfx/closed-loop-requests.html#converting-from-meters
+"""
+WHEEL_RADIUS_METERS = 0.0762  # (3 inches)
+GEARBOX_RATIO = 8.45
+METERS_PER_ROTATION = (2 * pi * WHEEL_RADIUS_METERS) / GEARBOX_RATIO
 
 
 class CANDriveSubsystem(commands2.Subsystem):
@@ -50,6 +69,66 @@ class CANDriveSubsystem(commands2.Subsystem):
             DriveConstants.RIGHT_LEADER_ID, signals.MotorAlignmentValue.ALIGNED
         )
         self.rightFollower.set_control(followRightRequest)
+
+        ## Easier way to read encoder than using cancoder.
+        left_position_meters = (
+            self.leftLeader.get_position().value * METERS_PER_ROTATION
+        )
+        right_position_meters = (
+            self.rightLeader.get_position().value * METERS_PER_ROTATION
+        )
+
+        self.gyro = navx.AHRS.create_spi()
+        sleep(1.0)
+
+        ## Supposed to be a drop in replacement from DifferentialDriveOdometry
+        # Meant to be easier to use with loczlization
+        self.poseEstimator = DifferentialDrivePoseEstimator(
+            DifferentialDriveKinematics(
+                trackWidth=0.1  # TODO: measure track width and update this value (meters)
+            ),
+            self.gyro.getRotation2d(),  # initial heading
+            left_position_meters,  # initial left encoder distance
+            right_position_meters,  # initial right encoder distance
+            Pose2d(),  # starting pose. Does not matter because, it will be reset by PathPlanner using resetOdometry()
+        )
+
+        self.field = wpilib.Field2d()
+        wpilib.SmartDashboard.putData("Field", self.field)
+
+    def resetOdometry(self, pose: Pose2d) -> None:
+        self.poseEstimator.resetPosition(
+            self.gyro.getRotation2d(),
+            self.leftLeader.get_position().value * METERS_PER_ROTATION,
+            self.rightLeader.get_position().value * METERS_PER_ROTATION,
+            pose,
+        )
+
+    def periodic(self) -> None:
+
+        pose = self.poseEstimator.update(
+            self.gyro.getRotation2d(),
+            self.leftLeader.get_position().value * METERS_PER_ROTATION,
+            self.rightLeader.get_position().value * METERS_PER_ROTATION,
+        )
+
+        wpilib.SmartDashboard.putNumber("x", pose.x)
+        wpilib.SmartDashboard.putNumber("y", pose.y)
+        wpilib.SmartDashboard.putNumber("heading", pose.rotation().degrees())
+
+        self.field.setRobotPose(pose)
+
+    def getPose(self) -> Pose2d:
+        return self.poseEstimator.getEstimatedPosition()
+
+    def getWheelSpeeds(self) -> DifferentialDriveWheelSpeeds:
+        left_speed = self.leftLeader.get_velocity().value * METERS_PER_ROTATION
+        right_speed = self.rightLeader.get_velocity().value * METERS_PER_ROTATION
+        return DifferentialDriveWheelSpeeds(left_speed, right_speed)
+
+    def driveVolts(self, leftVolts: float, rightVolts: float) -> None:
+        self.leftLeader.set_control(self.velocity_request.with_voltage(leftVolts))
+        self.rightLeader.set_control(self.velocity_request.with_voltage(rightVolts))
 
     def driveArcade(self, xSpeed: float, zRotation: float) -> None:
         xSpeed = -xSpeed
