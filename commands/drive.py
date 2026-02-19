@@ -29,8 +29,8 @@ class Drive(commands2.Command):
             rightX = 0
 
         self.driveSubsystem.driveArcade(
-            -leftY * OperatorConstants.DRIVE_SCALING,
-            -rightX * OperatorConstants.ROTATION_SCALING,
+            -leftY,
+            -rightX,
         )
 
     def end(self, interrupted: bool) -> None:

@@ -20,14 +20,18 @@ class CANDriveSubsystem(commands2.Subsystem):
         config = configs.TalonFXConfiguration()
 
         slot0 = config.slot0
-        slot0.k_p = 0.3
-        self.MAX_RPS = 70
+        slot0.k_p = 0.1
+        slot0.k_v = 0.12
+        slot0.k_s = 0.1
+        slot0.k_i = 0
+        slot0.k_d = 0
+        self.MAX_RPS = 11
         self.leftLeader.configurator.apply(config)
         self.rightLeader.configurator.apply(config)
 
         self.velocity_request = controls.VelocityVoltage(0)
 
-        config.motor_output.neutral_mode = signals.NeutralModeValue.BRAKE
+        #config.motor_output.neutral_mode = signals.NeutralModeValue.BRAKE
         config.motor_output.inverted = (
             configs.config_groups.InvertedValue.CLOCKWISE_POSITIVE
         )
@@ -59,6 +63,9 @@ class CANDriveSubsystem(commands2.Subsystem):
 
         left_target_rps = left_percent * self.MAX_RPS
         right_target_rps = right_percent * self.MAX_RPS
+
+        print(left_target_rps)
+        print(right_target_rps)
 
         self.leftLeader.set_control(
             self.velocity_request.with_velocity(left_target_rps)
