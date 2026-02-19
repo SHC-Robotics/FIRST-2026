@@ -57,10 +57,10 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.rightFollower.set_control(followRightRequest)
 
         self.leftEncoder = hardware.CANcoder(
-            DriveConstants.LEFT_LEADER_ID, self.canivore
+            DriveConstants.LEFT_LEADER_ID, "rio"
         )
         self.rightEncoder = hardware.CANcoder(
-            DriveConstants.RIGHT_LEADER_ID, self.canivore
+            DriveConstants.RIGHT_LEADER_ID, "rio"
         )
 
         self.gyro = navx.AHRS.create_spi()
