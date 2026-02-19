@@ -25,7 +25,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         slot0.k_s = 0.1
         slot0.k_i = 0
         slot0.k_d = 0
-        self.MAX_RPS = 11
+        self.MAX_RPS = 70
         self.leftLeader.configurator.apply(config)
         self.rightLeader.configurator.apply(config)
 
@@ -52,8 +52,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         )
         self.rightFollower.set_control(followRightRequest)
 
-        self.leftOut = controls.DutyCycleOut(0)
-        self.rightOut = controls.DutyCycleOut(0)
+
 
     def driveArcade(self, xSpeed: float, zRotation: float) -> None:
         xSpeed = -xSpeed
@@ -63,8 +62,6 @@ class CANDriveSubsystem(commands2.Subsystem):
 
         left_target_rps = left_percent * self.MAX_RPS
         right_target_rps = right_percent * self.MAX_RPS
-
-        print(self.leftLeader.get_velocity().value)
 
         self.leftLeader.set_control(
             self.velocity_request.with_velocity(left_target_rps)
