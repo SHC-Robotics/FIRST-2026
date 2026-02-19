@@ -1,6 +1,6 @@
 import commands2
 
-from phoenix6 import CANBus, hardware, configs, controls, signals
+from phoenix6 import hardware, configs, controls, signals
 from constants import DriveConstants
 
 
@@ -9,7 +9,6 @@ class CANDriveSubsystem(commands2.Subsystem):
         super().__init__()
 
         # Instantiate motors for drive
-        self.canivore = CANBus("canivore")
         self.leftLeader = hardware.TalonFX(DriveConstants.LEFT_LEADER_ID)
         self.leftFollower = hardware.TalonFX(DriveConstants.LEFT_FOLLOWER_ID)
         self.rightLeader = hardware.TalonFX(DriveConstants.RIGHT_LEADER_ID)
@@ -31,7 +30,7 @@ class CANDriveSubsystem(commands2.Subsystem):
 
         self.velocity_request = controls.VelocityVoltage(0).with_slot(0)
 
-        #config.motor_output.neutral_mode = signals.NeutralModeValue.BRAKE
+        # config.motor_output.neutral_mode = signals.NeutralModeValue.BRAKE
         config.motor_output.inverted = (
             configs.config_groups.InvertedValue.CLOCKWISE_POSITIVE
         )
@@ -51,8 +50,6 @@ class CANDriveSubsystem(commands2.Subsystem):
             DriveConstants.RIGHT_LEADER_ID, signals.MotorAlignmentValue.ALIGNED
         )
         self.rightFollower.set_control(followRightRequest)
-
-
 
     def driveArcade(self, xSpeed: float, zRotation: float) -> None:
         xSpeed = -xSpeed
