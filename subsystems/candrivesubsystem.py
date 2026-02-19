@@ -29,7 +29,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.leftLeader.configurator.apply(config)
         self.rightLeader.configurator.apply(config)
 
-        self.velocity_request = controls.VelocityVoltage(0)
+        self.velocity_request = controls.VelocityVoltage(0).with_slot(0)
 
         #config.motor_output.neutral_mode = signals.NeutralModeValue.BRAKE
         config.motor_output.inverted = (
@@ -64,8 +64,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         left_target_rps = left_percent * self.MAX_RPS
         right_target_rps = right_percent * self.MAX_RPS
 
-        print(left_target_rps)
-        print(right_target_rps)
+        print(self.leftLeader.get_velocity().value)
 
         self.leftLeader.set_control(
             self.velocity_request.with_velocity(left_target_rps)
