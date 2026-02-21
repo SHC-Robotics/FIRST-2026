@@ -140,7 +140,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         )
 
     def getRobotRelativeSpeeds(self) -> ChassisSpeeds:
-        self.kinematics.toChassisSpeeds(self.getWheelSpeeds())
+        return self.kinematics.toChassisSpeeds(self.getWheelSpeeds())
 
     def driveRobotRelative(self, speeds: ChassisSpeeds):
         # speeds = speeds.discretize(speeds, 0.02)
