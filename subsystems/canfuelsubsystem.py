@@ -12,10 +12,11 @@ class CANFuelSubsystem(commands2.Subsystem):
         # Instantiate each of the motors on the launcher mechanism
         self.intakeLauncherRoller = rev.SparkMax(
             FuelConstants.INTAKE_LAUNCHER_MOTOR_ID,
-            rev.SparkLowLevel.MotorType.kBrushless,
+            rev.SparkLowLevel.MotorType.kBrushless
         )
         self.feederRoller = rev.SparkMax(
-            FuelConstants.FEEDER_MOTOR_ID, rev.SparkLowLevel.MotorType.kBrushless
+            FuelConstants.FEEDER_MOTOR_ID, 
+            rev.SparkLowLevel.MotorType.kBrushless
         )
 
         # Put default values for various fuel operations onto the dashboard.
