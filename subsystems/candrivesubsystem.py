@@ -5,7 +5,7 @@ from constants import DriveConstants
 from math import pi
 from wpimath.estimator import DifferentialDrivePoseEstimator
 from wpimath.kinematics import DifferentialDriveKinematics, DifferentialDriveWheelSpeeds, ChassisSpeeds
-from wpimath.geometry import Pose2d
+from wpimath.geometry import Pose2d, Rotation2d
 from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.controller import PPLTVController
 from pathplannerlib.config import RobotConfig
@@ -147,6 +147,9 @@ class CANDriveSubsystem(commands2.Subsystem):
         wheelSpeeds = self.kinematics.toWheelSpeeds(speeds)
         self.leftLeader.set_control(self.velocity_request.with_velocity(wheelSpeeds.left / METERS_PER_ROTATION))
         self.rightLeader.set_control(self.velocity_request.with_velocity(wheelSpeeds.right / METERS_PER_ROTATION))
+
+    def getHeading(self) -> Rotation2d:
+        return self.gyro.getRotation2d()
 
     def getWheelSpeeds(self) -> DifferentialDriveWheelSpeeds:
         left_speed = self.leftLeader.get_velocity().value * METERS_PER_ROTATION
