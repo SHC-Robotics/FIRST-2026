@@ -19,16 +19,10 @@ class Launch(commands2.Command):
 
     def initialize(self) -> None:
         self.fuelSubsystem.setIntakeLauncherRoller(
-            wpilib.SmartDashboard.getNumber(
-                "Launching launcher roller value",
-                FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE,
-            )
+            FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE
         )
         self.fuelSubsystem.setFeederRoller(
-            -1
-            * wpilib.SmartDashboard.getNumber(
-                "Launching feeder roller value", FuelConstants.LAUNCHING_FEEDER_VOLTAGE
-            )
+            -1 * FuelConstants.LAUNCHING_FEEDER_VOLTAGE
         )
 
     def isFinished(self) -> bool:
