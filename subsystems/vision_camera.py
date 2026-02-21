@@ -2,7 +2,7 @@ import ntcore
 import commands2
 import wpilib
 
-class VisionCamrea(commands2.Subsystem):
+class VisionCamera(commands2.Subsystem):
     def __init__(self, cameraName: str) -> None:
         super().__init__()
 

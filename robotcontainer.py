@@ -1,4 +1,4 @@
-from subsystems.vision_camera import VisionCamrea
+from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
 import wpilib
 import commands2
@@ -30,7 +30,7 @@ class RobotContainer:
         self.fuelSubsystem = CANFuelSubsystem()
 
         self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
-        self.visionCamera = VisionCamrea("limelight-front")
+        self.visionCamera = VisionCamera("limelight-front")
         self.visionLocalizer.addCamera(
             self.visionCamera,
             poseOnRobot=Translation3d(), # TODO: measure this
