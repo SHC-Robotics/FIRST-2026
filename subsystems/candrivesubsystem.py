@@ -4,8 +4,11 @@ from phoenix6 import hardware, configs, controls, signals
 from constants import DriveConstants
 from math import pi
 from wpimath.estimator import DifferentialDrivePoseEstimator
-from wpimath.kinematics import DifferentialDriveKinematics, DifferentialDriveWheelSpeeds
+from wpimath.kinematics import DifferentialDriveKinematics, DifferentialDriveWheelSpeeds, ChassisSpeeds
 from wpimath.geometry import Pose2d
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.controller import PPLTVController
+from pathplannerlib.config import RobotConfig
 import wpilib
 
 import navx
@@ -81,12 +84,14 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.gyro = navx.AHRS.create_spi()
         sleep(1.0)
 
+        self.kinematics = DifferentialDriveKinematics(
+            trackWidth=0.1  # TODO: measure track width and update this value (meters)
+        )
+
         ## Supposed to be a drop in replacement from DifferentialDriveOdometry
         # Meant to be easier to use with loczlization
         self.poseEstimator = DifferentialDrivePoseEstimator(
-            DifferentialDriveKinematics(
-                trackWidth=0.1  # TODO: measure track width and update this value (meters)
-            ),
+            self.kinematics,
             self.gyro.getRotation2d(),  # initial heading
             left_position_meters,  # initial left encoder distance
             right_position_meters,  # initial right encoder distance
@@ -96,16 +101,20 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.field = wpilib.Field2d()
         wpilib.SmartDashboard.putData("Field", self.field)
 
-    def resetOdometry(self, pose: Pose2d) -> None:
-        self.poseEstimator.resetPosition(
-            self.gyro.getRotation2d(),
-            self.leftLeader.get_position().value * METERS_PER_ROTATION,
-            self.rightLeader.get_position().value * METERS_PER_ROTATION,
-            pose,
+        config = RobotConfig.fromGUISettings()
+
+        AutoBuilder.configure(
+            self.getPose,
+            self.resetPose,
+            self.getRobotRelativeSpeeds,
+            lambda speeds, feedforwards: self.driveRobotRelative(speeds),
+            PPLTVController(0.02),
+            config,
+            shouldFlipPath,
+            self
         )
 
     def periodic(self) -> None:
-
         pose = self.poseEstimator.update(
             self.gyro.getRotation2d(),
             self.leftLeader.get_position().value * METERS_PER_ROTATION,
@@ -120,6 +129,24 @@ class CANDriveSubsystem(commands2.Subsystem):
 
     def getPose(self) -> Pose2d:
         return self.poseEstimator.getEstimatedPosition()
+
+    def resetPose(self, pose: Pose2d) -> None:
+        # self.gyro.reset()
+        self.poseEstimator.resetPosition(
+            self.gyro.getRotation2d(),
+            self.leftLeader.get_position().value * METERS_PER_ROTATION,
+            self.rightLeader.get_position().value * METERS_PER_ROTATION,
+            pose,
+        )
+
+    def getRobotRelativeSpeeds(self) -> ChassisSpeeds:
+        self.kinematics.toChassisSpeeds(self.getWheelSpeeds())
+
+    def driveRobotRelative(self, speeds: ChassisSpeeds):
+        # speeds = speeds.discretize(speeds, 0.02)
+        wheelSpeeds = self.kinematics.toWheelSpeeds(speeds)
+        self.leftLeader.set_control(self.velocity_request.with_velocity(wheelSpeeds.left / METERS_PER_ROTATION))
+        self.rightLeader.set_control(self.velocity_request.with_velocity(wheelSpeeds.right / METERS_PER_ROTATION))
 
     def getWheelSpeeds(self) -> DifferentialDriveWheelSpeeds:
         left_speed = self.leftLeader.get_velocity().value * METERS_PER_ROTATION
@@ -145,3 +172,6 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.rightLeader.set_control(
             self.velocity_request.with_velocity(right_target_rps)
         )
+
+def shouldFlipPath():
+    return wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed
