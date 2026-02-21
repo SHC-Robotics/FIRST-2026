@@ -14,7 +14,7 @@ from commands.launchsequence import LaunchSequence
 from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
 
-from wpilib.geometry import Translation3d, Rotation2d
+from wpimath.geometry import Translation3d, Rotation2d
 
 
 class RobotContainer:
