@@ -79,6 +79,14 @@ class VisionLocalizer(commands2.Subsystem):
             camera.robotOrientationSetRequest.set([yaw, 0.0, 0.0, 0.0, 0.0, 0.0])
 
             # Retrieve updated robot pose from MegaTag2 and add it to the drivetrain pose estimator
-            visionPose = camera.botPose.get()
+            visionPoseArray = camera.botPose.get()
             timestamp = camera.lastHeartbeatTime
+
+            if len(visionPoseArray) == 0:
+                continue
+
+            visionX = visionPoseArray[0]
+            visionZ = visionPoseArray[2]
+            visionYaw = visionPoseArray[5]
+            visionPose = Pose2d(x=visionX, y=visionZ, rotation=Rotation2d.fromDegrees(visionYaw))
             self.drivetrain.poseEstimator.addVisionMeasurement(visionPose, timestamp)
