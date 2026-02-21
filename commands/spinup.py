@@ -19,16 +19,10 @@ class SpinUp(commands2.Command):
 
     def initialize(self) -> None:
         self.fuelSubsystem.setIntakeLauncherRoller(
-            wpilib.SmartDashboard.getNumber(
-                "Launching launcher roller value",
-                FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE,
-            )
+            -1 * FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE
         )
         self.fuelSubsystem.setFeederRoller(
-            -1
-            * wpilib.SmartDashboard.getNumber(
-                "Spin-up feeder roller value", FuelConstants.SPIN_UP_FEEDER_VOLTAGE
-            )
+            -1 * FuelConstants.SPIN_UP_FEEDER_VOLTAGE
         )
 
     def isFinished(self) -> bool:

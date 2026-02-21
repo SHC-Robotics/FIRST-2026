@@ -19,16 +19,10 @@ class Eject(commands2.Command):
 
     def initialize(self) -> None:
         self.fuelSubsystem.setIntakeLauncherRoller(
-            -1
-            * wpilib.SmartDashboard.getNumber(
-                "Intaking intake roller value", FuelConstants.INTAKING_INTAKE_VOLTAGE
-            )
+            FuelConstants.INTAKING_INTAKE_VOLTAGE
         )
         self.fuelSubsystem.setFeederRoller(
-            -1
-            * wpilib.SmartDashboard.getNumber(
-                "Intaking feeder roller value", FuelConstants.INTAKING_FEEDER_VOLTAGE
-            )
+            -1 * FuelConstants.INTAKING_FEEDER_VOLTAGE
         )
 
     def end(self, interrupted: bool) -> None:
