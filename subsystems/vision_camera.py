@@ -38,7 +38,7 @@ class VisionCamera(commands2.Subsystem):
         # Set the network tables needed by MegaTag2
         self.robotOrientationSetRequest = self.table.getDoubleArrayTopic("robot_orientation_set").publish()
         self.cameraPoseSetRequest = self.table.getDoubleArrayTopic("camerapose_robotspace_set").publish()
-        self.imuModeRequest = self.table.getDoubleArrayTopic("imumode_set").publish()
+        self.imuModeRequest = self.table.getIntegerTopic("imumode_set").publish()
 
         # Retrieve robot pose from MegaTag2
         self.botPose = self.table.getDoubleArrayTopic("botpose_orb_wpiblue").getEntry([])
