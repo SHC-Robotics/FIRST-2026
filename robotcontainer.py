@@ -1,3 +1,5 @@
+from subsystems.vision_camera import VisionCamrea
+from subsystems.vision_localizer import VisionLocalizer
 import wpilib
 import commands2
 import commands2.button
@@ -12,6 +14,8 @@ from commands.launchsequence import LaunchSequence
 from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
 
+from wpilib.geometry import Translation3d, Rotation2d
+
 
 class RobotContainer:
     """
@@ -24,6 +28,15 @@ class RobotContainer:
         # A Subsystem is a collection of motors, sensors, and other hardware objects that are operated on by a Command.
         self.driveSubsystem = CANDriveSubsystem()
         self.fuelSubsystem = CANFuelSubsystem()
+
+        self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
+        self.visionCamera = VisionCamrea("limelight-front")
+        self.visionLocalizer.addCamera(
+            self.visionCamera,
+            poseOnRobot=Translation3d(), # TODO: measure this
+            headingOnRobot=Rotation2d(), # TODO: measure this
+            pitchAngleDegrees=0.0,
+        )
 
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(
