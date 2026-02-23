@@ -16,6 +16,7 @@ from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
 
 from wpimath.geometry import Translation3d, Rotation2d
+from pathplannerlib.auto import AutoBuilder, NamedCommands
 
 from pathplannerlib.auto import AutoBuilder
 
@@ -41,6 +42,10 @@ class RobotContainer:
             pitchAngleDegrees=0.0,
         )
 
+        NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem))
+        NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
+        NamedCommands.registerCommand("Eject", Intake(self.fuelSubsystem))
+
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(
             OperatorConstants.DRIVER_CONTROLLER_PORT
@@ -59,7 +64,6 @@ class RobotContainer:
         # Set the options to show up in the Dashboard for selecting auto modes
         wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
 
-        
 
     def configureBindings(self) -> None:
         # While the left bumper on operator controller is held, run the intake command
