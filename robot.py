@@ -5,7 +5,7 @@ import commands2
 
 import robotcontainer
 
-from wpilib import CameraServer
+import wpilib
 
 
 class Robot(commands2.TimedCommandRobot):
@@ -20,7 +20,7 @@ class Robot(commands2.TimedCommandRobot):
         # Instantiate the RobotContainer, which contains the majority of robot logic
         # (includes all button bindings and adds autonomous chooser to dashboard)
         self.container = robotcontainer.RobotContainer()
-        CameraServer().launch()
+        wpilib.CameraServer.launch()
 
         # Track usage of Kitbot code
         hal.report(hal.tResourceType.kResourceType_Framework, 10)
