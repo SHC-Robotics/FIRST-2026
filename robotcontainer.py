@@ -17,6 +17,8 @@ from subsystems.canfuelsubsystem import CANFuelSubsystem
 from wpimath.geometry import Translation3d, Rotation2d
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 
+from pathplannerlib.auto import AutoBuilder
+
 
 class RobotContainer:
     """
@@ -58,8 +60,8 @@ class RobotContainer:
 
         self.configureBindings()
 
-        # Set the options to show up in the Dashboard for selecting auto modes.
-        wpilib.SmartDashboard.putData("Autonomous", self.autoChooser)
+        # Set the options to show up in the Dashboard for selecting auto modes
+        wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
 
     def configureBindings(self) -> None:
         # While the left bumper on operator controller is held, run the intake command
