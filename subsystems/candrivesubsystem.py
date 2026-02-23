@@ -52,6 +52,7 @@ class CANDriveSubsystem(commands2.Subsystem):
 
         self.velocity_request = controls.VelocityVoltage(0).with_slot(0)
 
+        # TODO: braking
         # config.motor_output.neutral_mode = signals.NeutralModeValue.BRAKE
         config.motor_output.inverted = (
             configs.config_groups.InvertedValue.CLOCKWISE_POSITIVE
