@@ -40,3 +40,7 @@ class OperatorConstants:
     # help avoid turning too fast and being difficult to control
     DRIVE_SCALING = 0.5
     ROTATION_SCALING = 0.5
+
+class ClimberConstants:
+    LEFT_ARM_ID = 7
+    RIGHT_ARM_ID = 8
