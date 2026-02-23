@@ -1,3 +1,5 @@
+from subsystems.vision_camera import VisionCamera
+from subsystems.vision_localizer import VisionLocalizer
 import wpilib
 import commands2
 import commands2.button
@@ -12,6 +14,11 @@ from commands.launchsequence import LaunchSequence
 from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
 
+from wpimath.geometry import Translation3d, Rotation2d
+from pathplannerlib.auto import AutoBuilder, NamedCommands
+
+from pathplannerlib.auto import AutoBuilder
+
 
 class RobotContainer:
     """
@@ -25,6 +32,19 @@ class RobotContainer:
         self.driveSubsystem = CANDriveSubsystem()
         self.fuelSubsystem = CANFuelSubsystem()
 
+        self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
+        self.visionCamera = VisionCamera("limelight-front")
+        self.visionLocalizer.addCamera(
+            self.visionCamera,
+            poseOnRobot=Translation3d(), # TODO: measure this
+            headingOnRobot=Rotation2d(), # TODO: measure this
+            pitchAngleDegrees=0.0,
+        )
+
+        NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem))
+        NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
+        NamedCommands.registerCommand("Eject", Intake(self.fuelSubsystem))
+
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(
             OperatorConstants.DRIVER_CONTROLLER_PORT
@@ -36,15 +56,12 @@ class RobotContainer:
         )
 
         # The autonomous chooser
-        self.autoChooser = wpilib.SendableChooser()
+        self.autoChooser = AutoBuilder.buildAutoChooser()
 
         self.configureBindings()
 
-        # Set the options to show up in the Dashboard for selecting auto modes.
-        self.autoChooser.setDefaultOption(
-            "Autonomous", ExampleAuto(self.driveSubsystem, self.fuelSubsystem)
-        )
-        wpilib.SmartDashboard.putData("Autonomous", self.autoChooser)
+        # Set the options to show up in the Dashboard for selecting auto modes
+        wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
 
     def configureBindings(self) -> None:
         # While the left bumper on operator controller is held, run the intake command
