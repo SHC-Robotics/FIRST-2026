@@ -41,7 +41,6 @@ class OperatorConstants:
     DRIVE_SCALING = 0.5
     ROTATION_SCALING = 0.5
 
-
-class AprilTagIds:
-    RED_HUB_CENTER = 10
-    BLUE_HUB_CENTER = 26
+class ClimberConstants:
+    LEFT_ARM_ID = 7
+    RIGHT_ARM_ID = 8
