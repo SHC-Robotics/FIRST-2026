@@ -4,3 +4,7 @@ __pycache__
 .DS_Store
 ctre_sim
 venv/
+networktables.json
+simgui-ds.json
+simgui-window.json
+simgui.json
