@@ -8,6 +8,7 @@ import commands2.cmd
 from constants import OperatorConstants
 from commands.drive import Drive
 from commands.eject import Eject
+from commands.aim import Aim
 from commands.exampleauto import ExampleAuto
 from commands.intake import Intake
 from commands.launchsequence import LaunchSequence
@@ -15,6 +16,8 @@ from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
 
 from wpimath.geometry import Translation3d, Rotation2d
+
+from pathplannerlib.auto import AutoBuilder
 
 
 class RobotContainer:
@@ -49,15 +52,14 @@ class RobotContainer:
         )
 
         # The autonomous chooser
-        self.autoChooser = wpilib.SendableChooser()
+        self.autoChooser = AutoBuilder.buildAutoChooser()
 
         self.configureBindings()
 
-        # Set the options to show up in the Dashboard for selecting auto modes.
-        self.autoChooser.setDefaultOption(
-            "Autonomous", ExampleAuto(self.driveSubsystem, self.fuelSubsystem)
-        )
-        wpilib.SmartDashboard.putData("Autonomous", self.autoChooser)
+        # Set the options to show up in the Dashboard for selecting auto modes
+        wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
+
+        
 
     def configureBindings(self) -> None:
         # While the left bumper on operator controller is held, run the intake command
@@ -77,6 +79,9 @@ class RobotContainer:
         # Set the default command for the drive subsystem to the command provided by
         # factory with the values provided by the joystick axes on the driver
         # controller.
+
+        self.driverController.a().whileTrue(Aim(self.driveSubsystem, self.driverController, self.visionCamera))
+
         self.driveSubsystem.setDefaultCommand(
             Drive(self.driveSubsystem, self.driverController)
         )

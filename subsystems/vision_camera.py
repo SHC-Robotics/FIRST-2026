@@ -44,6 +44,12 @@ class VisionCamera(commands2.Subsystem):
         self.botPose = self.table.getDoubleArrayTopic("botpose_orb_wpiblue").getEntry([])
         self.botPoseFlipped = self.table.getDoubleArrayTopic("botpose_orb_wpired").getEntry([])
 
+
+    
+    def getRawFiducials(self):
+        return self.table.getEntry("rawfiducials").getDoubleArray([])
+
+
     def getHB(self) -> float:
         return self.hb.get()
 
