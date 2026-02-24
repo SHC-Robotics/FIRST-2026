@@ -4,6 +4,8 @@ import wpilib
 from constants import FuelConstants
 from subsystems.candrivesubsystem import CANDriveSubsystem
 
+ALIGNED_THRESHOLD = 0.05
+
 
 class Aim(commands2.Command):
     """
@@ -34,59 +36,85 @@ class Aim(commands2.Command):
         #dif tags for dif alliance sides
         self.tagList = []
 
-        #red alliance shooter tags
+        # Red alliance shooter tags
         redTags = [9, 10]
-        #blue alliance shooter tags
+        # Blue alliance shooter tags
         blueTags = [26, 25]
 
-        #define target tags depending on alliance
-        # if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
-        #     self.tagList = redTags
-        # else:
-        #     self.tagList = blueTags
-        self.tagList = redTags
+        # Define target tags depending on alliance
+        if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
+            self.tagList = redTags
+        else:
+            self.tagList = blueTags
 
-        print("started aiming")
+        raw_tags = self.camera.getRawFiducials()
+        max_area = -1.0
+        best_id = None
+
+        # Use biggest area as main target
+        for i in range(0, len(raw_tags), 7):
+            tag_id = int(raw_tags[i])
+            area = raw_tags[i+3]
+
+            if tag_id in self.tagList:
+                if area > max_area:
+                    max_area = area
+                    best_id = tag_id
+
+        self.mainTarget = best_id
+
+        print(f"started aiming at tag {self.mainTarget}")
 
     def execute(self) -> None:
         #grab raw tag id from camera
         raw_tags = self.camera.getRawFiducials()
 
-        best_tx = None
-        max_area = -1.0
+        tx = None
+        area = None
+        dist = None
 
-
-        #loops through tag ids currently visible (skips by 7 because data in between is other stuff per id)
         for i in range(0, len(raw_tags), 7):
             tag_id = int(raw_tags[i])
-            area = raw_tags[i+3]
+            if tag_id == self.mainTarget:
+                tx = raw_tags[i+1]
+                area = raw_tags[i+3]
+                dist = raw_tags[i+4]
+                break
 
-            #use biggest of priority ids as main target
-            if tag_id in self.tagList:
-                if area > max_area:
-                    max_area = area
-                    best_tx = raw_tags[i+1]
+        if not tx:
+            self.driveSubsystem.driveArcade(0, 0)
+            return
 
-            #if found offset rotate towards offset
-            if best_tx != None:
-                #need to check wpilib's orientationController idk if this works
-                rotation_output = self.driveSubsystem.orientationController.calculate(best_tx, 0) 
-                rotation_output = max(min(rotation_output, 0.15), -0.15)
-                self.driveSubsystem.driveArcade(0, rotation_output)
-            else:
-                self.driveSubsystem.driveArcade(0, 0)
-
-
+        # need to check wpilib's orientationController idk if this works
+        rotation_output = self.driveSubsystem.orientationController.calculate(tx, 0) 
+        rotation_output = max(min(rotation_output, 0.15), -0.15)
+        self.driveSubsystem.driveArcade(0, rotation_output)
 
     def isFinished(self) -> bool:
-        #check if finished
+        # Finished if tag goes outside camera FOV or robot is lined up
         raw_tags = self.camera.getRawFiducials()
+
+        tx = None
+        area = None
+        dist = None
+
         for i in range(0, len(raw_tags), 7):
-            if int(raw_tags[i]) in self.tagList:
-                return False
-        return True
+            tag_id = int(raw_tags[i])
+            if tag_id == self.mainTarget:
+                tx = raw_tags[i+1]
+                area = raw_tags[i+3]
+                dist = raw_tags[i+4]
+                break
+
+        if not tx:
+            return True
+
+        if tx < ALIGNED_THRESHOLD and tx > -ALIGNED_THRESHOLD:
+            return True
+
+        return False
     
     def end(self, interrupted: bool):
-        #stop motors
+        # Stop motors
         self.driveSubsystem.driveArcade(0, 0)
-        print("finished aiming")
+        print(f"finished aiming at {self.mainTarget}")
