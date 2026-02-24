@@ -33,40 +33,23 @@ class Aim(commands2.Command):
 
         #can set priorityid to ignore other tags if there's any benefit towards aiming
 
-        #dif tags for dif alliance sides
-        self.tagList = []
+        # Dif tags for dif alliance sides
 
-        # Red alliance shooter tags
-        redTags = [9, 10]
+        # Red alliance shooter tags (the center one)
+        redTag = 10
         # Blue alliance shooter tags
-        blueTags = [26, 25]
+        blueTag = 26
 
         # Define target tags depending on alliance
         if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
-            self.tagList = redTags
+            self.tag = redTag
         else:
-            self.tagList = blueTags
+            self.tag = blueTag
 
-        raw_tags = self.camera.getRawFiducials()
-        max_area = -1.0
-        best_id = None
-
-        # Use biggest area as main target
-        for i in range(0, len(raw_tags), 7):
-            tag_id = int(raw_tags[i])
-            area = raw_tags[i+3]
-
-            if tag_id in self.tagList:
-                if area > max_area:
-                    max_area = area
-                    best_id = tag_id
-
-        self.mainTarget = best_id
-
-        print(f"started aiming at tag {self.mainTarget}")
+        print(f"started aiming at tag {self.tag}")
 
     def execute(self) -> None:
-        #grab raw tag id from camera
+        # Grab raw tag id from camera
         raw_tags = self.camera.getRawFiducials()
 
         tx = None
@@ -75,7 +58,7 @@ class Aim(commands2.Command):
 
         for i in range(0, len(raw_tags), 7):
             tag_id = int(raw_tags[i])
-            if tag_id == self.mainTarget:
+            if tag_id == self.tag:
                 tx = raw_tags[i+1]
                 area = raw_tags[i+3]
                 dist = raw_tags[i+4]
@@ -100,7 +83,7 @@ class Aim(commands2.Command):
 
         for i in range(0, len(raw_tags), 7):
             tag_id = int(raw_tags[i])
-            if tag_id == self.mainTarget:
+            if tag_id == self.tag:
                 tx = raw_tags[i+1]
                 area = raw_tags[i+3]
                 dist = raw_tags[i+4]
