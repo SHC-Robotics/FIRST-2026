@@ -18,11 +18,6 @@ from subsystems.canfuelsubsystem import CANFuelSubsystem
 from wpimath.geometry import Translation3d, Rotation2d
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 
-from pathplannerlib.auto import AutoBuilder
-
-from pathplannerlib.auto import AutoBuilder
-
-
 class RobotContainer:
     """
     The robot container, which stores the robot's subsystems, controllers, binds buttons to commands,

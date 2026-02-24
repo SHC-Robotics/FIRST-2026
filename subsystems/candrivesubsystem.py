@@ -217,3 +217,4 @@ class CANDriveSubsystem(commands2.Subsystem):
 
 def shouldFlipPath():
     return wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed
+
