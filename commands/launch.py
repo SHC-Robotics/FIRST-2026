@@ -19,7 +19,7 @@ class Launch(commands2.Command):
 
     def initialize(self) -> None:
         self.fuelSubsystem.setIntakeLauncherRoller(
-            FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE
+            -1 * FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE
         )
         self.fuelSubsystem.setFeederRoller(
             -1 * FuelConstants.LAUNCHING_FEEDER_VOLTAGE

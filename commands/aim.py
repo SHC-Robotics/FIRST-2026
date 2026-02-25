@@ -100,4 +100,4 @@ class Aim(commands2.Command):
     def end(self, interrupted: bool):
         # Stop motors
         self.driveSubsystem.driveArcade(0, 0)
-        print(f"finished aiming at {self.mainTarget}")
+        print(f"finished aiming at {self.tag}")
