@@ -40,3 +40,8 @@ class OperatorConstants:
     # help avoid turning too fast and being difficult to control
     DRIVE_SCALING = 0.5
     ROTATION_SCALING = 0.5
+
+
+class AprilTagIds:
+    RED_HUB_CENTER = 10
+    BLUE_HUB_CENTER = 26

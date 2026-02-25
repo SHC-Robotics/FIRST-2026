@@ -1,7 +1,7 @@
 import commands2
 import wpilib
 
-from constants import FuelConstants
+from constants import AprilTagIds, FuelConstants
 from subsystems.candrivesubsystem import CANDriveSubsystem
 
 ALIGNED_THRESHOLD = 0.05
@@ -33,18 +33,11 @@ class Aim(commands2.Command):
 
         #can set priorityid to ignore other tags if there's any benefit towards aiming
 
-        # Dif tags for dif alliance sides
-
-        # Red alliance shooter tags (the center one)
-        redTag = 10
-        # Blue alliance shooter tags
-        blueTag = 26
-
         # Define target tags depending on alliance
         if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
-            self.tag = redTag
+            self.tag = AprilTagIds.RED_HUB_CENTER
         else:
-            self.tag = blueTag
+            self.tag = AprilTagIds.BLUE_HUB_CENTER
 
         print(f"started aiming at tag {self.tag}")
 

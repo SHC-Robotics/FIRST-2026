@@ -1,3 +1,4 @@
+from constants import AprilTagIds
 import ntcore
 import commands2
 import wpilib
@@ -74,7 +75,7 @@ class VisionCamera(commands2.Subsystem):
         found = False
         for i in range(0, len(raw_tags), 7):
             tag_id = int(raw_tags[i])
-            if tag_id == 10 or tag_id == 26:
+            if tag_id == AprilTagIds.RED_HUB_CENTER or tag_id == AprilTagIds.BLUE_HUB_CENTER:
                 wpilib.SmartDashboard.putString("Hub AprilTag", f"VISIBLE (id = {tag_id})")
                 found = True
                 break
