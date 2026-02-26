@@ -10,9 +10,12 @@ from commands.drive import Drive
 from commands.eject import Eject
 from commands.exampleauto import ExampleAuto
 from commands.intake import Intake
+from commands.climb_down import ClimbDown
+from commands.climb_up import ClimbUp
 from commands.launchsequence import LaunchSequence
 from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
+from subsystems.canclimbsubsystem import CANClimbSubsystem
 
 from wpimath.geometry import Translation3d, Rotation2d
 from pathplannerlib.auto import AutoBuilder, NamedCommands
@@ -31,6 +34,7 @@ class RobotContainer:
         # A Subsystem is a collection of motors, sensors, and other hardware objects that are operated on by a Command.
         self.driveSubsystem = CANDriveSubsystem()
         self.fuelSubsystem = CANFuelSubsystem()
+        self.climbSubystem = CANClimbSubsystem()
 
         self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
         self.visionCamera = VisionCamera("limelight-front")
@@ -85,7 +89,14 @@ class RobotContainer:
             Drive(self.driveSubsystem, self.driverController)
         )
 
+        self.driverController.leftBumper().whileTrue(ClimbDown(self.climbSubystem))
+        self.driverController.rightBumper().whileTrue(ClimbUp(self.climbSubystem))
+
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
+
+
+
+
 
     def getAutonomousCommand(self) -> commands2.Command:
         return self.autoChooser.getSelected()

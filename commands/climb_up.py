@@ -17,16 +17,22 @@ class ClimbUp(commands2.Command):
         self.addRequirements(self.climbSubsystem)
 
     def initialize(self) -> None:
-        self.climbSubsystem.setVoltage(1)
+        self.climbSubsystem.setVoltage(-8)
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()
 
     def isFinished(self) -> bool:
         leftPosition = self.climbSubsystem.leftArm.get_position().value
-        rightPosition = self.climbSubsystem.rightArm.get_position().value
+        #print(leftPosition)
+        #print(self.climbSubsystem.leftArm.get_voltage().value)
+        #rightPosition = self.climbSubsystem.rightArm.get_position().
+        rightPosition = 0
 
-        if leftPosition > FINISHED_CLIMBING_POSITION or rightPosition > FINISHED_CLIMBING_POSITION:
-            return True
+
+        print(leftPosition)
+
+        # if leftPosition > FINISHED_CLIMBING_POSITION or rightPosition > FINISHED_CLIMBING_POSITION:
+        #     return True
 
         return False
