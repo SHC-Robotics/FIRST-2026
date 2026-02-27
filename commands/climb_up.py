@@ -24,13 +24,10 @@ class ClimbUp(commands2.Command):
 
     def isFinished(self) -> bool:
         leftPosition = self.climbSubsystem.leftArm.get_position().value
-        #print(leftPosition)
-        #print(self.climbSubsystem.leftArm.get_voltage().value)
-        #rightPosition = self.climbSubsystem.rightArm.get_position().
-        rightPosition = 0
-
-
+        # rightPosition = self.climbSubsystem.rightArm.get_position().
         print(leftPosition)
+        # print(self.climbSubsystem.leftArm.get_voltage().value)
+        # rightPosition = 0
 
         # if leftPosition > FINISHED_CLIMBING_POSITION or rightPosition > FINISHED_CLIMBING_POSITION:
         #     return True
