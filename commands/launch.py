@@ -56,6 +56,9 @@ class Launch(commands2.Command):
     
     def isFinished(self) -> bool:
         return False
+
+    def end(self, interrupted: bool) -> None:
+        self.fuelSubsystem.stop()
     
     def findSpeed(self, currentDistance):
         speedTable = self.speedTable
