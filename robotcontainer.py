@@ -34,7 +34,7 @@ class RobotContainer:
         # A Subsystem is a collection of motors, sensors, and other hardware objects that are operated on by a Command.
         self.driveSubsystem = CANDriveSubsystem()
         self.fuelSubsystem = CANFuelSubsystem()
-        self.climbSubystem = CANClimbSubsystem()
+        self.climbSubsystem = CANClimbSubsystem()
 
         self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
         self.visionCamera = VisionCamera("limelight-front")
@@ -90,8 +90,8 @@ class RobotContainer:
             Drive(self.driveSubsystem, self.driverController)
         )
 
-        self.driverController.leftBumper().whileTrue(ClimbDown(self.climbSubystem))
-        self.driverController.rightBumper().whileTrue(ClimbUp(self.climbSubystem))
+        self.driverController.leftBumper().whileTrue(ClimbDown(self.climbSubsystem))
+        self.driverController.rightBumper().whileTrue(ClimbUp(self.climbSubsystem))
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
 
