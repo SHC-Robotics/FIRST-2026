@@ -9,7 +9,6 @@ from constants import OperatorConstants
 from commands.drive import Drive
 from commands.eject import Eject
 from commands.aim import Aim
-from commands.exampleauto import ExampleAuto
 from commands.intake import Intake
 from commands.launchsequence import LaunchSequence
 from subsystems.candrivesubsystem import CANDriveSubsystem
