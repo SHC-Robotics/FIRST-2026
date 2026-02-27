@@ -13,7 +13,7 @@ class ClimbDown(commands2.Command):
         self.addRequirements(self.climbSubsystem)
 
     def initialize(self) -> None:
-        self.climbSubsystem.setVoltage(8)
+        self.climbSubsystem.setVoltage(-8)
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()
