@@ -50,6 +50,8 @@ class RobotContainer:
         NamedCommands.registerCommand("Eject", Intake(self.fuelSubsystem))
         NamedCommands.registerCommand("Climb", ClimbUp(self.fuelSubsystem))
 
+        print(f"{self.climbSubsystem.leftArm.get_position().value}")
+
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(
             OperatorConstants.DRIVER_CONTROLLER_PORT
