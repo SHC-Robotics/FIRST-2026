@@ -46,12 +46,12 @@ class Launch(commands2.Command):
         print(f"Multiplier: {distance}")
 
 
-        # self.fuelSubsystem.setIntakeLauncherRoller(
-        #     -1 * FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE * multiplier
-        # )
-        # self.fuelSubsystem.setFeederRoller(
-        #     -1 * FuelConstants.LAUNCHING_FEEDER_VOLTAGE
-        # )
+        self.fuelSubsystem.setIntakeLauncherRoller(
+            FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE * multiplier
+        )
+        self.fuelSubsystem.setFeederRoller(
+            FuelConstants.LAUNCHING_FEEDER_VOLTAGE
+        )
 
     
     def isFinished(self) -> bool:

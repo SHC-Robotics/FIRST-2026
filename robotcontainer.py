@@ -68,7 +68,7 @@ class RobotContainer:
 
         # While the right bumper on the operator controller is held, run the launch
         # sequence command on the fuel subsystem.
-        self.operatorController.rightBumper().whileTrue(
+        self.operatorController.rightBumper().onTrue(
             LaunchSequence(self.fuelSubsystem, self.visionCamera)
         )
 

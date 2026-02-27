@@ -17,6 +17,6 @@ class LaunchSequence(commands2.SequentialCommandGroup):
         super().__init__()
 
         self.addCommands(
-            #SpinUp(fuelSubsystem).withTimeout(FuelConstants.SPIN_UP_SECONDS),
+            SpinUp(fuelSubsystem).withTimeout(FuelConstants.SPIN_UP_SECONDS),
             Launch(fuelSubsystem, visionCamera),
         )
