@@ -48,6 +48,7 @@ class RobotContainer:
         NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem))
         NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
         NamedCommands.registerCommand("Eject", Intake(self.fuelSubsystem))
+        NamedCommands.registerCommand("Climb", ClimbUp(self.fuelSubsystem))
 
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(
