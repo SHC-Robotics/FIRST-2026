@@ -18,6 +18,8 @@ class Eject(commands2.Command):
         self.addRequirements(self.fuelSubsystem)
 
     def initialize(self) -> None:
+        wpilib.SmartDashboard.putString("Current command", "Eject")
+
         self.fuelSubsystem.setIntakeLauncherRoller(
             -1 * FuelConstants.INTAKING_INTAKE_VOLTAGE
         )

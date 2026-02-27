@@ -18,6 +18,8 @@ class Intake(commands2.Command):
         self.addRequirements(self.fuelSubsystem)
 
     def initialize(self) -> None:
+        wpilib.SmartDashboard.putString("Current command", "Intake")
+
         self.fuelSubsystem.setIntakeLauncherRoller(
             FuelConstants.INTAKING_INTAKE_VOLTAGE
         )

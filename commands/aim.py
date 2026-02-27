@@ -25,6 +25,8 @@ class Aim(commands2.Command):
 
 
     def initialize(self) -> None:
+        wpilib.SmartDashboard.putString("Current command", "Aim")
+
         #get current robotpose from the drive subsystem
         #curentPose = self.driveSubsystem.getPose()
 

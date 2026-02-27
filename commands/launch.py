@@ -37,6 +37,8 @@ class Launch(commands2.Command):
             self.tag = AprilTagIds.BLUE_HUB_CENTER
 
     def initialize(self) -> None:
+        wpilib.SmartDashboard.putString("Current command", "Launch")
+
         data = self.camera.getHubData(self.tag)
         distance = data["dist"]
 
@@ -44,7 +46,6 @@ class Launch(commands2.Command):
 
         print(f"Distance: {distance}")
         print(f"Multiplier: {distance}")
-
 
         self.fuelSubsystem.setIntakeLauncherRoller(
             FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE * multiplier
