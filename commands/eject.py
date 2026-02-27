@@ -19,7 +19,7 @@ class Eject(commands2.Command):
 
     def initialize(self) -> None:
         self.fuelSubsystem.setIntakeLauncherRoller(
-            FuelConstants.INTAKING_INTAKE_VOLTAGE
+            -1 * FuelConstants.INTAKING_INTAKE_VOLTAGE
         )
         self.fuelSubsystem.setFeederRoller(
             -1 * FuelConstants.INTAKING_FEEDER_VOLTAGE

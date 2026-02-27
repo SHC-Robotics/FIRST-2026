@@ -6,6 +6,7 @@ from math import pi
 from wpimath.estimator import DifferentialDrivePoseEstimator
 from wpimath.kinematics import DifferentialDriveKinematics, DifferentialDriveWheelSpeeds, ChassisSpeeds
 from wpimath.geometry import Pose2d, Rotation2d
+from wpimath.controller import PIDController
 from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.controller import PPLTVController
 from pathplannerlib.config import RobotConfig
@@ -46,6 +47,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         slot0.k_s = 0.1
         slot0.k_i = 0
         slot0.k_d = 0
+
         self.MAX_RPS = 70
         self.leftLeader.configurator.apply(config)
         self.rightLeader.configurator.apply(config)
@@ -115,6 +117,20 @@ class CANDriveSubsystem(commands2.Subsystem):
             self
         )
 
+        #WPIlib PID setup for rotating towards an angle
+        #unsure if WPILIB pid or talon PID better to use here
+        #need to do vast research on how this works
+
+        # kP needs to be tuned. Start small (0.01 - 0.05).
+        self.orientationController = PIDController(0.005, 0, 0) 
+        # Tell the controller that -180 and 180 are the same point so it takes the shortest path
+        self.orientationController.enableContinuousInput(-180, 180)
+        # Set a tolerance (e.g., stop when within 1 degree of target)
+        self.orientationController.setTolerance(1.0)
+
+
+
+
     def periodic(self) -> None:
         pose = self.poseEstimator.update(
             self.gyro.getRotation2d(),
@@ -177,5 +193,28 @@ class CANDriveSubsystem(commands2.Subsystem):
             self.velocity_request.with_velocity(right_target_rps)
         )
 
+    def driveToOrientation(self, targetDegrees: float, xSpeed: float = 0):
+        """
+        Rotates the robot toward a target heading while optionally moving forward.
+        :param targetDegrees: The target angle in degrees (-180 to 180).
+        :param xSpeed: Optional forward speed (0 to 1.0).
+        """
+        currentDegrees = self.getPose().rotation().degrees()
+        print("Current Degrees" + str(currentDegrees))
+        print("Target: " + str(targetDegrees))
+        
+        # Calculate the rotation output needed
+        # This returns a value typically between -1.0 and 1.0
+        rotationOutput = self.orientationController.calculate(currentDegrees, targetDegrees)
+        
+        # Use your existing arcade drive to move the motors
+        self.driveArcade(xSpeed, rotationOutput)
+
+    def isAtTargetOrientation(self) -> bool:
+        return self.orientationController.atSetpoint()
+
+    
+
 def shouldFlipPath():
     return wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed
+

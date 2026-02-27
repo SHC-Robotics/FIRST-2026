@@ -19,10 +19,10 @@ class SpinUp(commands2.Command):
 
     def initialize(self) -> None:
         self.fuelSubsystem.setIntakeLauncherRoller(
-            -1 * FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE
+            FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE
         )
         self.fuelSubsystem.setFeederRoller(
-            -1 * FuelConstants.SPIN_UP_FEEDER_VOLTAGE
+            FuelConstants.SPIN_UP_FEEDER_VOLTAGE
         )
 
     def isFinished(self) -> bool:

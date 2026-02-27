@@ -9,33 +9,20 @@ class CANFuelSubsystem(commands2.Subsystem):
     def __init__(self) -> None:
         super().__init__()
 
+
+        #current distance from target
+        self.distance = None
+
         # Instantiate each of the motors on the launcher mechanism
         self.intakeLauncherRoller = rev.SparkMax(
             FuelConstants.INTAKE_LAUNCHER_MOTOR_ID,
             rev.SparkLowLevel.MotorType.kBrushless,
         )
         self.feederRoller = rev.SparkMax(
-            FuelConstants.FEEDER_MOTOR_ID, rev.SparkLowLevel.MotorType.kBrushless
+            FuelConstants.FEEDER_MOTOR_ID, 
+            rev.SparkLowLevel.MotorType.kBrushless
         )
 
-        # Put default values for various fuel operations onto the dashboard.
-        # All commands using this subsystem pull values from the dashboard to allow
-        # values to be tuned easily. Values in constants.py must be replaced for changes to persist.
-        wpilib.SmartDashboard.putNumber(
-            "Intaking feeder roller value", FuelConstants.INTAKING_FEEDER_VOLTAGE
-        )
-        wpilib.SmartDashboard.putNumber(
-            "Intaking intake roller value", FuelConstants.INTAKING_INTAKE_VOLTAGE
-        )
-        wpilib.SmartDashboard.putNumber(
-            "Launching feeder roller value", FuelConstants.LAUNCHING_FEEDER_VOLTAGE
-        )
-        wpilib.SmartDashboard.putNumber(
-            "Launching launcher roller value", FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE
-        )
-        wpilib.SmartDashboard.putNumber(
-            "Spin-up feeder roller value", FuelConstants.SPIN_UP_FEEDER_VOLTAGE
-        )
 
         # Create the configuration for the feeder roller, set a current limit and
         # apply the config to the controller
@@ -52,6 +39,7 @@ class CANFuelSubsystem(commands2.Subsystem):
         # intaking and launching, and apply the config to the controller
         launcherConfig = rev.SparkMaxConfig()
         launcherConfig.smartCurrentLimit(FuelConstants.LAUNCHER_MOTOR_CURRENT_LIMIT)
+        launcherConfig.inverted(True)
         self.intakeLauncherRoller.configure(
             launcherConfig,
             rev.ResetMode.kResetSafeParameters,

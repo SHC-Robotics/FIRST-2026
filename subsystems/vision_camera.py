@@ -1,3 +1,4 @@
+from constants import AprilTagIds
 import ntcore
 import commands2
 import wpilib
@@ -44,6 +45,30 @@ class VisionCamera(commands2.Subsystem):
         self.botPose = self.table.getDoubleArrayTopic("botpose_orb_wpiblue").getEntry([])
         self.botPoseFlipped = self.table.getDoubleArrayTopic("botpose_orb_wpired").getEntry([])
 
+
+    
+    def getRawFiducials(self):
+        return self.table.getEntry("rawfiducials").getDoubleArray([])
+    
+    def getHubData(self, target_id):
+        raw_tags = self.getRawFiducials()
+
+
+        data = {"tx": None, "area": None, "dist": None}
+
+        for i in range(0, len(raw_tags), 7):
+            tag_id = int(raw_tags[i])
+            if tag_id == target_id:
+                data["tx"] = raw_tags[i+1]
+                data["area"] = raw_tags[i+3]
+                data["dist"] = raw_tags[i+4]
+                break
+            
+        return data
+
+
+
+
     def getHB(self) -> float:
         return self.hb.get()
 
@@ -62,3 +87,16 @@ class VisionCamera(commands2.Subsystem):
         if heartbeating != self.heartbeating:
             print(f"Camera {self.cameraName} is " + ("UPDATING" if heartbeating else "NOT UPDATING"))
         self.heartbeating = heartbeating
+
+        # Add indicator to dashboard when hub apriltag is on screen
+        raw_tags = self.getRawFiducials()
+        found = False
+        for i in range(0, len(raw_tags), 7):
+            tag_id = int(raw_tags[i])
+            if tag_id == AprilTagIds.RED_HUB_CENTER or tag_id == AprilTagIds.BLUE_HUB_CENTER:
+                wpilib.SmartDashboard.putString("Hub AprilTag", f"VISIBLE (id = {tag_id})")
+                found = True
+                break
+
+        if not found:
+            wpilib.SmartDashboard.putString("Hub AprilTag", "OFF SCREEN")

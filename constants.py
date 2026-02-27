@@ -22,11 +22,11 @@ class FuelConstants:
     # Voltage values for various fuel operations. These values may need to be tuned
     # based on exact robot construction.
     # See the Software Guide for tuning information
-    INTAKING_FEEDER_VOLTAGE = -12.0
-    INTAKING_INTAKE_VOLTAGE = 8.0
-    LAUNCHING_FEEDER_VOLTAGE = 9.0
-    LAUNCHING_LAUNCHER_VOLTAGE = 8.4
-    SPIN_UP_FEEDER_VOLTAGE = -6.0
+    INTAKING_FEEDER_VOLTAGE = -12.0 
+    INTAKING_INTAKE_VOLTAGE = 8.0 
+    LAUNCHING_FEEDER_VOLTAGE = 9.0 
+    LAUNCHING_LAUNCHER_VOLTAGE = 12.0
+    SPIN_UP_FEEDER_VOLTAGE = -6.0 
     SPIN_UP_SECONDS = 1.0
 
 
@@ -40,3 +40,8 @@ class OperatorConstants:
     # help avoid turning too fast and being difficult to control
     DRIVE_SCALING = 0.5
     ROTATION_SCALING = 0.5
+
+
+class AprilTagIds:
+    RED_HUB_CENTER = 10
+    BLUE_HUB_CENTER = 26
