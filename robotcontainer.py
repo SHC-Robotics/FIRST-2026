@@ -38,7 +38,7 @@ class RobotContainer:
             pitchAngleDegrees=0.0,
         )
 
-        NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, self.visionCamera))
+        NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, self.visionCamera, launchTimeout=5))
         NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
         NamedCommands.registerCommand("Eject", Eject(self.fuelSubsystem))
 
