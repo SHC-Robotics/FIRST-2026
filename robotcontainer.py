@@ -53,6 +53,8 @@ class RobotContainer:
             OperatorConstants.OPERATOR_CONTROLLER_PORT
         )
 
+        NamedCommands.registerCommand("Aim", Aim(self.driveSubsystem, self.driverController, self.visionCamera))
+
         # The autonomous chooser
         self.autoChooser = AutoBuilder.buildAutoChooser()
 
