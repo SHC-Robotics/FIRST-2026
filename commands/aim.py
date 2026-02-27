@@ -3,6 +3,7 @@ import wpilib
 
 from constants import AprilTagIds, FuelConstants
 from subsystems.candrivesubsystem import CANDriveSubsystem
+from subsystems.canfuelsubsystem import CANFuelSubsystem
 
 ALIGNED_THRESHOLD = 0.05
 
@@ -42,21 +43,13 @@ class Aim(commands2.Command):
         print(f"started aiming at tag {self.tag}")
 
     def execute(self) -> None:
-        # Grab raw tag id from camera
-        raw_tags = self.camera.getRawFiducials()
+        # Grab hub data from camera
+        data = self.camera.getHubData(self.tag)
 
-        tx = None
-        area = None
-        dist = None
+        #grab offset from tag
+        tx = data["tx"]
 
-        for i in range(0, len(raw_tags), 7):
-            tag_id = int(raw_tags[i])
-            if tag_id == self.tag:
-                tx = raw_tags[i+1]
-                area = raw_tags[i+3]
-                dist = raw_tags[i+4]
-                break
-
+        #else stop aiming
         if not tx:
             self.driveSubsystem.driveArcade(0, 0)
             return
@@ -68,19 +61,8 @@ class Aim(commands2.Command):
 
     def isFinished(self) -> bool:
         # Finished if tag goes outside camera FOV or robot is lined up
-        raw_tags = self.camera.getRawFiducials()
-
-        tx = None
-        area = None
-        dist = None
-
-        for i in range(0, len(raw_tags), 7):
-            tag_id = int(raw_tags[i])
-            if tag_id == self.tag:
-                tx = raw_tags[i+1]
-                area = raw_tags[i+3]
-                dist = raw_tags[i+4]
-                break
+        data = self.camera.getHubData(self.tag)
+        tx = data["tx"]
 
         if not tx:
             return True

@@ -39,7 +39,7 @@ class RobotContainer:
             pitchAngleDegrees=0.0,
         )
 
-        NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem))
+        NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, self.visionCamera))
         NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
         NamedCommands.registerCommand("Eject", Intake(self.fuelSubsystem))
 
@@ -69,7 +69,7 @@ class RobotContainer:
         # While the right bumper on the operator controller is held, run the launch
         # sequence command on the fuel subsystem.
         self.operatorController.rightBumper().whileTrue(
-            LaunchSequence(self.fuelSubsystem)
+            LaunchSequence(self.fuelSubsystem, self.visionCamera)
         )
 
         # While the A button is held on the operator controller, run the eject command

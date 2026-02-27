@@ -49,6 +49,24 @@ class VisionCamera(commands2.Subsystem):
     
     def getRawFiducials(self):
         return self.table.getEntry("rawfiducials").getDoubleArray([])
+    
+    def getHubData(self, target_id):
+        raw_tags = self.getRawFiducials()
+
+
+        data = {"tx": None, "area": None, "dist": None}
+
+        for i in range(0, len(raw_tags), 7):
+            tag_id = int(raw_tags[i])
+            if tag_id == target_id:
+                data["tx"] = raw_tags[i+1]
+                data["area"] = raw_tags[i+3]
+                data["dist"] = raw_tags[i+4]
+                break
+            
+        return data
+
+
 
 
     def getHB(self) -> float:
