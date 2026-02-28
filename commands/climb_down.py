@@ -3,7 +3,7 @@ from subsystems.canclimbsubsystem import CANClimbSubsystem
 import commands2
 
 
-UPPER_BOUND_DELTA = 3
+UPPER_BOUND_DELTA = 1
 
 class ClimbDown(commands2.Command):
     def __init__(self, climbSubsystem: CANClimbSubsystem) -> None:
@@ -17,7 +17,7 @@ class ClimbDown(commands2.Command):
         if abs(leftPosition - self.climbSubsystem.initLeftPosition) < UPPER_BOUND_DELTA:
             return
 
-        self.climbSubsystem.setVoltage(-0.1)
+        self.climbSubsystem.setVoltage(3)
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()
@@ -43,7 +43,8 @@ class ClimbDownManual(commands2.Command):
         self.addRequirements(self.climbSubsystem)
 
     def initialize(self) -> None:
-        self.climbSubsystem.setVoltage(-0.01)
+        print("going down manually")
+        self.climbSubsystem.setVoltage(0.05)
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()
