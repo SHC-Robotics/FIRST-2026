@@ -17,6 +17,10 @@ class ClimbUp(commands2.Command):
         self.addRequirements(self.climbSubsystem)
 
     def initialize(self) -> None:
+        leftPosition = self.climbSubsystem.leftArm.get_position().value
+        if abs(leftPosition - self.climbSubsystem.initLeftPosition) > LOWER_BOUND_DELTA:
+            return
+
         self.climbSubsystem.setVoltage(0.1)
 
     def end(self, interrupted: bool) -> None:
