@@ -3,7 +3,7 @@ from subsystems.canclimbsubsystem import CANClimbSubsystem
 import wpilib
 
 # TODO: measure and configure
-MOTOR_POSITION_DELTA = 20
+MOTOR_POSITION_DELTA = 32
 
 class ClimbUp(commands2.Command):
     """
