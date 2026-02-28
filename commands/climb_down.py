@@ -21,7 +21,7 @@ class ClimbDown(commands2.Command):
     def isFinished(self) -> bool:
         leftPosition = self.climbSubsystem.leftArm.get_position().value
         # rightPosition = self.climbSubsystem.rightArm.get_position().
-        print(f"leftPosition: {leftPosition}, initLeftPosition: {self.initLeftPosition}")
+        print(f"leftPosition: {leftPosition}, initLeftPosition: {self.climbSubsystem.initLeftPosition}")
         # print(self.climbSubsystem.leftArm.get_voltage().value)
         # rightPosition = 1
 

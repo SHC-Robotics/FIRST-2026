@@ -25,7 +25,7 @@ class ClimbUp(commands2.Command):
     def isFinished(self) -> bool:
         leftPosition = self.climbSubsystem.leftArm.get_position().value
         # rightPosition = self.climbSubsystem.rightArm.get_position().
-        print(f"leftPosition: {leftPosition}, initLeftPosition: {self.initLeftPosition}")
+        print(f"leftPosition: {leftPosition}, initLeftPosition: {self.climbSubsystem.initLeftPosition}")
         # print(self.climbSubsystem.leftArm.get_voltage().value)
         # rightPosition = 0
 
@@ -34,3 +34,16 @@ class ClimbUp(commands2.Command):
             return True
 
         return False
+
+class ClimbUpManual(commands2.Command):
+    def __init__(self, climbSubsystem: CANClimbSubsystem) -> None:
+        super().__init__()
+
+        self.climbSubsystem = climbSubsystem
+        self.addRequirements(self.climbSubsystem)
+
+    def initialize(self) -> None:
+        self.climbSubsystem.setVoltage(0.01)
+
+    def end(self, interrupted: bool) -> None:
+        self.climbSubsystem.stop()
