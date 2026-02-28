@@ -10,7 +10,7 @@ from commands.drive import Drive
 from commands.eject import Eject
 from commands.aim import Aim
 from commands.intake import Intake
-from commands.climb_down import ClimbDown
+from commands.climb_down import ClimbDown, ClimbDownManual
 from commands.climb_up import ClimbUp
 from commands.launchsequence import LaunchSequence
 from commands.launch import StopLaunch
@@ -107,11 +107,9 @@ class RobotContainer:
         self.driverController.leftBumper().onTrue(ClimbDown(self.climbSubsystem))
         self.driverController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
 
+        self.driverController.y().whileTrue(ClimbDownManual(self.climbSubsystem))
+
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
-
-
-
-
 
     def getAutonomousCommand(self) -> commands2.Command:
         return self.autoChooser.getSelected()

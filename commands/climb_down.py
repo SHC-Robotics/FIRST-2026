@@ -30,3 +30,16 @@ class ClimbDown(commands2.Command):
             return True
 
         return False
+
+class ClimbDownManual(commands2.Command):
+    def __init__(self, climbSubsystem: CANClimbSubsystem) -> None:
+        super().__init__()
+
+        self.climbSubsystem = climbSubsystem
+        self.addRequirements(self.climbSubsystem)
+
+    def initialize(self) -> None:
+        self.climbSubsystem.setVoltage(-0.01)
+
+    def end(self, interrupted: bool) -> None:
+        self.climbSubsystem.stop()
