@@ -11,7 +11,7 @@ from commands.eject import Eject
 from commands.exampleauto import ExampleAuto
 from commands.intake import Intake
 from commands.climb_down import ClimbDown, ClimbDownManual
-from commands.climb_up import ClimbUp
+from commands.climb_up import ClimbUp, ClimbUpManual
 from commands.launchsequence import LaunchSequence
 from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
@@ -95,7 +95,8 @@ class RobotContainer:
         self.driverController.leftBumper().onTrue(ClimbDown(self.climbSubsystem))
         self.driverController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
 
-        self.driverController.y().whileTrue(ClimbDownManual(self.climbSubsystem))
+        self.driverController.x().whileTrue(ClimbUpManual(self.climbSubsystem))
+        self.driverController.b().whileTrue(ClimbDownManual(self.climbSubsystem))
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
 
