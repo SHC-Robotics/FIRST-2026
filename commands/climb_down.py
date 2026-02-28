@@ -3,7 +3,7 @@ from subsystems.canclimbsubsystem import CANClimbSubsystem
 import commands2
 
 
-INITIAL_CLIMBING_POSITION = 0
+MOTOR_POSITION_DELTA = 10
 
 class ClimbDown(commands2.Command):
     def __init__(self, climbSubsystem: CANClimbSubsystem) -> None:
@@ -13,7 +13,10 @@ class ClimbDown(commands2.Command):
         self.addRequirements(self.climbSubsystem)
 
     def initialize(self) -> None:
-        self.climbSubsystem.setVoltage(-8)
+        self.initLeftPosition = self.climbSubsystem.leftArm.get_position().value
+        # self.initRightPosition = self.climbSubsystem.rightArm.get_position().value
+
+        self.climbSubsystem.setVoltage(-0.1)
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()
@@ -21,11 +24,12 @@ class ClimbDown(commands2.Command):
     def isFinished(self) -> bool:
         leftPosition = self.climbSubsystem.leftArm.get_position().value
         # rightPosition = self.climbSubsystem.rightArm.get_position().
-        print(leftPosition)
+        print(f"leftPosition: {leftPosition}, initLeftPosition: {self.initLeftPosition}")
         # print(self.climbSubsystem.leftArm.get_voltage().value)
         # rightPosition = 1
 
-        # if leftPosition < INITIAL_CLIMBING_POSITION or rightPosition < INITIAL_CLIMBING_POSITION:
-        #     return True
+        if abs(leftPosition - self.initLeftPosition) > MOTOR_POSITION_DELTA:
+            print("stopping climb down")
+            return True
 
         return False
