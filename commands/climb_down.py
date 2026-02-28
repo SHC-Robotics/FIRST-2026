@@ -3,7 +3,7 @@ from subsystems.canclimbsubsystem import CANClimbSubsystem
 import commands2
 
 
-MOTOR_POSITION_DELTA = 10
+UPPER_BOUND_DELTA = 3
 
 class ClimbDown(commands2.Command):
     def __init__(self, climbSubsystem: CANClimbSubsystem) -> None:
@@ -13,9 +13,6 @@ class ClimbDown(commands2.Command):
         self.addRequirements(self.climbSubsystem)
 
     def initialize(self) -> None:
-        self.initLeftPosition = self.climbSubsystem.leftArm.get_position().value
-        # self.initRightPosition = self.climbSubsystem.rightArm.get_position().value
-
         self.climbSubsystem.setVoltage(-0.1)
 
     def end(self, interrupted: bool) -> None:
@@ -28,7 +25,7 @@ class ClimbDown(commands2.Command):
         # print(self.climbSubsystem.leftArm.get_voltage().value)
         # rightPosition = 1
 
-        if abs(leftPosition - self.initLeftPosition) > MOTOR_POSITION_DELTA:
+        if abs(leftPosition - self.climbSubsystem.initLeftPosition) < UPPER_BOUND_DELTA:
             print("stopping climb down")
             return True
 

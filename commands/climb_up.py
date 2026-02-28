@@ -3,7 +3,7 @@ from subsystems.canclimbsubsystem import CANClimbSubsystem
 import wpilib
 
 # TODO: measure and configure
-MOTOR_POSITION_DELTA = 10
+LOWER_BOUND_DELTA = 10
 
 class ClimbUp(commands2.Command):
     """
@@ -17,9 +17,6 @@ class ClimbUp(commands2.Command):
         self.addRequirements(self.climbSubsystem)
 
     def initialize(self) -> None:
-        self.initLeftPosition = self.climbSubsystem.leftArm.get_position().value
-        # self.initRightPosition = self.climbSubsystem.rightArm.get_position().value
-
         self.climbSubsystem.setVoltage(0.1)
 
     def end(self, interrupted: bool) -> None:
@@ -32,7 +29,7 @@ class ClimbUp(commands2.Command):
         # print(self.climbSubsystem.leftArm.get_voltage().value)
         # rightPosition = 0
 
-        if abs(leftPosition - self.initLeftPosition) > MOTOR_POSITION_DELTA:
+        if abs(leftPosition - self.climbSubsystem.initLeftPosition) > LOWER_BOUND_DELTA:
             print("stopping climb up")
             return True
 
