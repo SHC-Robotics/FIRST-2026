@@ -27,6 +27,9 @@ class CANClimbSubsystem(commands2.Subsystem):
         # )
         # self.rightArm.configurator.apply(config)
 
+        self.initLeftPosition = self.leftArm.get_position().value
+        # self.initRightPosition = self.rightArm.get_position().value
+
     def setVoltage(self, voltage: float) -> None:
         self.leftArm.set_control(self.duty_cycle_request.with_output(voltage))
         # self.rightArm.set_control(self.duty_cycle_request.with_output(voltage))
