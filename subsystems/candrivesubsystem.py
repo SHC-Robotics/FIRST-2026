@@ -88,7 +88,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         sleep(1.0)
 
         self.kinematics = DifferentialDriveKinematics(
-            trackWidth=0.1  # TODO: measure track width and update this value (meters)
+            trackWidth=0.549275 # meters
         )
 
         ## Supposed to be a drop in replacement from DifferentialDriveOdometry
