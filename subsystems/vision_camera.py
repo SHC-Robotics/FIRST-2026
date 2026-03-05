@@ -16,6 +16,7 @@ class VisionCamera(commands2.Subsystem):
         self.pipelineIndexRequest = self.table.getDoubleTopic("pipeline").publish()
         self.pipelineIndex = self.table.getDoubleTopic("getpipe").getEntry(-1)
         self.hb = self.table.getIntegerTopic("hb").getEntry(0)
+        self.tv = self.table.getIntegerTopic("tv").getEntry(0)
 
         self.lastHeartbeat = 0
         self.lastHeartbeatTime = 0
@@ -71,6 +72,15 @@ class VisionCamera(commands2.Subsystem):
 
     def getHB(self) -> float:
         return self.hb.get()
+
+    def getTv(self) -> int:
+        return self.tv.get()
+
+    def getBotPose(self):
+        # if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
+        #     return self.botPoseFlipped.get()
+        # else:
+        return self.botPose.get()
 
     def getSecondsSinceLastHeartbeat(self) -> float:
         return wpilib.Timer.getFPGATimestamp() - self.lastHeartbeatTime
