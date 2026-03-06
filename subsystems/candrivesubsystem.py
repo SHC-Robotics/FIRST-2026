@@ -153,7 +153,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         return self.poseEstimator.getEstimatedPosition()
 
     def resetPose(self, pose: Pose2d) -> None:
-        # self.gyro.reset()
+        self.gyro.reset()
         self.poseEstimator.resetPosition(
             -Rotation2d.fromDegrees(self.gyro.getAngle()),
             self.leftLeader.get_position().value * METERS_PER_ROTATION,
