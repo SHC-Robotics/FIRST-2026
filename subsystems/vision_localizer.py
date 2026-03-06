@@ -72,7 +72,7 @@ class VisionLocalizer(commands2.Subsystem):
 
             # Update network table values for MegaTag2
             p = c.poseOnRobot
-            camera.cameraPoseSetRequest.set([p.x, p.y, p.z, c.pitchAngleDegrees, 0.0, c.headingOnRobot.degrees()])
+            camera.cameraPoseSetRequest.set([p.x, p.y, p.z, 0.0, c.pitchAngleDegrees, c.headingOnRobot.degrees()])
 
             camera.imuModeRequest.set(4) # use internal IMU with external IMU assisted convergence
 
