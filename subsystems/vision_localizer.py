@@ -44,7 +44,7 @@ class VisionLocalizer(commands2.Subsystem):
         headingOnRobot: Rotation2d,
         pitchAngleDegrees: float,
         minPercentFrame: float = 0.07,
-        maxRotationSpeed: float = 120,
+        maxRotationSpeed: float = 120, # degrees per second
     ) -> None:
         self.cameras[camera.cameraName] = CameraState(
             camera,
@@ -65,6 +65,7 @@ class VisionLocalizer(commands2.Subsystem):
             return
 
         heading = self.drivetrain.getHeading()
+        rotationSpeed = self.drivetrain.gyro.getRate()
 
         for c in self.cameras.values():
             camera = c.camera
@@ -86,6 +87,9 @@ class VisionLocalizer(commands2.Subsystem):
                 continue
 
             if camera.getTv() == 0:
+                continue
+
+            if abs(rotationSpeed) > c.maxRotationSpeed:
                 continue
 
             visionX = visionPoseArray[0]
