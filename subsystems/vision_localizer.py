@@ -65,7 +65,7 @@ class VisionLocalizer(commands2.Subsystem):
             return
 
         heading = self.drivetrain.getHeading()
-        rotationSpeed = self.drivetrain.gyro.getRate()
+        yawRate = self.drivetrain.gyro.getRate()
 
         for c in self.cameras.values():
             camera = c.camera
@@ -74,14 +74,13 @@ class VisionLocalizer(commands2.Subsystem):
             p = c.poseOnRobot
             camera.cameraPoseSetRequest.set([p.x, p.y, p.z, 0.0, c.pitchAngleDegrees, c.headingOnRobot.degrees()])
 
-            camera.imuModeRequest.set(4) # use internal IMU with external IMU assisted convergence
+            camera.imuModeRequest.set(3) # use internal IMU with external IMU assisted convergence
 
             yaw = heading.degrees()
-            camera.robotOrientationSetRequest.set([yaw, 0.0, 0.0, 0.0, 0.0, 0.0])
+            camera.robotOrientationSetRequest.set([yaw, yawRate, 0.0, 0.0, 0.0, 0.0])
 
             # Retrieve updated robot pose from MegaTag2 and add it to the drivetrain pose estimator
             visionPoseArray = camera.getBotPose()
-            timestamp = camera.lastHeartbeatTime
 
             if len(visionPoseArray) == 0:
                 continue
@@ -89,8 +88,11 @@ class VisionLocalizer(commands2.Subsystem):
             if camera.getTv() == 0:
                 continue
 
-            if abs(rotationSpeed) > c.maxRotationSpeed:
+            if abs(yawRate) > c.maxRotationSpeed:
                 continue
+
+            latencySec = visionPoseArray[6] / 1000.0
+            timestamp = wpilib.Timer.getFPGATimestamp() - latencySec
 
             visionX = visionPoseArray[0]
             visionY = visionPoseArray[1]
