@@ -164,12 +164,6 @@ class CANDriveSubsystem(commands2.Subsystem):
     def getRobotRelativeSpeeds(self) -> ChassisSpeeds:
         return self.kinematics.toChassisSpeeds(self.getWheelSpeeds())
 
-    def driveRobotRelative(self, speeds: ChassisSpeeds):
-        # speeds = speeds.discretize(speeds, 0.02)
-        wheelSpeeds = self.kinematics.toWheelSpeeds(speeds)
-        self.leftLeader.set_control(self.velocity_request.with_velocity(wheelSpeeds.left / METERS_PER_ROTATION))
-        self.rightLeader.set_control(self.velocity_request.with_velocity(wheelSpeeds.right / METERS_PER_ROTATION))
-
     def getHeading(self) -> Rotation2d:
         return -Rotation2d.fromDegrees(self.gyro.getAngle())
 
@@ -177,6 +171,22 @@ class CANDriveSubsystem(commands2.Subsystem):
         left_speed = self.leftLeader.get_velocity().value * METERS_PER_ROTATION
         right_speed = self.rightLeader.get_velocity().value * METERS_PER_ROTATION
         return DifferentialDriveWheelSpeeds(left_speed, right_speed)
+
+    # ------------------------------------------------------------------
+    # Drive
+    # ------------------------------------------------------------------
+
+    def driveRobotRelative(self, speeds: ChassisSpeeds) -> None:
+        wheelSpeeds = self.kinematics.toWheelSpeeds(speeds)
+
+        wpilib.SmartDashboard.putString("PathPlanner Wheel Speeds", f"Left: {wheelSpeeds.left}, Right: {wheelSpeeds.right}")
+
+        self.leftLeader.set_control(
+            self.velocity_request.with_velocity(min(wheelSpeeds.left, 0.1) / METERS_PER_ROTATION)
+        )
+        self.rightLeader.set_control(
+            self.velocity_request.with_velocity(min(wheelSpeeds.right, 0.1) / METERS_PER_ROTATION)
+        )
 
     def driveVolts(self, leftVolts: float, rightVolts: float) -> None:
         self.leftLeader.set_control(self.velocity_request.with_voltage(leftVolts))
@@ -222,4 +232,3 @@ class CANDriveSubsystem(commands2.Subsystem):
 
 def shouldFlipPath():
     return wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed
-
