@@ -95,7 +95,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         # Meant to be easier to use with loczlization
         self.poseEstimator = DifferentialDrivePoseEstimator(
             self.kinematics,
-            self.gyro.getRotation2d(),  # initial heading
+            -Rotation2d.fromDegrees(self.gyro.getAngle()),  # initial heading
             left_position_meters,  # initial left encoder distance
             right_position_meters,  # initial right encoder distance
             Pose2d(),  # starting pose. Does not matter because, it will be reset by PathPlanner using resetOdometry()
@@ -132,14 +132,19 @@ class CANDriveSubsystem(commands2.Subsystem):
 
 
     def periodic(self) -> None:
+        leftPosition = self.leftLeader.get_position().value * METERS_PER_ROTATION
+        rightPosition = self.rightLeader.get_position().value * METERS_PER_ROTATION
+
         pose = self.poseEstimator.update(
-            self.gyro.getRotation2d(),
-            self.leftLeader.get_position().value * METERS_PER_ROTATION,
-            self.rightLeader.get_position().value * METERS_PER_ROTATION,
+            -Rotation2d.fromDegrees(self.gyro.getAngle()),
+            leftPosition,
+            rightPosition,
         )
 
         wpilib.SmartDashboard.putNumber("x", pose.x)
         wpilib.SmartDashboard.putNumber("y", pose.y)
+        wpilib.SmartDashboard.putNumber("leftPosition", leftPosition)
+        wpilib.SmartDashboard.putNumber("rightPosition", rightPosition)
         wpilib.SmartDashboard.putNumber("heading", pose.rotation().degrees())
 
         self.field.setRobotPose(pose)
@@ -150,7 +155,7 @@ class CANDriveSubsystem(commands2.Subsystem):
     def resetPose(self, pose: Pose2d) -> None:
         # self.gyro.reset()
         self.poseEstimator.resetPosition(
-            self.gyro.getRotation2d(),
+            -Rotation2d.fromDegrees(self.gyro.getAngle()),
             self.leftLeader.get_position().value * METERS_PER_ROTATION,
             self.rightLeader.get_position().value * METERS_PER_ROTATION,
             pose,
@@ -166,7 +171,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.rightLeader.set_control(self.velocity_request.with_velocity(wheelSpeeds.right / METERS_PER_ROTATION))
 
     def getHeading(self) -> Rotation2d:
-        return self.gyro.getRotation2d()
+        return -Rotation2d.fromDegrees(self.gyro.getAngle())
 
     def getWheelSpeeds(self) -> DifferentialDriveWheelSpeeds:
         left_speed = self.leftLeader.get_velocity().value * METERS_PER_ROTATION
