@@ -35,13 +35,13 @@ class RobotContainer:
         self.visionLocalizer.addCamera(
             self.frontVisionCamera,
             poseOnRobot=Translation3d(0.3066, 0.1056, 0.66), # Forward: +X, Right: +Y, Up: +Z
-            headingOnRobot=Rotation2d(0.0), # yaw
+            headingOnRobot=Rotation2d.fromDegrees(0.0), # yaw
             pitchAngleDegrees=0.0,
         )
         self.visionLocalizer.addCamera(
             self.backVisionCamera,
             poseOnRobot=Translation3d(0.264, 0.094, 0.58),
-            headingOnRobot=Rotation2d(180.0),
+            headingOnRobot=Rotation2d.fromDegrees(180.0),
             pitchAngleDegrees=0.0
         )
 
