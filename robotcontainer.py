@@ -12,6 +12,7 @@ from commands.aim import Aim
 from commands.intake import Intake
 from commands.climb_down import ClimbDown, ClimbDownManual
 from commands.climb_up import ClimbUp, ClimbUpManual
+from commands.homing import ClimberHoming
 from commands.launchsequence import LaunchSequence
 from commands.launch import StopLaunch
 from subsystems.candrivesubsystem import CANDriveSubsystem
@@ -53,9 +54,10 @@ class RobotContainer:
         NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, self.frontVisionCamera, launchTimeout=5))
         NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
         NamedCommands.registerCommand("Eject", Eject(self.fuelSubsystem))
-        NamedCommands.registerCommand("Climb", ClimbUp(self.fuelSubsystem))
+        NamedCommands.registerCommand("Climb", ClimbUp(self.climbSubsystem))
 
-        print(f"{self.climbSubsystem.leftArm.get_position().value}")
+        # Run the homing routine immediately on startup to zero the climber encoders
+        #ClimberHoming(self.climbSubsystem).schedule()
 
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(
@@ -104,8 +106,8 @@ class RobotContainer:
             Drive(self.driveSubsystem, self.driverController)
         )
 
-        self.driverController.leftBumper().onTrue(ClimbDown(self.climbSubsystem))
-        self.driverController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
+        #self.driverController.leftBumper().onTrue(ClimbDown(self.climbSubsystem))
+        #self.driverController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
 
         self.driverController.x().whileTrue(ClimbUpManual(self.climbSubsystem))
         self.driverController.b().whileTrue(ClimbDownManual(self.climbSubsystem))
