@@ -13,7 +13,8 @@ class CANClimbSubsystem(commands2.Subsystem):
         self.rightArm = hardware.TalonFX(ClimberConstants.RIGHT_ARM_ID)
 
         # Limit switch wired to a DIO port — triggers when arms are fully retracted (down)
-        self.limitSwitch = wpilib.DigitalInput(ClimberConstants.LIMIT_SWITCH_PORT)
+        self.limitSwitchLeft = wpilib.DigitalInput(ClimberConstants.LIMIT_SWITCH_LEFT_PORT)
+        self.limitSwitchRight = wpilib.DigitalInput(ClimberConstants.LIMIT_SWITCH_RIGHT_PORT)
 
         # Motion Magic position request (units: rotations, voltage-based)
         # Cruise velocity in the Motion Magic config caps how fast it moves to the target
@@ -70,15 +71,30 @@ class CANClimbSubsystem(commands2.Subsystem):
 
         self.duty_cycle_request = controls.DutyCycleOut(0)
 
+    def isLeftAtBottom(self) -> bool:
+        """Returns True when the left arm limit switch is triggered."""
+        return self.limitSwitchLeft.get()
+
+    def isRightAtBottom(self) -> bool:
+        """Returns True when the right arm limit switch is triggered."""
+        return self.limitSwitchRight.get()
+
     def isAtBottom(self) -> bool:
-        """Returns True when the limit switch is triggered (arms fully down/retracted)."""
-        # DigitalInput returns False when switch is closed (active low); adjust if wired differently
-        return self.limitSwitch.get()
+        """Returns True when both arm limit switches are triggered."""
+        return self.isLeftAtBottom() and self.isRightAtBottom()
+
+    def isLeftAtPosition(self, targetPosition: float, toleranceRotations: float = 0.5) -> bool:
+        """Returns True when the left arm is within tolerance of the target position."""
+        return abs(self.leftArm.get_position().value - targetPosition) < toleranceRotations
+
+    def isRightAtPosition(self, targetPosition: float, toleranceRotations: float = 0.5) -> bool:
+        """Returns True when the right arm is within tolerance of the target position."""
+        return True  # remove this line and uncomment below when right arm is active
+        # return abs(self.rightArm.get_position().value - targetPosition) < toleranceRotations
 
     def isAtPosition(self, targetPosition: float, toleranceRotations: float = 0.5) -> bool:
-        """Returns True when the arm is within tolerance of the target position (rotations)."""
-        leftPosition = self.leftArm.get_position().value
-        return abs(leftPosition - targetPosition) < toleranceRotations
+        """Returns True when both arms are within tolerance of the target position (rotations)."""
+        return self.isLeftAtPosition(targetPosition, toleranceRotations) and self.isRightAtPosition(targetPosition, toleranceRotations)
 
     def setVoltage(self, voltage: float) -> None:
         """Applies direct voltage output. Used for manual control only."""
@@ -99,12 +115,16 @@ class CANClimbSubsystem(commands2.Subsystem):
         #     self.motion_magic_position_request.with_position(position)
         # )
 
-    def stop(self) -> None:
+    def stopLeft(self) -> None:
         self.leftArm.set_control(controls.StaticBrake())
-        self.rightArm.set_control(controls.StaticBrake())
 
-        # self.leftArm.set_control(controls.NeutralOut())
-        # self.rightArm.set_control(controls.NeutralOut())
+    def stopRight(self) -> None:
+        pass
+        # self.rightArm.set_control(controls.StaticBrake())
+
+    def stop(self) -> None:
+        self.stopLeft()
+        self.stopRight()
 
     def periodic(self) -> None:
         """Safety: if limit switch is hit, stop the arms regardless of active command."""

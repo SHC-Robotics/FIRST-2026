@@ -49,7 +49,9 @@ class ClimberConstants:
 
     # DIO port for the limit switch (triggered when arms are fully retracted/down)
     # TODO: set to the actual DIO channel the limit switch is wired to
-    LIMIT_SWITCH_PORT = 0
+    LIMIT_SWITCH_LEFT_PORT = 0
+    LIMIT_SWITCH_RIGHT_PORT = 1
+
 
     # --- Position targets (rotations) ---
     # TODO: verify CLIMB_UP_DELTA by manually driving the arm to full extension and reading

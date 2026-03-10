@@ -16,15 +16,12 @@ class ClimbUp(commands2.Command):
         self.addRequirements(self.climbSubsystem)
 
     def initialize(self) -> None:
-        self.targetPosition = (
-            self.climbSubsystem.homePosition - ClimberConstants.CLIMB_UP_DELTA
-        )
+        self.targetPosition = self.climbSubsystem.homePosition - ClimberConstants.CLIMB_UP_DELTA
         print(f"ClimbUp: moving to position {self.targetPosition:.2f} rotations")
         self.climbSubsystem.setMotionMagicPosition(self.targetPosition)
 
     def execute(self) -> None:
-        if self.climbSubsystem.isAtBottom():
-            self.climbSubsystem.stop()
+        pass
 
     def end(self, interrupted: bool) -> None:
         if interrupted:
@@ -35,13 +32,7 @@ class ClimbUp(commands2.Command):
             print("ClimbUp: reached target position")
 
     def isFinished(self) -> bool:
-        if self.climbSubsystem.isAtBottom():
-            print("ClimbUp: limit switch triggered, stopping")
-            return True
-
-        if self.climbSubsystem.isAtPosition(
-            self.targetPosition, ClimberConstants.POSITION_TOLERANCE
-        ):
+        if self.climbSubsystem.isAtPosition(self.targetPosition, ClimberConstants.POSITION_TOLERANCE):
             print("ClimbUp: target position reached")
             return True
 
@@ -61,12 +52,14 @@ class ClimbUpManual(commands2.Command):
 
     def initialize(self) -> None:
         print("ClimbUpManual: started")
-        self.climbSubsystem.setVoltage(-0.5)
+        self.climbSubsystem.setVoltage(-1.0)
 
+    def execute(self) -> None:
+        pass
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()
         print("ClimbUpManual: stopped")
 
     def isFinished(self) -> bool:
-        return self.climbSubsystem.isAtBottom()
+        return False
