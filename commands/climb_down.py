@@ -13,24 +13,39 @@ class ClimbDown(commands2.Command):
         self.addRequirements(self.climbSubsystem)
 
     def initialize(self) -> None:
-        leftPosition = self.climbSubsystem.leftArm.get_position().value
-        if abs(leftPosition - self.climbSubsystem.initLeftPosition) < UPPER_BOUND_DELTA:
+        if self.climbSubsystem.isAtBottom():
+            print("ClimbDown: already at bottom, not starting")
             return
 
-        self.climbSubsystem.setVoltage(3)
+        self.targetPosition = self.climbSubsystem.homePosition
+        print(f"ClimbDown: moving to home position {self.targetPosition:.2f} rotations")
+        self.climbSubsystem.setMotionMagicPosition(self.targetPosition)
+
+    def execute(self) -> None:
+        # Stop each arm independently as soon as its limit switch triggers
+        # This prevents over-driving whichever arm reaches the bottom first
+        if self.climbSubsystem.isLeftAtBottom():
+            self.climbSubsystem.stopLeft()
+        if self.climbSubsystem.isRightAtBottom():
+            self.climbSubsystem.stopRight()
+
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()
+        if interrupted:
+            print("ClimbDown: interrupted")
+        else:
+            print("ClimbDown: reached home position")
 
     def isFinished(self) -> bool:
-        leftPosition = self.climbSubsystem.leftArm.get_position().value
-        # rightPosition = self.climbSubsystem.rightArm.get_position().
-        print(f"leftPosition: {leftPosition}, initLeftPosition: {self.climbSubsystem.initLeftPosition}")
-        # print(self.climbSubsystem.leftArm.get_voltage().value)
-        # rightPosition = 1
+        # Primary stop: both limit switches physically confirm arms are fully down
+        if self.climbSubsystem.isAtBottom():
+            print("ClimbDown: both limit switches triggered — arms fully retracted, stopping")
+            return True
 
-        if abs(leftPosition - self.climbSubsystem.initLeftPosition) < UPPER_BOUND_DELTA:
-            print("stopping climb down")
+        # Fallback: both encoders reached home within tolerance
+        if self.climbSubsystem.isAtPosition(self.climbSubsystem.homePosition, ClimberConstants.POSITION_TOLERANCE):
+            print("ClimbDown: home position reached")
             return True
 
         return False
@@ -47,8 +62,11 @@ class ClimbDownManual(commands2.Command):
         self.climbSubsystem.setVoltage(2)
 
     def execute(self) -> None:
-        if self.climbSubsystem.isAtBottom():
-           self.climbSubsystem.stop()
+        # Stop each arm independently as soon as its limit switch triggers
+        if self.climbSubsystem.isLeftAtBottom():
+            self.climbSubsystem.stopLeft()
+        if self.climbSubsystem.isRightAtBottom():
+            self.climbSubsystem.stopRight()
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()
