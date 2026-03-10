@@ -69,8 +69,23 @@ class RobotContainer:
 
         self.configureBindings()
 
+<<<<<<< Updated upstream
         # Set the options to show up in the Dashboard for selecting auto modes
         wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
+=======
+        # Set the options to show up in the Dashboard for selecting auto modes.
+        self.autoChooser.setDefaultOption(
+            "Autonomous", ExampleAuto(self.driveSubsystem, self.fuelSubsystem)
+        )
+        wpilib.SmartDashboard.putData("Autonomous", self.autoChooser)
+        
+        pf = wpilib.PortForwarder.getInstance()
+
+        # Limelight 1 (ID 0) - Mapped to 5801-5809
+        # Maps local port 580x to Limelight IP 172.29.0.1 on port 580x
+        for port in range(5801, 5810):
+            pf.add(port, "172.29.0.1", port)
+>>>>>>> Stashed changes
 
     def configureBindings(self) -> None:
         # While the left bumper on operator controller is held, run the intake command
