@@ -10,7 +10,7 @@ class CANClimbSubsystem(commands2.Subsystem):
         super().__init__()
 
         self.leftArm = hardware.TalonFX(ClimberConstants.LEFT_ARM_ID)
-        # self.rightArm = hardware.TalonFX(ClimberConstants.RIGHT_ARM_ID)
+        self.rightArm = hardware.TalonFX(ClimberConstants.RIGHT_ARM_ID)
 
         # Limit switch wired to a DIO port — triggers when arms are fully retracted (down)
         self.limitSwitch = wpilib.DigitalInput(ClimberConstants.LIMIT_SWITCH_PORT)
@@ -58,20 +58,22 @@ class CANClimbSubsystem(commands2.Subsystem):
 
         self.leftArm.configurator.apply(config)
 
-        # config.motor_output.inverted = (
-        #     configs.config_groups.InvertedValue.COUNTER_CLOCKWISE_POSITIVE
-        # )
-        # self.rightArm.configurator.apply(config)
+        config.motor_output.inverted = (
+            configs.config_groups.InvertedValue.COUNTER_CLOCKWISE_POSITIVE
+        )
+        self.rightArm.configurator.apply(config)
 
         # homePosition is set to 0 after homing completes.
         # Until ClimberHoming runs, this is a best-guess fallback from boot position.
         # Do not rely on this value for accurate positioning until homing has been run.
         self.homePosition = self.leftArm.get_position().value
 
+        self.duty_cycle_request = controls.DutyCycleOut(0)
+
     def isAtBottom(self) -> bool:
         """Returns True when the limit switch is triggered (arms fully down/retracted)."""
         # DigitalInput returns False when switch is closed (active low); adjust if wired differently
-        return not self.limitSwitch.get()
+        return self.limitSwitch.get()
 
     def isAtPosition(self, targetPosition: float, toleranceRotations: float = 0.5) -> bool:
         """Returns True when the arm is within tolerance of the target position (rotations)."""
@@ -81,7 +83,8 @@ class CANClimbSubsystem(commands2.Subsystem):
     def setVoltage(self, voltage: float) -> None:
         """Applies direct voltage output. Used for manual control only."""
         self.leftArm.set_control(controls.VoltageOut(voltage))
-        # self.rightArm.set_control(controls.VoltageOut(voltage))
+        #self.leftArm.set_control(self.duty_cycle_request.with_output(voltage))
+        self.rightArm.set_control(controls.VoltageOut(voltage))
 
     def setMotionMagicPosition(self, position: float) -> None:
         """
@@ -97,7 +100,10 @@ class CANClimbSubsystem(commands2.Subsystem):
         # )
 
     def stop(self) -> None:
-        self.leftArm.set_control(controls.NeutralOut())
+        self.leftArm.set_control(controls.StaticBrake())
+        self.rightArm.set_control(controls.StaticBrake())
+
+        # self.leftArm.set_control(controls.NeutralOut())
         # self.rightArm.set_control(controls.NeutralOut())
 
     def periodic(self) -> None:

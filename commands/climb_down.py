@@ -44,7 +44,11 @@ class ClimbDownManual(commands2.Command):
 
     def initialize(self) -> None:
         print("going down manually")
-        self.climbSubsystem.setVoltage(0.05)
+        self.climbSubsystem.setVoltage(2)
+
+    def execute(self) -> None:
+        if self.climbSubsystem.isAtBottom():
+           self.climbSubsystem.stop()
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()
