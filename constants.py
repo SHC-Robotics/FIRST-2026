@@ -72,7 +72,7 @@ class ClimberConstants:
     # --- Current limit (Amps) ---
     # Supply current limit protects the motor and breaker during high-load climb
     # TODO: tune based on your gearbox and robot weight; 40-60A is a reasonable starting point
-    SUPPLY_CURRENT_LIMIT = 20
+    SUPPLY_CURRENT_LIMIT = 60
 
     # --- Slot 0 PID/feedforward gains for MotionMagicVoltage ---
     # Recommended tuning order: kS → kV (via Phoenix Tuner X SysId) → kP (manual sweep)
