@@ -94,11 +94,12 @@ class RobotContainer:
             Drive(self.driveSubsystem, self.driverController)
         )
 
-        #self.driverController.leftBumper().onTrue(ClimbDown(self.climbSubsystem))
-        #self.driverController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
+        self.driverController.leftBumper().onTrue(ClimbDown(self.climbSubsystem))
+        self.driverController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
 
         self.driverController.x().whileTrue(ClimbUpManual(self.climbSubsystem))
         self.driverController.b().whileTrue(ClimbDownManual(self.climbSubsystem))
+        self.driverController.y().onTrue(ClimberHoming(self.climbSubsystem))
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
 

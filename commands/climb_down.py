@@ -1,5 +1,6 @@
 # TODO: measure and configure
 from subsystems.canclimbsubsystem import CANClimbSubsystem
+from constants import ClimberConstants
 import commands2
 
 
@@ -40,7 +41,7 @@ class ClimbDown(commands2.Command):
     def isFinished(self) -> bool:
         # Primary stop: both limit switches physically confirm arms are fully down
         if self.climbSubsystem.isAtBottom():
-            print("ClimbDown: both limit switches triggered — arms fully retracted, stopping")
+            print("ClimbDown: both limit switches triggered arms fully retracted, stopping")
             return True
 
         # Fallback: both encoders reached home within tolerance
