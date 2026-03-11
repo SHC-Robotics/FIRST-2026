@@ -52,7 +52,7 @@ class ClimbUpManual(commands2.Command):
 
     def initialize(self) -> None:
         print("ClimbUpManual: started")
-        self.climbSubsystem.setVoltage(-1.0)
+        self.climbSubsystem.setVoltage(-0.5)
 
     def execute(self) -> None:
         pass

@@ -26,10 +26,10 @@ class ClimberHoming(commands2.Command):
             print("ClimberHoming: both switches already active, already homed")
             return
 
-        print("ClimberHoming: starting — driving arms down slowly")
+        print("ClimberHoming: starting driving arms down slowly")
         self._leftTarget = self.climbSubsystem.leftArm.get_position().value
-        self._rightTarget = self._leftTarget  # mirror start position for right arm
-        # self._rightTarget = self.climbSubsystem.rightArm.get_position().value
+        #._rightTarget = self._leftTarget  # mirror start position for right arm
+        self._rightTarget = self.climbSubsystem.rightArm.get_position().value
 
     def execute(self) -> None:
         # Creep left arm down only if its switch hasn't triggered yet
@@ -44,9 +44,9 @@ class ClimberHoming(commands2.Command):
         # Creep right arm down only if its switch hasn't triggered yet
         if not self.climbSubsystem.isRightAtBottom():
             self._rightTarget += ClimberConstants.HOMING_STEP
-            # self.climbSubsystem.rightArm.set_control(
-            #     self.climbSubsystem.motion_magic_position_request.with_position(self._rightTarget)
-            # )
+            self.climbSubsystem.rightArm.set_control(
+                self.climbSubsystem.motion_magic_position_request.with_position(self._rightTarget)
+            )
         else:
             self.climbSubsystem.stopRight()
 
@@ -56,14 +56,14 @@ class ClimberHoming(commands2.Command):
         if not interrupted:
             # Zero both encoders at their current physical positions
             self.climbSubsystem.leftArm.set_position(0)
-            # self.climbSubsystem.rightArm.set_position(0)
+            self.climbSubsystem.rightArm.set_position(0)
 
             # Set home as 0 so all future targets are relative to this zeroed point
             self.climbSubsystem.homePosition = 0.0
 
-            print("ClimberHoming: complete — both encoders zeroed at limit switches")
+            print("ClimberHoming: complete both encoders zeroed at limit switches")
         else:
-            print("ClimberHoming: interrupted before both switches triggered — NOT zeroed")
+            print("ClimberHoming: interrupted before both switches triggered")
 
     def isFinished(self) -> bool:
         # Wait until both arms have hit their respective limit switches

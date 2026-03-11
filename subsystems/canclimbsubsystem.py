@@ -89,8 +89,7 @@ class CANClimbSubsystem(commands2.Subsystem):
 
     def isRightAtPosition(self, targetPosition: float, toleranceRotations: float = 0.5) -> bool:
         """Returns True when the right arm is within tolerance of the target position."""
-        return True  # remove this line and uncomment below when right arm is active
-        # return abs(self.rightArm.get_position().value - targetPosition) < toleranceRotations
+        return abs(self.rightArm.get_position().value - targetPosition) < toleranceRotations
 
     def isAtPosition(self, targetPosition: float, toleranceRotations: float = 0.5) -> bool:
         """Returns True when both arms are within tolerance of the target position (rotations)."""
@@ -111,16 +110,15 @@ class CANClimbSubsystem(commands2.Subsystem):
         self.leftArm.set_control(
             self.motion_magic_position_request.with_position(position)
         )
-        # self.rightArm.set_control(
-        #     self.motion_magic_position_request.with_position(position)
-        # )
+        self.rightArm.set_control(
+            self.motion_magic_position_request.with_position(position)
+        )
 
     def stopLeft(self) -> None:
-        self.leftArm.set_control(controls.StaticBrake())
+        self.leftArm.set_control(controls.NeutralOut())
 
     def stopRight(self) -> None:
-        pass
-        # self.rightArm.set_control(controls.StaticBrake())
+        self.rightArm.set_control(controls.NeutralOut())
 
     def stop(self) -> None:
         self.stopLeft()
@@ -129,5 +127,7 @@ class CANClimbSubsystem(commands2.Subsystem):
     def periodic(self) -> None:
         """Safety: if limit switch is hit, stop the arms regardless of active command."""
         wpilib.SmartDashboard.putNumber("leftArm position", self.leftArm.get_position().value)
+        wpilib.SmartDashboard.putBoolean("left switch", self.limitSwitchLeft.get())
+        wpilib.SmartDashboard.putBoolean("right switch", self.limitSwitchRight.get())
         if self.isAtBottom():
             self.stop()
