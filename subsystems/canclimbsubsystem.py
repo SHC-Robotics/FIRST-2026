@@ -115,10 +115,10 @@ class CANClimbSubsystem(commands2.Subsystem):
         )
 
     def stopLeft(self) -> None:
-        self.leftArm.set_control(controls.NeutralOut())
+        self.leftArm.set_control(controls.StaticBrake())
 
     def stopRight(self) -> None:
-        self.rightArm.set_control(controls.NeutralOut())
+        self.rightArm.set_control(controls.StaticBrake())
 
     def stop(self) -> None:
         self.stopLeft()
