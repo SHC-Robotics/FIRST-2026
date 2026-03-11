@@ -128,8 +128,12 @@ class CANDriveSubsystem(commands2.Subsystem):
         # Set a tolerance (e.g., stop when within 1 degree of target)
         self.orientationController.setTolerance(1.0)
 
-
-
+        self.sysIdRoutine = commands2.sysid.SysIdRoutine(
+            commands2.sysid.SysIdRoutine.Config(),
+            commands2.sysid.SysIdRoutine.Mechanism(
+                self.sysIdDrive, self.sysIdLog, self
+            )
+        )
 
     def periodic(self) -> None:
         pose = self.poseEstimator.update(
@@ -213,7 +217,35 @@ class CANDriveSubsystem(commands2.Subsystem):
     def isAtTargetOrientation(self) -> bool:
         return self.orientationController.atSetpoint()
 
-    
+    def sysIdDrive(self, voltage):
+        self.driveVolts(voltage, voltage)
+
+    def sysIdLog(self, log: wpilib.sysid.SysIdRoutineLog):
+        log.motor("drive-left").voltage(
+            self.leftLeader.get_motor_voltage().value
+        ).angularPosition(
+            self.leftLeader.get_position().value
+        ).angularVelocity(
+            self.leftLeader.get_velocity().value
+        ).angularAcceleration(
+            self.leftLeader.get_acceleration().value
+        )
+
+        log.motor("drive-right").voltage(
+            self.rightLeader.get_motor_voltage().value
+        ).angularPosition(
+            self.rightLeader.get_position().value
+        ).angularVelocity(
+            self.rightLeader.get_velocity().value
+        ).angularAcceleration(
+            self.rightLeader.get_acceleration().value
+        )
+
+    def sysIdQuasistatic(self, direction: commands2.sysid.SysIdRoutine.Direction) -> commands2.Command:
+        return commands2.sysid.SysIdRoutine.quasistatic(direction)
+
+    def sysIdDynamic(self, direction: commands2.sysid.SysIdRoutine.Direction) -> commands2.Command:
+        return commands2.sysid.SysIdRoutine.dynamic(direction)
 
 def shouldFlipPath():
     return wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed
