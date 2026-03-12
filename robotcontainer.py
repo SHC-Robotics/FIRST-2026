@@ -11,6 +11,7 @@ from commands.eject import Eject
 from commands.aim import Aim
 from commands.intake import Intake
 from commands.launchsequence import LaunchSequence
+from commands.launch import StopLaunch
 from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
 
@@ -79,6 +80,8 @@ class RobotContainer:
         self.operatorController.rightBumper().onTrue(
             LaunchSequence(self.fuelSubsystem, self.frontVisionCamera)
         )
+
+        self.operatorController.x().onTrue(StopLaunch(self.fuelSubsystem))
 
         # While the A button is held on the operator controller, run the eject command
         # on the fuel subsystem.
