@@ -12,7 +12,7 @@ from commands.exampleauto import ExampleAuto
 from commands.intake import Intake
 from commands.climb_down import ClimbDown, ClimbDownManual
 from commands.climb_up import ClimbUp, ClimbUpManual
-from commands.homing import ClimberHoming
+from commands.homing import ClimbHomeManual, ClimberHoming
 from commands.launchsequence import LaunchSequence
 from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
@@ -100,6 +100,7 @@ class RobotContainer:
         self.driverController.x().whileTrue(ClimbUpManual(self.climbSubsystem))
         self.driverController.b().whileTrue(ClimbDownManual(self.climbSubsystem))
         self.driverController.y().onTrue(ClimberHoming(self.climbSubsystem))
+        self.driverController.a().onTrue(ClimbHomeManual(self.climbSubsystem))
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
 
