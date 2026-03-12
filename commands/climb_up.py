@@ -21,7 +21,11 @@ class ClimbUp(commands2.Command):
         self.climbSubsystem.setMotionMagicPosition(self.targetPosition)
 
     def execute(self) -> None:
-        pass
+        if self.climbSubsystem.isLeftAtPosition(self.targetPosition, ClimberConstants.POSITION_TOLERANCE):
+            self.climbSubsystem.stopLeft()
+
+        if self.climbSubsystem.isRightAtPosition(self.targetPosition, ClimberConstants.POSITION_TOLERANCE):
+            self.climbSubsystem.stopRight()
 
     def end(self, interrupted: bool) -> None:
         if interrupted:

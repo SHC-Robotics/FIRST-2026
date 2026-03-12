@@ -19,7 +19,7 @@ class CANClimbSubsystem(commands2.Subsystem):
         # Motion Magic position request (units: rotations, voltage-based)
         # Cruise velocity in the Motion Magic config caps how fast it moves to the target
         # Upgrade path: swap to MotionMagicTorqueCurrentFOC if Phoenix Pro is available
-        self.motion_magic_position_request = controls.MotionMagicVoltage(0)
+        self.motion_magic_position_request = controls.MotionMagicVoltage(0).with_override_brake_dur_neutral(True)
 
         config = configs.TalonFXConfiguration()
 
@@ -129,5 +129,5 @@ class CANClimbSubsystem(commands2.Subsystem):
         wpilib.SmartDashboard.putNumber("leftArm position", self.leftArm.get_position().value)
         wpilib.SmartDashboard.putBoolean("left switch", self.limitSwitchLeft.get())
         wpilib.SmartDashboard.putBoolean("right switch", self.limitSwitchRight.get())
-        if self.isAtBottom():
-            self.stop()
+        # if self.isAtBottom():
+        #     self.stop()

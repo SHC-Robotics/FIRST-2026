@@ -25,17 +25,22 @@ class ClimbDown(commands2.Command):
     def execute(self) -> None:
         # Stop each arm independently as soon as its limit switch triggers
         # This prevents over-driving whichever arm reaches the bottom first
-        if self.climbSubsystem.isLeftAtBottom():
+        if self.climbSubsystem.isLeftAtBottom() or self.climbSubsystem.isLeftAtPosition(self.targetPosition, ClimberConstants.POSITION_TOLERANCE):
             self.climbSubsystem.stopLeft()
-        if self.climbSubsystem.isRightAtBottom():
+
+        if self.climbSubsystem.isRightAtBottom() or self.climbSubsystem.isRightAtPosition(self.targetPosition, ClimberConstants.POSITION_TOLERANCE):
             self.climbSubsystem.stopRight()
 
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()
+
         if interrupted:
             print("ClimbDown: interrupted")
         else:
+            # self.climbSubsystem.leftArm.set_position(0)
+            # self.climbSubsystem.leftArm.set_position(0)
+
             print("ClimbDown: reached home position")
 
     def isFinished(self) -> bool:
@@ -45,7 +50,7 @@ class ClimbDown(commands2.Command):
             return True
 
         # Fallback: both encoders reached home within tolerance
-        if self.climbSubsystem.isAtPosition(self.climbSubsystem.homePosition, ClimberConstants.POSITION_TOLERANCE):
+        if self.climbSubsystem.isAtPosition(self.targetPosition, ClimberConstants.POSITION_TOLERANCE):
             print("ClimbDown: home position reached")
             return True
 
@@ -60,12 +65,13 @@ class ClimbDownManual(commands2.Command):
 
     def initialize(self) -> None:
         print("going down manually")
-        self.climbSubsystem.setVoltage(2)
+        self.climbSubsystem.setVoltage(0.5)
 
     def execute(self) -> None:
         # Stop each arm independently as soon as its limit switch triggers
         if self.climbSubsystem.isLeftAtBottom():
             self.climbSubsystem.stopLeft()
+
         if self.climbSubsystem.isRightAtBottom():
             self.climbSubsystem.stopRight()
 

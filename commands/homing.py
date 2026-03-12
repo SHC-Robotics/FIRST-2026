@@ -82,3 +82,4 @@ class ClimbHomeManual(commands2.Command):
     def initialize(self) -> None:
         self.climbSubsystem.leftArm.set_position(0)
         self.climbSubsystem.rightArm.set_position(0)
+        self.climbSubsystem.homePosition = 0
