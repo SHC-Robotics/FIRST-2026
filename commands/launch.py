@@ -84,4 +84,12 @@ class Launch(commands2.Command):
         return speedTable[distances[-1]]
     
 
-        
+class StopLaunch(commands2.Command):
+    def __init__(self, fuelSubsystem: CANFuelSubsystem) -> None:
+        super().__init__()
+
+        self.fuelSubsystem = fuelSubsystem
+        self.addRequirements(self.fuelSubsystem)
+
+    def initialize(self) -> None:
+        self.fuelSubsystem.stop()
