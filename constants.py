@@ -56,6 +56,7 @@ class ClimberConstants:
     # TODO: verify CLIMB_UP_DELTA by manually driving the arm to full extension and reading
     # the encoder value in Phoenix Tuner X or via print statements
     CLIMB_UP_DELTA = 24      # Rotations from home = arms fully extended (up)
+    CLIMB_LIFT_TARGET = 5
 
     # Per-loop step for homing routine (rotations per 20ms loop cycle)
     HOMING_STEP = 0.06
