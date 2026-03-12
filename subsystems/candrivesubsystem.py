@@ -10,6 +10,7 @@ from wpimath.controller import PIDController
 from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.controller import PPLTVController
 from pathplannerlib.config import RobotConfig
+from commands2 import sysid
 import wpilib
 
 import navx
@@ -53,6 +54,7 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.rightLeader.configurator.apply(config)
 
         self.velocity_request = controls.VelocityVoltage(0).with_slot(0)
+        self.voltage_request = controls.VoltageOut(0)
 
         # TODO: braking
         # config.motor_output.neutral_mode = signals.NeutralModeValue.BRAKE
@@ -128,9 +130,9 @@ class CANDriveSubsystem(commands2.Subsystem):
         # Set a tolerance (e.g., stop when within 1 degree of target)
         self.orientationController.setTolerance(1.0)
 
-        self.sysIdRoutine = commands2.sysid.SysIdRoutine(
-            commands2.sysid.SysIdRoutine.Config(),
-            commands2.sysid.SysIdRoutine.Mechanism(
+        self.sysIdRoutine = sysid.SysIdRoutine(
+            sysid.SysIdRoutine.Config(),
+            sysid.SysIdRoutine.Mechanism(
                 self.sysIdDrive, self.sysIdLog, self
             )
         )
@@ -178,8 +180,8 @@ class CANDriveSubsystem(commands2.Subsystem):
         return DifferentialDriveWheelSpeeds(left_speed, right_speed)
 
     def driveVolts(self, leftVolts: float, rightVolts: float) -> None:
-        self.leftLeader.set_control(self.velocity_request.with_voltage(leftVolts))
-        self.rightLeader.set_control(self.velocity_request.with_voltage(rightVolts))
+        self.leftLeader.set_control(self.voltage_request.with_output(leftVolts))
+        self.rightLeader.set_control(self.voltage_request.with_output(rightVolts))
 
     def driveArcade(self, xSpeed: float, zRotation: float) -> None:
         xSpeed = -xSpeed
@@ -241,11 +243,11 @@ class CANDriveSubsystem(commands2.Subsystem):
             self.rightLeader.get_acceleration().value
         )
 
-    def sysIdQuasistatic(self, direction: commands2.sysid.SysIdRoutine.Direction) -> commands2.Command:
-        return commands2.sysid.SysIdRoutine.quasistatic(direction)
+    def sysIdQuasistatic(self, direction: sysid.SysIdRoutine.Direction) -> commands2.Command:
+        return self.sysIdRoutine.quasistatic(direction)
 
-    def sysIdDynamic(self, direction: commands2.sysid.SysIdRoutine.Direction) -> commands2.Command:
-        return commands2.sysid.SysIdRoutine.dynamic(direction)
+    def sysIdDynamic(self, direction: sysid.SysIdRoutine.Direction) -> commands2.Command:
+        return self.sysIdRoutine.dynamic(direction)
 
 def shouldFlipPath():
     return wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed

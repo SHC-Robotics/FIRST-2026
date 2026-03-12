@@ -4,6 +4,8 @@ from subsystems.canfuelsubsystem import CANFuelSubsystem
 import commands2
 import wpilib
 
+from commands2 import sysid
+
 
 class SysIdRoutineBot:
     def __init__(self) -> None:
@@ -15,7 +17,7 @@ class SysIdRoutineBot:
         self.configureBindings()
 
     def configureBindings(self) -> None:
-        self.driverController.a().whileTrue(self.driveSubsystem.sysIdQuasistatic(commands2.sysid.SysIdRoutine.Direction.kForward))
-        self.driverController.b().whileTrue(self.driveSubsystem.sysIdQuasistatic(commands2.sysid.SysIdRoutine.Direction.kReverse))
-        self.driverController.x().whileTrue(self.driveSubsystem.sysIdDynamic(commands2.sysid.SysIdRoutine.Direction.kForward))
-        self.driverController.y().whileTrue(self.driveSubsystem.sysIdDynamic(commands2.sysid.SysIdRoutine.Direction.kReverse))
+        self.driverController.a().whileTrue(self.driveSubsystem.sysIdQuasistatic(sysid.SysIdRoutine.Direction.kForward))
+        self.driverController.b().whileTrue(self.driveSubsystem.sysIdQuasistatic(sysid.SysIdRoutine.Direction.kReverse))
+        self.driverController.x().whileTrue(self.driveSubsystem.sysIdDynamic(sysid.SysIdRoutine.Direction.kForward))
+        self.driverController.y().whileTrue(self.driveSubsystem.sysIdDynamic(sysid.SysIdRoutine.Direction.kReverse))
