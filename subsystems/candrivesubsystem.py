@@ -179,13 +179,14 @@ class CANDriveSubsystem(commands2.Subsystem):
     def driveRobotRelative(self, speeds: ChassisSpeeds) -> None:
         wheelSpeeds = self.kinematics.toWheelSpeeds(speeds)
 
-        wpilib.SmartDashboard.putString("PathPlanner Wheel Speeds", f"Left: {wheelSpeeds.left}, Right: {wheelSpeeds.right}")
+        wpilib.SmartDashboard.putString("PathPlanner Left Speed", f"{wheelSpeeds.left}")
+        wpilib.SmartDashboard.putString("PathPlanner Right Speed", f"{wheelSpeeds.right}")
 
         self.leftLeader.set_control(
-            self.velocity_request.with_velocity(min(wheelSpeeds.left, 0.1) / METERS_PER_ROTATION)
+            self.velocity_request.with_velocity(wheelSpeeds.left)
         )
         self.rightLeader.set_control(
-            self.velocity_request.with_velocity(min(wheelSpeeds.right, 0.1) / METERS_PER_ROTATION)
+            self.velocity_request.with_velocity(wheelSpeeds.right)
         )
 
     def driveVolts(self, leftVolts: float, rightVolts: float) -> None:
