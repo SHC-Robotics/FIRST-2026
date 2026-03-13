@@ -56,7 +56,7 @@ class ClimberConstants:
     # TODO: verify CLIMB_UP_DELTA by manually driving the arm to full extension and reading
     # the encoder value in Phoenix Tuner X or via print statements
     CLIMB_UP_DELTA = 24      # Rotations from home = arms fully extended (up)
-    CLIMB_LIFT_TARGET = 5
+    CLIMB_LIFT_TARGET = 6
 
     # Per-loop step for homing routine (rotations per 20ms loop cycle)
     HOMING_STEP = 0.06
@@ -67,7 +67,7 @@ class ClimberConstants:
     # --- Motion Magic profile ---
     # Cruise velocity caps the max speed during any position move — keep this low for safety
     # TODO: tune on robot; 2 rot/s is a conservative starting point
-    MM_CRUISE_VELOCITY = 1.5   # rotations/sec
+    MM_CRUISE_VELOCITY = 4.0   # rotations/sec
     MM_ACCELERATION = 1.0      # rotations/sec² — reaches cruise in ~0.5s at this value
     MM_JERK = 0                # rotations/sec³ — 0 disables jerk limiting
 
