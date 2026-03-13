@@ -41,6 +41,9 @@ class OperatorConstants:
     DRIVE_SCALING = 0.5
     ROTATION_SCALING = 0.5
 
+class AprilTagIds:
+    RED_HUB_TAGS = [8,5,9,10,11,2]
+    BLUE_HUB_TAGS = [18,27,26,25,21,24]
 
 class ClimberConstants:
     # CAN IDs
@@ -85,3 +88,4 @@ class ClimberConstants:
     MM_KP = 5.0   # Proportional gain — TODO: increase until arm reaches position without oscillating
     MM_KI = 0.0   # Integral gain — leave at 0
     MM_KD = 0.0   # Derivative gain — leave at 0
+
