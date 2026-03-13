@@ -23,6 +23,7 @@ Math is from
 https://v6.docs.ctr-electronics.com/en/stable/docs/api-reference/device-specific/talonfx/closed-loop-requests.html#converting-from-meters
 """
 WHEEL_RADIUS_METERS = 0.0762  # (3 inches)
+WHEEL_CIRCUMFERENCE = 2 * pi * WHEEL_RADIUS_METERS
 GEARBOX_RATIO = 8.45
 METERS_PER_ROTATION = (2 * pi * WHEEL_RADIUS_METERS) / GEARBOX_RATIO
 
@@ -43,8 +44,8 @@ class CANDriveSubsystem(commands2.Subsystem):
 
         slot0 = config.slot0
         slot0.k_p = 0.1
-        slot0.k_v = 0.12
-        slot0.k_s = 0.1
+        slot0.k_v = 0.136
+        slot0.k_s = 0.25
         slot0.k_i = 0
         slot0.k_d = 0
 
@@ -111,11 +112,13 @@ class CANDriveSubsystem(commands2.Subsystem):
             self.resetPose,
             self.getRobotRelativeSpeeds,
             lambda speeds, feedforwards: self.driveRobotRelative(speeds),
-            PPLTVController(0.02),
+            PPLTVController(0.02, 5.0),
             config,
             shouldFlipPath,
             self
         )
+
+        print(f"auto builder configured: {AutoBuilder.isConfigured()}")
 
         #WPIlib PID setup for rotating towards an angle
         #unsure if WPILIB pid or talon PID better to use here
@@ -141,19 +144,43 @@ class CANDriveSubsystem(commands2.Subsystem):
             rightPosition,
         )
 
+        wpilib.SmartDashboard.putNumber("Current Heading", -self.gyro.getAngle())
+        wpilib.SmartDashboard.putNumber("Pose Heading", self.getPose().rotation().degrees())
+
         wpilib.SmartDashboard.putNumber("x", pose.x)
         wpilib.SmartDashboard.putNumber("y", pose.y)
         wpilib.SmartDashboard.putNumber("leftPosition", leftPosition)
         wpilib.SmartDashboard.putNumber("rightPosition", rightPosition)
+        wpilib.SmartDashboard.putNumber("raw rps", self.leftLeader.get_velocity().value)
+        wpilib.SmartDashboard.putNumber("left m/s mpr", self.leftLeader.get_velocity().value * METERS_PER_ROTATION)
+        #wpilib.SmartDashboard.putNumber(self.leftLeader.get_velocity().value * WHEEL_CIRCUMFERENCE)
+        wpilib.SmartDashboard.putNumber("right m/s", self.rightLeader.get_velocity().value * METERS_PER_ROTATION)
         wpilib.SmartDashboard.putNumber("heading", pose.rotation().degrees())
 
+
+        wpilib.SmartDashboard.putNumber("Raw left", self.leftLeader.get_velocity().value)
+        wpilib.SmartDashboard.putNumber("Raw right", self.rightLeader.get_velocity().value)
+
+        wpilib.SmartDashboard.putNumber("left m/s", self.leftLeader.get_velocity().value * METERS_PER_ROTATION)
+        wpilib.SmartDashboard.putNumber("right m/s", self.rightLeader.get_velocity().value * METERS_PER_ROTATION)
+
         self.field.setRobotPose(pose)
+
+        wpilib.SmartDashboard.putNumber("pose x", self.getPose().x)
+        wpilib.SmartDashboard.putNumber("pose y", self.getPose().y)
+        wpilib.SmartDashboard.putNumber("pose heading", self.getPose().rotation().degrees())
 
     def getPose(self) -> Pose2d:
         return self.poseEstimator.getEstimatedPosition()
 
     def resetPose(self, pose: Pose2d) -> None:
-        self.gyro.reset()
+        #self.gyro.reset()
+
+        print(f"resetpose: ({pose.x}, {pose.y}, {pose.rotation().degrees()})")
+        wpilib.SmartDashboard.putNumber("Reset Pose Heading", pose.rotation().degrees())
+        wpilib.SmartDashboard.putNumber("Gyro At Reset", -self.gyro.getAngle())
+        print("reset pose")
+
         self.poseEstimator.resetPosition(
             -Rotation2d.fromDegrees(self.gyro.getAngle()),
             self.leftLeader.get_position().value * METERS_PER_ROTATION,
@@ -179,14 +206,27 @@ class CANDriveSubsystem(commands2.Subsystem):
     def driveRobotRelative(self, speeds: ChassisSpeeds) -> None:
         wheelSpeeds = self.kinematics.toWheelSpeeds(speeds)
 
-        wpilib.SmartDashboard.putString("PathPlanner Left Speed", f"{wheelSpeeds.left}")
-        wpilib.SmartDashboard.putString("PathPlanner Right Speed", f"{wheelSpeeds.right}")
+        wpilib.SmartDashboard.putNumber("commanded vx", speeds.vx)
+        wpilib.SmartDashboard.putNumber("chassis omega", speeds.omega)
+
+        wpilib.SmartDashboard.putNumber("PathPlanner Left Wheel ", wheelSpeeds.left)
+        wpilib.SmartDashboard.putNumber("PathPlanner Right Wheel Speed", wheelSpeeds.right)
+
+        wpilib.SmartDashboard.putNumber("actual left m/s", self.leftLeader.get_velocity().value * METERS_PER_ROTATION)
+        wpilib.SmartDashboard.putNumber("actual right m/s", self.rightLeader.get_velocity().value * METERS_PER_ROTATION)
+
+        wpilib.SmartDashboard.putNumber("actual left rps", self.leftLeader.get_velocity().value)
+        wpilib.SmartDashboard.putNumber("actual right rps", self.rightLeader.get_velocity().value)
+
+
+        wpilib.SmartDashboard.putNumber("pp left rps", wheelSpeeds.left / METERS_PER_ROTATION)
+        wpilib.SmartDashboard.putNumber("pp right rps", wheelSpeeds.right / METERS_PER_ROTATION)
 
         self.leftLeader.set_control(
-            self.velocity_request.with_velocity(wheelSpeeds.left)
+            self.velocity_request.with_velocity(wheelSpeeds.left / METERS_PER_ROTATION)
         )
         self.rightLeader.set_control(
-            self.velocity_request.with_velocity(wheelSpeeds.right)
+            self.velocity_request.with_velocity(wheelSpeeds.right / METERS_PER_ROTATION)
         )
 
     def driveVolts(self, leftVolts: float, rightVolts: float) -> None:
