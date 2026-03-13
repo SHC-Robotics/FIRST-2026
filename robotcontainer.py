@@ -1,3 +1,4 @@
+from commands.climb_lift import ClimbLift
 from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
 import wpilib
@@ -94,8 +95,9 @@ class RobotContainer:
             Drive(self.driveSubsystem, self.driverController)
         )
 
-        self.driverController.leftBumper().onTrue(ClimbDown(self.climbSubsystem))
+        self.driverController.leftBumper().onTrue(ClimbLift(self.climbSubsystem))
         self.driverController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
+        # self.driverController.leftTrigger().onTrue(ClimbLift(self.climbSubsystem))
 
         self.driverController.x().whileTrue(ClimbUpManual(self.climbSubsystem))
         self.driverController.b().whileTrue(ClimbDownManual(self.climbSubsystem))
