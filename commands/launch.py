@@ -22,11 +22,11 @@ class Launch(commands2.Command):
 
         #TODO: PLEASE FIND ACTUAL VALUES FOR THIS; distance (meters) : percentage of max voltage
         self.speedTable = {
-            0.8: 0.35,
-            1.2: 0.45,
-            1.6: 0.55,
-            2: 0.65,
-            2.4: 0.75,
+            0.8: 0.65,
+            1.2: 0.69,
+            1.6: 0.73,
+            2: 0.77,
+            2.4: 0.81,
             2.8: 0.85
         }
 
