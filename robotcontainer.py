@@ -1,3 +1,4 @@
+from commands.climb_lift import ClimbLift
 from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
 import wpilib
@@ -10,10 +11,14 @@ from commands.drive import Drive
 from commands.eject import Eject
 from commands.aim import Aim
 from commands.intake import Intake
+from commands.climb_down import ClimbDown, ClimbDownManual
+from commands.climb_up import ClimbUp, ClimbUpManual
+from commands.homing import ClimbHomeManual, ClimberHoming
 from commands.launchsequence import LaunchSequence
 from commands.launch import StopLaunch
 from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
+from subsystems.canclimbsubsystem import CANClimbSubsystem
 
 from wpimath.geometry import Translation3d, Rotation2d
 from pathplannerlib.auto import AutoBuilder, NamedCommands
@@ -29,6 +34,7 @@ class RobotContainer:
         # A Subsystem is a collection of motors, sensors, and other hardware objects that are operated on by a Command.
         self.driveSubsystem = CANDriveSubsystem()
         self.fuelSubsystem = CANFuelSubsystem()
+        self.climbSubsystem = CANClimbSubsystem()
 
         self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
         self.frontVisionCamera = VisionCamera("limelight-front")
@@ -49,6 +55,10 @@ class RobotContainer:
         NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, self.frontVisionCamera, launchTimeout=5))
         NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
         NamedCommands.registerCommand("Eject", Eject(self.fuelSubsystem))
+        NamedCommands.registerCommand("Climb", ClimbUp(self.climbSubsystem))  # fixed: was fuelSubsystem
+
+        # Run the homing routine immediately on startup to zero the climber encoders
+        #ClimberHoming(self.climbSubsystem).schedule()
 
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(
@@ -96,6 +106,15 @@ class RobotContainer:
         self.driveSubsystem.setDefaultCommand(
             Drive(self.driveSubsystem, self.driverController)
         )
+
+        self.driverController.leftBumper().onTrue(ClimbLift(self.climbSubsystem))
+        self.driverController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
+        # self.driverController.leftTrigger().onTrue(ClimbLift(self.climbSubsystem))
+
+        self.driverController.x().whileTrue(ClimbUpManual(self.climbSubsystem))
+        self.driverController.b().whileTrue(ClimbDownManual(self.climbSubsystem))
+        self.driverController.y().onTrue(ClimberHoming(self.climbSubsystem))
+        self.driverController.a().onTrue(ClimbHomeManual(self.climbSubsystem))
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
 
