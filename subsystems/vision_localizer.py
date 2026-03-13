@@ -7,10 +7,7 @@ import wpilib
 import commands2
 from wpimath.geometry import Rotation2d, Translation3d, Pose2d, Translation2d
 
-U_TURN = Rotation2d.fromDegrees(180)
-LEARNING_RATE = 0.3
-TYPICAL_PERCENT_FRAME = 0.7  # when the tag is ~2m away
-EMPHASIZE_TAGS_NEARBY = False
+IMU_SEED_DURATION = 2.0  # seconds to spend in mode 1 before switching to mode 4
 
 
 @dataclass
@@ -28,14 +25,11 @@ class VisionLocalizer(commands2.Subsystem):
         super().__init__()
 
         self.drivetrain = drivetrain
-
-        from getpass import getuser
-
-        self.username = getuser()
-
-        self.enabled = None
         self.allowed = True
         self.cameras: Dict[str, CameraState] = dict()
+
+        self._imuSeeded = False
+        self._seedStartTime = 0.0
 
     def addCamera(
         self,
@@ -44,7 +38,7 @@ class VisionLocalizer(commands2.Subsystem):
         headingOnRobot: Rotation2d,
         pitchAngleDegrees: float,
         minPercentFrame: float = 0.07,
-        maxRotationSpeed: float = 120, # degrees per second
+        maxRotationSpeed: float = 120,  # degrees per second
     ) -> None:
         self.cameras[camera.cameraName] = CameraState(
             camera,
@@ -54,54 +48,97 @@ class VisionLocalizer(commands2.Subsystem):
             minPercentFrame,
             maxRotationSpeed,
         )
-
         camera.addLocalizer()
 
-    def setAllowed(self, value: bool):
+    def onEnabled(self) -> None:
+        """
+        Call from teleopInit() and autonomousInit() in robot.py.
+        Starts the IMU seeding sequence.
+        """
+        self._seedStartTime = wpilib.Timer.getFPGATimestamp()
+        self._imuSeeded = False
+        for c in self.cameras.values():
+            c.camera.imuModeRequest.set(1)
+
+    def onDisabled(self) -> None:
+        """
+        Call from disabledInit() in robot.py.
+        Keeps LL4 IMU seeded from NavX while disabled.
+        """
+        for c in self.cameras.values():
+            c.camera.imuModeRequest.set(1)
+
+    def setAllowed(self, value: bool) -> None:
         self.allowed = value
 
     def periodic(self) -> None:
+        # Skip vision entirely in simulation — no Limelight available
+        if wpilib.RobotBase.isSimulation():
+            return
+
         if len(self.cameras) == 0:
             return
 
-        heading = self.drivetrain.getHeading()
-        yawRate = self.drivetrain.gyro.getRate()
+        heading      = self.drivetrain.getHeading()
+        rotationSpeed = self.drivetrain.getRotationSpeed()  # deg/s, CCW positive
+
+        # IMU seeding phase — push heading in mode 1 but skip vision fusion
+        if not self._imuSeeded:
+            elapsed = wpilib.Timer.getFPGATimestamp() - self._seedStartTime
+            wpilib.SmartDashboard.putNumber("IMU Seed Elapsed", elapsed)
+            for c in self.cameras.values():
+                c.camera.robotOrientationSetRequest.set(
+                    [heading.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0]
+                )
+            if elapsed >= IMU_SEED_DURATION:
+                for c in self.cameras.values():
+                    c.camera.imuModeRequest.set(4)
+                self._imuSeeded = True
+                print(f"LL4 IMU seeding complete after {elapsed:.2f}s, switching to mode 4")
+            return
 
         for c in self.cameras.values():
             camera = c.camera
 
-            # Update network table values for MegaTag2
-            p = c.poseOnRobot
-            camera.cameraPoseSetRequest.set([p.x, p.y, p.z, 0.0, c.pitchAngleDegrees, c.headingOnRobot.degrees()])
+            # Feed heading to MT2 every loop — required to resolve pose ambiguity
+            camera.robotOrientationSetRequest.set(
+                [heading.degrees(), rotationSpeed, 0.0, 0.0, 0.0, 0.0]
+            )
 
-            camera.imuModeRequest.set(3) # use internal IMU with external IMU assisted convergence
-
-            yaw = heading.degrees()
-            camera.robotOrientationSetRequest.set([yaw, yawRate, 0.0, 0.0, 0.0, 0.0])
-
-            # Retrieve updated robot pose from MegaTag2 and add it to the drivetrain pose estimator
-            visionPoseArray = camera.getBotPose()
-
-            if len(visionPoseArray) == 0:
+            # Skip if rotating too fast — rapid turns smear tag corners
+            if abs(rotationSpeed) > c.maxRotationSpeed:
                 continue
 
-            if camera.getTv() == 0:
+            # Retrieve MT2 pose estimate
+            visionPoseArray = camera.botPose.get()
+
+            # Require full 10-element array before any indexing
+            if len(visionPoseArray) < 10:
                 continue
 
-            if abs(yawRate) > c.maxRotationSpeed:
-                continue
-
-            latencySec = visionPoseArray[6] / 1000.0
-            timestamp = wpilib.Timer.getFPGATimestamp() - latencySec
-
-            visionX = visionPoseArray[0]
-            visionY = visionPoseArray[1]
-            visionYaw = visionPoseArray[5]
             tagCount = int(visionPoseArray[7])
-            visionPose = Pose2d(x=visionX, y=visionY, rotation=Rotation2d.fromDegrees(visionYaw))
+            if tagCount == 0:
+                continue
 
-            wpilib.SmartDashboard.putString("Vision Pose", f"x: {visionX}, y: {visionY}, yaw: {visionYaw}")
+            # Latency-compensated timestamp
+            latency_sec = visionPoseArray[6] / 1000.0
+            timestamp   = wpilib.Timer.getFPGATimestamp() - latency_sec
 
+            visionX   = visionPoseArray[0]
+            visionY   = visionPoseArray[1]  # index 1 is field Y, not index 2 (height)
+            visionYaw = visionPoseArray[5]
+            visionPose = Pose2d(
+                Translation2d(visionX, visionY),
+                Rotation2d.fromDegrees(visionYaw)
+            )
+
+            # Per-measurement std devs — always distrust vision rotation
             xy_stdev = 0.3 if tagCount > 1 else 0.7
-            self.drivetrain.poseEstimator.setVisionMeasurementStdDevs((xy_stdev, xy_stdev, 9999999))
-            self.drivetrain.poseEstimator.addVisionMeasurement(visionPose, timestamp)
+            self.drivetrain.poseEstimator.addVisionMeasurement(
+                visionPose, timestamp, (xy_stdev, xy_stdev, 9999999)
+            )
+
+            wpilib.SmartDashboard.putString(
+                "Vision Pose",
+                f"x: {visionX:.2f}, y: {visionY:.2f}, yaw: {visionYaw:.1f}, tags: {tagCount}"
+            )

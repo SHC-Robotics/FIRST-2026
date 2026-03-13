@@ -20,19 +20,30 @@ class Robot(commands2.TimedCommandRobot):
         # Instantiate the RobotContainer, which contains the majority of robot logic
         # (includes all button bindings and adds autonomous chooser to dashboard)
         self.container = robotcontainer.RobotContainer()
-        wpilib.CameraServer.launch()
+
+        if not wpilib.RobotBase.isSimulation():
+            wpilib.CameraServer.launch()
 
         # Track usage of Kitbot code
         hal.report(hal.tResourceType.kResourceType_Framework, 10)
 
+    def disabledInit(self) -> None:
+        # Keep LL4 IMU seeded from NavX while disabled
+        self.container.visionLocalizer.onDisabled()
+
     def autonomousInit(self) -> None:
+        # Start IMU seeding sequence before scheduling auto
+        self.container.visionLocalizer.onEnabled()
+
         self.autonomousCommand = self.container.getAutonomousCommand()
 
-        # Schedule the autonomous command
         if self.autonomousCommand is not None:
             self.autonomousCommand.schedule()
 
     def teleopInit(self) -> None:
+        # Start IMU seeding sequence for teleop
+        self.container.visionLocalizer.onEnabled()
+
         # Ensure autonomous stops running when teleop starts
         if self.autonomousCommand is not None:
             self.autonomousCommand.cancel()

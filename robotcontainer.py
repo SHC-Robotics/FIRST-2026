@@ -17,79 +17,65 @@ from subsystems.canfuelsubsystem import CANFuelSubsystem
 from wpimath.geometry import Translation3d, Rotation2d
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 
+
 class RobotContainer:
     """
-    The robot container, which stores the robot's subsystems, controllers, binds buttons to commands,
-    and manages autonomous modes.
+    The robot container, which stores the robot's subsystems, controllers, binds
+    buttons to commands, and manages autonomous modes.
     """
 
     def __init__(self) -> None:
-        # The robot's subsystems.
-        # A Subsystem is a collection of motors, sensors, and other hardware objects that are operated on by a Command.
+        # Subsystems
         self.driveSubsystem = CANDriveSubsystem()
-        self.fuelSubsystem = CANFuelSubsystem()
+        self.fuelSubsystem  = CANFuelSubsystem()
 
-        self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
-        self.frontVisionCamera = VisionCamera("limelight-front")
-        self.backVisionCamera = VisionCamera("limelight-back")
+        self.visionLocalizer    = VisionLocalizer(self.driveSubsystem)
+        self.frontVisionCamera  = VisionCamera("limelight-front")
+        self.backVisionCamera   = VisionCamera("limelight-back")
+
         self.visionLocalizer.addCamera(
             self.frontVisionCamera,
-            poseOnRobot=Translation3d(0.3066, 0.1056, 0.66), # Forward: +X, Right: +Y, Up: +Z
-            headingOnRobot=Rotation2d.fromDegrees(0.0), # yaw
+            poseOnRobot=Translation3d(0.3066, 0.1056, 0.66),  # Forward: +X, Right: +Y, Up: +Z
+            headingOnRobot=Rotation2d.fromDegrees(0.0),         # front-facing
             pitchAngleDegrees=0.0,
         )
         self.visionLocalizer.addCamera(
             self.backVisionCamera,
             poseOnRobot=Translation3d(0.264, 0.094, 0.58),
-            headingOnRobot=Rotation2d.fromDegrees(180.0),
-            pitchAngleDegrees=0.0
+            headingOnRobot=Rotation2d.fromDegrees(180.0),        # rear-facing — was Rotation2d(180.0) which is radians
+            pitchAngleDegrees=0.0,
         )
 
-        NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, self.frontVisionCamera, launchTimeout=5))
+        # Named commands for PathPlanner autos
+        NamedCommands.registerCommand("Shoot",  LaunchSequence(self.fuelSubsystem, self.frontVisionCamera, launchTimeout=5))
         NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
-        NamedCommands.registerCommand("Eject", Eject(self.fuelSubsystem))
+        NamedCommands.registerCommand("Eject",  Eject(self.fuelSubsystem))
+        NamedCommands.registerCommand("Aim",    Aim(self.driveSubsystem, None, self.frontVisionCamera))
 
-        # The driver's controller
-        self.driverController = commands2.button.CommandXboxController(
-            OperatorConstants.DRIVER_CONTROLLER_PORT
-        )
+        # Controllers
+        self.driverController   = commands2.button.CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
+        self.operatorController = commands2.button.CommandXboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT)
 
-        # The operator's controller
-        self.operatorController = commands2.button.CommandXboxController(
-            OperatorConstants.OPERATOR_CONTROLLER_PORT
-        )
-
-        NamedCommands.registerCommand("Aim", Aim(self.driveSubsystem, self.driverController, self.frontVisionCamera))
-
-        # The autonomous chooser
+        # Auto chooser — must be after AutoBuilder.configure() in CANDriveSubsystem
         self.autoChooser = AutoBuilder.buildAutoChooser()
+        wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
 
         self.configureBindings()
 
-        # Set the options to show up in the Dashboard for selecting auto modes
-        wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
-
     def configureBindings(self) -> None:
-        # While the left bumper on operator controller is held, run the intake command
-        # on the fuel subsystem.
+        # Operator controls
         self.operatorController.leftBumper().whileTrue(Intake(self.fuelSubsystem))
-
-        # While the right bumper on the operator controller is held, run the launch
-        # sequence command on the fuel subsystem.
         self.operatorController.rightBumper().onTrue(
             LaunchSequence(self.fuelSubsystem, self.frontVisionCamera)
         )
-
-        # While the A button is held on the operator controller, run the eject command
-        # on the fuel subsystem.
         self.operatorController.a().whileTrue(Eject(self.fuelSubsystem))
 
-        # Set the default command for the drive subsystem to the command provided by
-        # factory with the values provided by the joystick axes on the driver
-        # controller.
+        # Driver controls
+        self.driverController.a().whileTrue(
+            Aim(self.driveSubsystem, self.driverController, self.frontVisionCamera)
+        )
 
-        self.driverController.a().whileTrue(Aim(self.driveSubsystem, self.driverController, self.frontVisionCamera))
-
+        # Default drive command
         self.driveSubsystem.setDefaultCommand(
             Drive(self.driveSubsystem, self.driverController)
         )
