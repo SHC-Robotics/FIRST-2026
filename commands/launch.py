@@ -31,10 +31,10 @@ class Launch(commands2.Command):
         }
 
 
-        if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
-            self.tag = AprilTagIds.RED_HUB_CENTER
-        else:
-            self.tag = AprilTagIds.BLUE_HUB_CENTER
+        # if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
+        #     self.tag = AprilTagIds.RED_HUB_CENTER
+        # else:
+        #     self.tag = AprilTagIds.BLUE_HUB_CENTER
 
     def initialize(self) -> None:
         wpilib.SmartDashboard.putString("Current command", "Launch")
