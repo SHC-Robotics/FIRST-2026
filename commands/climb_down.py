@@ -55,25 +55,3 @@ class ClimbDown(commands2.Command):
             return True
 
         return False
-
-class ClimbDownManual(commands2.Command):
-    def __init__(self, climbSubsystem: CANClimbSubsystem) -> None:
-        super().__init__()
-
-        self.climbSubsystem = climbSubsystem
-        self.addRequirements(self.climbSubsystem)
-
-    def initialize(self) -> None:
-        print("going down manually")
-        self.climbSubsystem.setVoltage(0.5)
-
-    def execute(self) -> None:
-        # Stop each arm independently as soon as its limit switch triggers
-        if self.climbSubsystem.isLeftAtBottom():
-            self.climbSubsystem.stopLeft()
-
-        if self.climbSubsystem.isRightAtBottom():
-            self.climbSubsystem.stopRight()
-
-    def end(self, interrupted: bool) -> None:
-        self.climbSubsystem.stop()
