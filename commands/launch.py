@@ -42,7 +42,8 @@ class Launch(commands2.Command):
         data = self.camera.getHubData(self.tag)
         distance = data["dist"]
 
-        multiplier = self.findSpeed(distance)
+        # multiplier = self.findSpeed(distance)
+        multiplier = self.fuelSubsystem.multiplier
 
         print(f"Distance: {distance}")
         print(f"Multiplier: {distance}")
@@ -93,3 +94,29 @@ class StopLaunch(commands2.Command):
 
     def initialize(self) -> None:
         self.fuelSubsystem.stop()
+
+class ChangeLaunchSpeed(commands2.Command):
+    def __init__(self, fuelSubsystem: CANFuelSubsystem, operatorController) -> None:
+        super().__init__()
+
+        self.fuelSubsystem = fuelSubsystem
+        self.controller = operatorController
+        self.addRequirements(self.fuelSubsystem)
+
+    def execute(self) -> None:
+        leftTrigger = self.controller.getLeftTriggerAxis()
+        rightTrigger = self.controller.getRightTriggerAxis()
+
+        if leftTrigger < 0.1:
+            leftTrigger = 0
+
+        if rightTrigger < 0.1:
+            rightTrigger = 0
+
+        self.fuelSubsystem.multiplier -= leftTrigger * 0.1
+        self.fuelSubsystem.multiplier += rightTrigger * 0.1
+
+        self.fuelSubsystem.multiplier = max(min(self.fuelSubsystem.multiplier, 0.85), 0.65)
+
+    def isFinished(self) -> bool:
+        return False
