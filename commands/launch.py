@@ -120,5 +120,8 @@ class ChangeLaunchSpeed(commands2.Command):
 
         wpilib.SmartDashboard.putNumber("Shooting multiplier", self.fuelSubsystem.multiplier)
 
+    def end(self, interrupted: bool) -> None:
+        pass
+
     def isFinished(self) -> bool:
         return False

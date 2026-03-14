@@ -117,9 +117,9 @@ class RobotContainer:
             ClimbManual(self.climbSubsystem, self.operatorController)
         )
 
-        self.fuelSubsystem.setDefaultCommand(
-            ChangeLaunchSpeed(self.fuelSubsystem, self.operatorController)
-        )
+        # self.fuelSubsystem.setDefaultCommand(
+            # ChangeLaunchSpeed(self.fuelSubsystem, self.operatorController)
+        # )
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
 
