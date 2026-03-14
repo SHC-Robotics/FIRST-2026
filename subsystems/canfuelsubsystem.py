@@ -6,7 +6,7 @@ from constants import FuelConstants
 
 
 class CANFuelSubsystem(commands2.Subsystem):
-    def __init__(self) -> None:
+    def __init__(self, operatorController) -> None:
         super().__init__()
 
 
@@ -14,6 +14,8 @@ class CANFuelSubsystem(commands2.Subsystem):
         self.distance = None
 
         self.multiplier = 0.85
+
+        self.controller = operatorController
 
         # Instantiate each of the motors on the launcher mechanism
         self.intakeLauncherRoller = rev.SparkMax(
@@ -60,3 +62,20 @@ class CANFuelSubsystem(commands2.Subsystem):
     def stop(self) -> None:
         self.feederRoller.set(0)
         self.intakeLauncherRoller.set(0)
+
+    def periodic(self) -> None:
+        leftTrigger = self.controller.getLeftTriggerAxis()
+        rightTrigger = self.controller.getRightTriggerAxis()
+
+        if leftTrigger < 0.1:
+            leftTrigger = 0
+
+        if rightTrigger < 0.1:
+            rightTrigger = 0
+
+        self.multiplier -= leftTrigger * 0.001
+        self.multiplier += rightTrigger * 0.001
+
+        self.multiplier = max(min(self.multiplier, 0.85), 0.65)
+
+        wpilib.SmartDashboard.putNumber("Shooting multiplier", self.multiplier)
