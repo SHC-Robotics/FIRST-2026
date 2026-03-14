@@ -60,33 +60,33 @@ class VisionLocalizer(commands2.Subsystem):
     def setAllowed(self, value: bool):
         self.allowed = value
 
-    def periodic(self) -> None:
-        if len(self.cameras) == 0:
-            return
+    # def periodic(self) -> None:
+    #     if len(self.cameras) == 0:
+    #         return
 
-        heading = self.drivetrain.getHeading()
+    #     heading = self.drivetrain.getHeading()
 
-        for c in self.cameras.values():
-            camera = c.camera
+    #     for c in self.cameras.values():
+    #         camera = c.camera
 
-            # Update network table values for MegaTag2
-            p = c.poseOnRobot
-            camera.cameraPoseSetRequest.set([p.x, p.y, p.z, c.pitchAngleDegrees, 0.0, c.headingOnRobot.degrees()])
+    #         # Update network table values for MegaTag2
+    #         p = c.poseOnRobot
+    #         camera.cameraPoseSetRequest.set([p.x, p.y, p.z, c.pitchAngleDegrees, 0.0, c.headingOnRobot.degrees()])
 
-            camera.imuModeRequest.set(4) # use internal IMU with external IMU assisted convergence
+    #         camera.imuModeRequest.set(4) # use internal IMU with external IMU assisted convergence
 
-            yaw = heading.degrees()
-            camera.robotOrientationSetRequest.set([yaw, 0.0, 0.0, 0.0, 0.0, 0.0])
+    #         yaw = heading.degrees()
+    #         camera.robotOrientationSetRequest.set([yaw, 0.0, 0.0, 0.0, 0.0, 0.0])
 
-            # Retrieve updated robot pose from MegaTag2 and add it to the drivetrain pose estimator
-            visionPoseArray = camera.botPose.get()
-            timestamp = camera.lastHeartbeatTime
+    #         # Retrieve updated robot pose from MegaTag2 and add it to the drivetrain pose estimator
+    #         visionPoseArray = camera.botPose.get()
+    #         timestamp = camera.lastHeartbeatTime
 
-            if len(visionPoseArray) == 0:
-                continue
+    #         if len(visionPoseArray) == 0:
+    #             continue
 
-            visionX = visionPoseArray[0]
-            visionZ = visionPoseArray[2]
-            visionYaw = visionPoseArray[5]
-            visionPose = Pose2d(x=visionX, y=visionZ, rotation=Rotation2d.fromDegrees(visionYaw))
-            self.drivetrain.poseEstimator.addVisionMeasurement(visionPose, timestamp)
+    #         visionX = visionPoseArray[0]
+    #         visionZ = visionPoseArray[2]
+    #         visionYaw = visionPoseArray[5]
+    #         visionPose = Pose2d(x=visionX, y=visionZ, rotation=Rotation2d.fromDegrees(visionYaw))
+    #         self.drivetrain.poseEstimator.addVisionMeasurement(visionPose, timestamp)
