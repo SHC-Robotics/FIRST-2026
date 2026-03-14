@@ -41,29 +41,3 @@ class ClimbUp(commands2.Command):
             return True
 
         return False
-
-
-class ClimbUpManual(commands2.Command):
-    """
-    Applies direct voltage to move the climber upward while the button is held.
-    Stops immediately on button release. Bind with whileTrue() on your controller.
-    """
-
-    def __init__(self, climbSubsystem: CANClimbSubsystem) -> None:
-        super().__init__()
-        self.climbSubsystem = climbSubsystem
-        self.addRequirements(self.climbSubsystem)
-
-    def initialize(self) -> None:
-        print("ClimbUpManual: started")
-        self.climbSubsystem.setVoltage(-0.5)
-
-    def execute(self) -> None:
-        pass
-
-    def end(self, interrupted: bool) -> None:
-        self.climbSubsystem.stop()
-        print("ClimbUpManual: stopped")
-
-    def isFinished(self) -> bool:
-        return False

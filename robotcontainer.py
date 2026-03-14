@@ -1,3 +1,4 @@
+from climb_manual import ClimbManual
 from commands.climb_lift import ClimbLift
 from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
@@ -81,13 +82,13 @@ class RobotContainer:
         wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
 
     def configureBindings(self) -> None:
-        # While the left bumper on operator controller is held, run the intake command
+        # While the B button on operator controller is held, run the intake command
         # on the fuel subsystem.
-        self.operatorController.leftBumper().whileTrue(Intake(self.fuelSubsystem))
+        self.operatorController.b().whileTrue(Intake(self.fuelSubsystem))
 
-        # While the right bumper on the operator controller is held, run the launch
+        # While the Y button on the operator controller is held, run the launch
         # sequence command on the fuel subsystem.
-        self.operatorController.rightBumper().onTrue(
+        self.operatorController.y().onTrue(
             LaunchSequence(self.fuelSubsystem, self.frontVisionCamera)
         )
 
@@ -96,6 +97,9 @@ class RobotContainer:
         # While the A button is held on the operator controller, run the eject command
         # on the fuel subsystem.
         self.operatorController.a().whileTrue(Eject(self.fuelSubsystem))
+
+        self.operatorController.leftBumper().onTrue(ClimbLift(self.climbSubsystem))
+        self.operatorController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
 
         # Set the default command for the drive subsystem to the command provided by
         # factory with the values provided by the joystick axes on the driver
@@ -107,14 +111,9 @@ class RobotContainer:
             Drive(self.driveSubsystem, self.driverController)
         )
 
-        self.driverController.leftBumper().onTrue(ClimbLift(self.climbSubsystem))
-        self.driverController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
-        # self.driverController.leftTrigger().onTrue(ClimbLift(self.climbSubsystem))
-
-        self.driverController.x().whileTrue(ClimbUpManual(self.climbSubsystem))
-        self.driverController.b().whileTrue(ClimbDownManual(self.climbSubsystem))
-        self.driverController.y().onTrue(ClimberHoming(self.climbSubsystem))
-        self.driverController.a().onTrue(ClimbHomeManual(self.climbSubsystem))
+        self.climbSubsystem.setDefaultCommand(
+            ClimbManual(self.climbSubsystem, self.operatorController)
+        )
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
 

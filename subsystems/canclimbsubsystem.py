@@ -101,6 +101,12 @@ class CANClimbSubsystem(commands2.Subsystem):
         #self.leftArm.set_control(self.duty_cycle_request.with_output(voltage))
         self.rightArm.set_control(controls.VoltageOut(voltage))
 
+    def setVoltageLeft(self, voltage: float) -> None:
+        self.leftArm.set_control(controls.VoltageOut(voltage))
+
+    def setVoltageRight(self, voltage: float) -> None:
+        self.rightArm.set_control(controls.VoltageOut(voltage))
+
     def setMotionMagicPosition(self, position: float) -> None:
         """
         Commands the arm to a target absolute position (rotations) using Motion Magic.
