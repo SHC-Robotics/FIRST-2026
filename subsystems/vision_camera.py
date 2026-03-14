@@ -89,14 +89,14 @@ class VisionCamera(commands2.Subsystem):
         self.heartbeating = heartbeating
 
         # Add indicator to dashboard when hub apriltag is on screen
-        raw_tags = self.getRawFiducials()
-        found = False
-        for i in range(0, len(raw_tags), 7):
-            tag_id = int(raw_tags[i])
-            if tag_id == AprilTagIds.RED_HUB_CENTER or tag_id == AprilTagIds.BLUE_HUB_CENTER:
-                wpilib.SmartDashboard.putString("Hub AprilTag", f"VISIBLE (id = {tag_id})")
-                found = True
-                break
+        # raw_tags = self.getRawFiducials()
+        # found = False
+        # for i in range(0, len(raw_tags), 7):
+        #     tag_id = int(raw_tags[i])
+        #     if tag_id == AprilTagIds.RED_HUB_CENTER or tag_id == AprilTagIds.BLUE_HUB_CENTER:
+        #         wpilib.SmartDashboard.putString("Hub AprilTag", f"VISIBLE (id = {tag_id})")
+        #         found = True
+        #         break
 
-        if not found:
-            wpilib.SmartDashboard.putString("Hub AprilTag", "OFF SCREEN")
+        # if not found:
+        #     wpilib.SmartDashboard.putString("Hub AprilTag", "OFF SCREEN")
