@@ -118,5 +118,7 @@ class ChangeLaunchSpeed(commands2.Command):
 
         self.fuelSubsystem.multiplier = max(min(self.fuelSubsystem.multiplier, 0.85), 0.65)
 
+        wpilib.SmartDashboard.putNumber("Shooting multiplier")
+
     def isFinished(self) -> bool:
         return False
