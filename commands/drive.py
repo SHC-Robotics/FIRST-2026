@@ -1,6 +1,6 @@
 import commands2
 
-from constants import OperatorConstants
+from constants import DriveConstants, OperatorConstants
 from subsystems.candrivesubsystem import CANDriveSubsystem
 
 ZERO_THRESHOLD = 0.1
@@ -29,8 +29,8 @@ class Drive(commands2.Command):
             rightX = 0
 
         self.driveSubsystem.driveArcade(
-            -leftY,
-            -rightX,
+            -leftY * DriveConstants.DRIVE_SPEED_MULT,
+            -rightX * DriveConstants.DRIVE_SPEED_MULT,
         )
 
     def end(self, interrupted: bool) -> None:
