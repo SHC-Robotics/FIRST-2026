@@ -5,6 +5,8 @@ class DriveConstants:
     RIGHT_LEADER_ID = 2
     RIGHT_FOLLOWER_ID = 1
 
+    DRIVE_SPEED_MULT = 0.6
+
     # Current limit for drivetrain motors. 60A is a reasonable maximum to reduce
     # likelihood of tripping breakers or damaging CIM motors
     DRIVE_MOTOR_CURRENT_LIMIT = 60
@@ -22,9 +24,9 @@ class FuelConstants:
     # Voltage values for various fuel operations. These values may need to be tuned
     # based on exact robot construction.
     # See the Software Guide for tuning information
-    INTAKING_FEEDER_VOLTAGE = -12.0 
-    INTAKING_INTAKE_VOLTAGE = 8.0 
-    LAUNCHING_FEEDER_VOLTAGE = 9.0 
+    INTAKING_FEEDER_VOLTAGE = -8.0
+    INTAKING_INTAKE_VOLTAGE = 6.0
+    LAUNCHING_FEEDER_VOLTAGE = 9.0
     LAUNCHING_LAUNCHER_VOLTAGE = 12.0
     SPIN_UP_FEEDER_VOLTAGE = -6.0 
     SPIN_UP_SECONDS = 1.0
@@ -44,6 +46,9 @@ class OperatorConstants:
 class AprilTagIds:
     RED_HUB_TAGS = [8,5,9,10,11,2]
     BLUE_HUB_TAGS = [18,27,26,25,21,24]
+
+    RED_HUB_CENTER = 10
+    BLUE_HUB_CENTER = 26
 
 class ClimberConstants:
     # CAN IDs
