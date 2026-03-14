@@ -52,7 +52,7 @@ class Aim(commands2.Command):
 
     def initialize(self) -> None:
         wpilib.SmartDashboard.putString("Current command", "Aim")
-        print(f"Aim started — targeting closest of tags {self._getAllianceTags()}")
+        print(f"Aim started -- targeting closest of tags {self._getAllianceTags()}")
 
     def execute(self) -> None:
         best = self._getBestTagData()
