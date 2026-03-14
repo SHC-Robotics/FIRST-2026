@@ -13,6 +13,8 @@ class CANFuelSubsystem(commands2.Subsystem):
         #current distance from target
         self.distance = None
 
+        self.multiplier = 0.85
+
         # Instantiate each of the motors on the launcher mechanism
         self.intakeLauncherRoller = rev.SparkMax(
             FuelConstants.INTAKE_LAUNCHER_MOTOR_ID,
