@@ -1,4 +1,5 @@
 from subsystems.canclimbsubsystem import CANClimbSubsystem
+import commands2
 
 
 class ClimbManual(commands2.Command):
