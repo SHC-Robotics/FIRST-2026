@@ -1,4 +1,3 @@
-from climb_manual import ClimbManual
 from commands.climb_lift import ClimbLift
 from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
