@@ -39,14 +39,14 @@ class Launch(commands2.Command):
     def initialize(self) -> None:
         wpilib.SmartDashboard.putString("Current command", "Launch")
 
-        data = self.camera.getHubData(self.tag)
-        distance = data["dist"]
+        # data = self.camera.getHubData(self.tag)
+        # distance = data["dist"]
 
         # multiplier = self.findSpeed(distance)
         multiplier = self.fuelSubsystem.multiplier
 
-        print(f"Distance: {distance}")
-        print(f"Multiplier: {distance}")
+        # print(f"Distance: {distance}")
+        # print(f"Multiplier: {distance}")
 
         self.fuelSubsystem.setIntakeLauncherRoller(
             FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE * multiplier

@@ -31,10 +31,20 @@ class RobotContainer:
     """
 
     def __init__(self) -> None:
+        # The driver's controller
+        self.driverController = commands2.button.CommandXboxController(
+            OperatorConstants.DRIVER_CONTROLLER_PORT
+        )
+
+        # The operator's controller
+        self.operatorController = commands2.button.CommandXboxController(
+            OperatorConstants.OPERATOR_CONTROLLER_PORT
+        )
+
         # The robot's subsystems.
         # A Subsystem is a collection of motors, sensors, and other hardware objects that are operated on by a Command.
         self.driveSubsystem = CANDriveSubsystem()
-        self.fuelSubsystem = CANFuelSubsystem()
+        self.fuelSubsystem = CANFuelSubsystem(self.operatorController)
         self.climbSubsystem = CANClimbSubsystem()
 
         self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
@@ -60,16 +70,6 @@ class RobotContainer:
 
         # Run the homing routine immediately on startup to zero the climber encoders
         #ClimberHoming(self.climbSubsystem).schedule()
-
-        # The driver's controller
-        self.driverController = commands2.button.CommandXboxController(
-            OperatorConstants.DRIVER_CONTROLLER_PORT
-        )
-
-        # The operator's controller
-        self.operatorController = commands2.button.CommandXboxController(
-            OperatorConstants.OPERATOR_CONTROLLER_PORT
-        )
 
         NamedCommands.registerCommand("Aim", Aim(self.driveSubsystem, self.driverController, self.frontVisionCamera))
 
