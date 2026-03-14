@@ -12,8 +12,9 @@ from commands.drive import Drive
 from commands.eject import Eject
 from commands.aim import Aim
 from commands.intake import Intake
-from commands.climb_down import ClimbDown, ClimbDownManual
-from commands.climb_up import ClimbUp, ClimbUpManual
+from commands.climb_down import ClimbDown
+from commands.climb_up import ClimbUp
+from commands.climb_manual import ClimbManual
 from commands.homing import ClimbHomeManual, ClimberHoming
 from commands.launchsequence import LaunchSequence
 from commands.launch import StopLaunch
