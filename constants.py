@@ -70,7 +70,7 @@ class ClimberConstants:
     # --- Motion Magic profile ---
     # Cruise velocity caps the max speed during any position move — keep this low for safety
     # TODO: tune on robot; 2 rot/s is a conservative starting point
-    MM_CRUISE_VELOCITY = 4.0   # rotations/sec
+    MM_CRUISE_VELOCITY = 5.0   # rotations/sec
     MM_ACCELERATION = 1.0      # rotations/sec² — reaches cruise in ~0.5s at this value
     MM_JERK = 0                # rotations/sec³ — 0 disables jerk limiting
 
