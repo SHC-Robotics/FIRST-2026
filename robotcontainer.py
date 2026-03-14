@@ -82,10 +82,6 @@ class RobotContainer:
         wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
 
     def configureBindings(self) -> None:
-        # While the B button on operator controller is held, run the intake command
-        # on the fuel subsystem.
-        self.operatorController.b().whileTrue(Intake(self.fuelSubsystem))
-
         # While the Y button on the operator controller is held, run the launch
         # sequence command on the fuel subsystem.
         self.operatorController.y().onTrue(
@@ -94,12 +90,18 @@ class RobotContainer:
 
         self.operatorController.x().onTrue(StopLaunch(self.fuelSubsystem))
 
-        # While the A button is held on the operator controller, run the eject command
-        # on the fuel subsystem.
-        self.operatorController.a().whileTrue(Eject(self.fuelSubsystem))
+        self.operatorController.a().onTrue(ClimbHomeManual(self.climbSubsystem))
 
-        self.operatorController.leftBumper().onTrue(ClimbLift(self.climbSubsystem))
-        self.operatorController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
+        # While the left bumper on operator controller is held, run the intake command
+        # on the fuel subsystem.
+        self.operatorController.leftBumper().whileTrue(Intake(self.fuelSubsystem))
+
+        # While the right bumper is held on the operator controller, run the eject command
+        # on the fuel subsystem.
+        self.operatorController.rightBumper().whileTrue(Eject(self.fuelSubsystem))
+
+        self.driverController.leftBumper().onTrue(ClimbLift(self.climbSubsystem))
+        self.driverController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
 
         # Set the default command for the drive subsystem to the command provided by
         # factory with the values provided by the joystick axes on the driver
