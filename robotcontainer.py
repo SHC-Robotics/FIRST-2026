@@ -1,3 +1,4 @@
+from commands.autolaunch import AutoLaunch
 from commands.climb_lift import ClimbLift
 from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
@@ -79,7 +80,7 @@ class RobotContainer:
 
         self.autoChooser.setDefaultOption("None", commands2.cmd.none())
         self.autoChooser.addOption(
-            "Shoot In Place", LaunchSequence(self.fuelSubsystem, self.frontVisionCamera, launchTimeout=10)
+            "Shoot In Place", AutoLaunch(self.fuelSubsystem),
         )
         wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
 
