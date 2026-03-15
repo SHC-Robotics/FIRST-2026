@@ -13,7 +13,7 @@ class CANFuelSubsystem(commands2.Subsystem):
         #current distance from target
         self.distance = None
 
-        self.multiplier = 0.85
+        self.multiplier = 0.65
 
         self.controller = operatorController
 
@@ -76,6 +76,6 @@ class CANFuelSubsystem(commands2.Subsystem):
         self.multiplier -= leftTrigger * 0.001
         self.multiplier += rightTrigger * 0.001
 
-        self.multiplier = max(min(self.multiplier, 0.85), 0.65)
+        self.multiplier = max(min(self.multiplier, 0.85), 0.5)
 
         wpilib.SmartDashboard.putNumber("Shooting multiplier", self.multiplier)
