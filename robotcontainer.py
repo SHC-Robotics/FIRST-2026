@@ -16,7 +16,7 @@ from commands.climb_up import ClimbUp
 from commands.climb_manual import ClimbManual
 from commands.homing import ClimbHomeManual, ClimberHoming
 from commands.launchsequence import LaunchSequence
-from commands.launch import ChangeLaunchSpeed, StopLaunch
+from commands.launch import StopLaunch
 from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
 from subsystems.canclimbsubsystem import CANClimbSubsystem
