@@ -73,11 +73,14 @@ class RobotContainer:
         # NamedCommands.registerCommand("Aim", Aim(self.driveSubsystem, self.driverController, self.frontVisionCamera))
 
         # The autonomous chooser
-        self.autoChooser = AutoBuilder.buildAutoChooser()
+        self.autoChooser = wpilib.SendableChooser()
 
         self.configureBindings()
 
-        # Set the options to show up in the Dashboard for selecting auto modes
+        self.autoChooser.setDefaultOption("None", commands2.cmd.none())
+        self.autoChooser.addOption(
+            "Shoot In Place", LaunchSequence(self.fuelSubsystem, self.frontVisionCamera, launchTimeout=10)
+        )
         wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
 
     def configureBindings(self) -> None:
