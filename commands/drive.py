@@ -20,6 +20,11 @@ class Drive(commands2.Command):
         self.addRequirements(self.driveSubsystem)
 
     def execute(self) -> None:
+        leftTrigger = self.controller.leftTrigger()
+        mult = 1
+        if leftTrigger:
+            mult = 0.25
+
         leftY = self.controller.getLeftY()
         if leftY < ZERO_THRESHOLD and leftY > -ZERO_THRESHOLD:
             leftY = 0
@@ -29,8 +34,8 @@ class Drive(commands2.Command):
             rightX = 0
 
         self.driveSubsystem.driveArcade(
-            -leftY * DriveConstants.DRIVE_SPEED_MULT,
-            -rightX * DriveConstants.DRIVE_SPEED_MULT,
+            -leftY * DriveConstants.DRIVE_SPEED_MULT * mult,
+            -rightX * DriveConstants.DRIVE_SPEED_MULT * mult,
         )
 
     def end(self, interrupted: bool) -> None:
