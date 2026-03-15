@@ -13,16 +13,16 @@ class LaunchSequence(commands2.SequentialCommandGroup):
     Requires the fuel subsystem.
     """
 
-    def __init__(self, fuelSubsystem: CANFuelSubsystem, visionCamera, launchTimeout=None) -> None:
+    def __init__(self, fuelSubsystem: CANFuelSubsystem, launchTimeout=None) -> None:
         super().__init__()
 
         if launchTimeout:
             self.addCommands(
                 SpinUp(fuelSubsystem).withTimeout(FuelConstants.SPIN_UP_SECONDS),
-                Launch(fuelSubsystem, visionCamera).withTimeout(launchTimeout),
+                Launch(fuelSubsystem).withTimeout(launchTimeout),
             )
         else: 
             self.addCommands(
                 SpinUp(fuelSubsystem).withTimeout(FuelConstants.SPIN_UP_SECONDS),
-                Launch(fuelSubsystem, visionCamera),
+                Launch(fuelSubsystem),
             )

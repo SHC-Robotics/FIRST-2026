@@ -11,14 +11,11 @@ class Launch(commands2.Command):
     Requires the fuel subsystem.
     """
 
-    def __init__(self, fuelSubsystem: CANFuelSubsystem, visionCamera) -> None:
+    def __init__(self, fuelSubsystem: CANFuelSubsystem) -> None:
         super().__init__()
 
         self.fuelSubsystem = fuelSubsystem
         self.addRequirements(self.fuelSubsystem)
-
-        self.camera = visionCamera
-
 
         #TODO: PLEASE FIND ACTUAL VALUES FOR THIS; distance (meters) : percentage of max voltage
         self.speedTable = {
@@ -29,7 +26,6 @@ class Launch(commands2.Command):
             2.4: 0.81,
             2.8: 0.85
         }
-
 
         # if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
         #     self.tag = AprilTagIds.RED_HUB_CENTER
