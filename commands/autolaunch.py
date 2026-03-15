@@ -8,7 +8,7 @@ class AutoLaunch(commands2.SequentialCommandGroup):
         super().__init__()
 
         self.addCommands(
-            commands2.cmd.runOnce(configureLaunchSpeed, fuelSubsystem),
+            commands2.cmd.runOnce(lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem),
             LaunchSequence(fuelSubsystem, launchTimeout=10)
         )
 
