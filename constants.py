@@ -31,7 +31,7 @@ class FuelConstants:
     SPIN_UP_FEEDER_VOLTAGE = -6.0 
     SPIN_UP_SECONDS = 1.0
 
-    AUTO_SHOOTING_MULTIPLIER = 0.55
+    AUTO_SHOOTING_MULTIPLIER = 0.6
 
 
 class OperatorConstants:

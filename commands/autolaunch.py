@@ -9,7 +9,7 @@ class AutoLaunch(commands2.SequentialCommandGroup):
 
         self.addCommands(
             commands2.cmd.runOnce(lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem),
-            LaunchSequence(fuelSubsystem, launchTimeout=10)
+            LaunchSequence(fuelSubsystem, launchTimeout=15)
         )
 
 def configureLaunchSpeed(fuelSubsystem: CANFuelSubsystem):
