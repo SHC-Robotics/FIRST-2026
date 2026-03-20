@@ -1,9 +1,9 @@
 class DriveConstants:
     # Motor controller IDs for drivetrain motors
-    LEFT_LEADER_ID = 1
-    LEFT_FOLLOWER_ID = 2
-    RIGHT_LEADER_ID = 3
-    RIGHT_FOLLOWER_ID = 4
+    LEFT_LEADER_ID = 4
+    LEFT_FOLLOWER_ID = 3
+    RIGHT_LEADER_ID = 2
+    RIGHT_FOLLOWER_ID = 1
 
     # Current limit for drivetrain motors. 60A is a reasonable maximum to reduce
     # likelihood of tripping breakers or damaging CIM motors
