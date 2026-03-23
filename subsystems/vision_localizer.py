@@ -141,9 +141,9 @@ class VisionLocalizer(commands2.Subsystem):
             # Tighter std devs for multi-tag detections.
             # Always distrust vision rotation — gyro is more accurate for heading.
             xy_stdev = 0.3 if tagCount > 1 else 0.7
-            # self.drivetrain.poseEstimator.addVisionMeasurement(
-            #     visionPose, timestamp, (xy_stdev, xy_stdev, 9999999)
-            # )
+            self.drivetrain.poseEstimator.addVisionMeasurement(
+                visionPose, timestamp, (xy_stdev, xy_stdev, 9999999)
+            )
 
             wpilib.SmartDashboard.putString(
                 "Vision Pose", f"x: {visionX:.2f}, y: {visionY:.2f}, yaw: {visionYaw:.1f}, tags: {tagCount}"

@@ -47,14 +47,14 @@ class RobotContainer:
         self.climbSubsystem = CANClimbSubsystem()
 
         self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
-        # self.frontVisionCamera = VisionCamera("limelight-front")
+        self.frontVisionCamera = VisionCamera("limelight-front")
         self.backVisionCamera = VisionCamera("limelight-back")
-        # self.visionLocalizer.addCamera(
-        #     self.frontVisionCamera,
-        #     poseOnRobot=Translation3d(0.3066, 0.1056, 0.66), # Forward: +X, Right: +Y, Up: +Z
-        #     headingOnRobot=Rotation2d(0.0), # yaw
-        #     pitchAngleDegrees=0.0,
-        # )
+        self.visionLocalizer.addCamera(
+            self.frontVisionCamera,
+            poseOnRobot=Translation3d(0.3066, 0.1056, 0.66), # Forward: +X, Right: +Y, Up: +Z
+            headingOnRobot=Rotation2d(0.0), # yaw
+            pitchAngleDegrees=0.0,
+        )
         self.visionLocalizer.addCamera(
             self.backVisionCamera,
             poseOnRobot=Translation3d(0.264, 0.094, 0.58),
@@ -84,7 +84,7 @@ class RobotContainer:
         # While the Y button on the operator controller is held, run the launch
         # sequence command on the fuel subsystem.
         self.operatorController.y().onTrue(
-            LaunchSequence(self.fuelSubsystem)
+            LaunchSequence(self.fuelSubsystem, self.frontVisionCamera)
         )
 
         self.operatorController.x().onTrue(StopLaunch(self.fuelSubsystem))
