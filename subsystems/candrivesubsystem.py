@@ -57,13 +57,13 @@ class CANDriveSubsystem(commands2.Subsystem):
 
         # Left side: clockwise = forward
         config.motor_output.inverted = (
-            configs.config_groups.InvertedValue.COUNTER_CLOCKWISE_POSITIVE
+            configs.config_groups.InvertedValue.CLOCKWISE_POSITIVE
         )
         self.leftLeader.configurator.apply(config, 0.1)
 
         # Right side: counter-clockwise = forward
         config.motor_output.inverted = (
-            configs.config_groups.InvertedValue.CLOCKWISE_POSITIVE
+            configs.config_groups.InvertedValue.COUNTER_CLOCKWISE_POSITIVE
         )
         self.rightLeader.configurator.apply(config, 0.1)
 
@@ -146,7 +146,7 @@ class CANDriveSubsystem(commands2.Subsystem):
     def _getRightPositionMeters(self) -> float:
         # Negated because right motor inversion causes get_position() to read
         # negative for forward motion, which contradicts the left encoder.
-        return self.rightLeader.get_position().value * METERS_PER_ROTATION
+        return -self.rightLeader.get_position().value * METERS_PER_ROTATION
 
     # ------------------------------------------------------------------
     # Periodic
@@ -212,8 +212,8 @@ class CANDriveSubsystem(commands2.Subsystem):
         return self.kinematics.toChassisSpeeds(self.getWheelSpeeds())
 
     def getWheelSpeeds(self) -> DifferentialDriveWheelSpeeds:
-        left_speed  = self.leftLeader.get_velocity().value * METERS_PER_ROTATION
-        right_speed = self.rightLeader.get_velocity().value * METERS_PER_ROTATION
+        left_speed  =  self.leftLeader.get_velocity().value * METERS_PER_ROTATION
+        right_speed = -self.rightLeader.get_velocity().value * METERS_PER_ROTATION
         return DifferentialDriveWheelSpeeds(left_speed, right_speed)
 
     # ------------------------------------------------------------------
