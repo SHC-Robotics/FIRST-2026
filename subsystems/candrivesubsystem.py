@@ -212,8 +212,8 @@ class CANDriveSubsystem(commands2.Subsystem):
         return self.kinematics.toChassisSpeeds(self.getWheelSpeeds())
 
     def getWheelSpeeds(self) -> DifferentialDriveWheelSpeeds:
-        left_speed  =  self.leftLeader.get_velocity().value * METERS_PER_ROTATION
-        right_speed = -self.rightLeader.get_velocity().value * METERS_PER_ROTATION
+        left_speed  = self.leftLeader.get_velocity().value * METERS_PER_ROTATION
+        right_speed = self.rightLeader.get_velocity().value * METERS_PER_ROTATION
         return DifferentialDriveWheelSpeeds(left_speed, right_speed)
 
     # ------------------------------------------------------------------
