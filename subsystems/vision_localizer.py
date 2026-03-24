@@ -28,8 +28,8 @@ class VisionLocalizer(commands2.Subsystem):
         self.allowed = True
         self.cameras: Dict[str, CameraState] = dict()
 
-        self._imuSeeded = False
-        self._seedStartTime = 0.0
+        self._imuSeeding = False
+        self._finishSeeding = False
 
     def addCamera(
         self,
@@ -59,8 +59,7 @@ class VisionLocalizer(commands2.Subsystem):
         to mode 4 (external IMU assisted convergence) for the rest of the match.
         Vision measurements are blocked during the seeding window.
         """
-        self._seedStartTime = wpilib.Timer.getFPGATimestamp()
-        self._imuSeeded = False
+        self._finishSeeding = True
         for c in self.cameras.values():
             c.camera.imuModeRequest.set(1)
 
@@ -71,6 +70,7 @@ class VisionLocalizer(commands2.Subsystem):
         Keeps the LL4 internal IMU continuously seeded from the NavX while
         disabled so it has an accurate heading reference before the match starts.
         """
+        self._imuSeeding = True
         for c in self.cameras.values():
             c.camera.imuModeRequest.set(1)
 
@@ -86,18 +86,18 @@ class VisionLocalizer(commands2.Subsystem):
 
         # IMU seeding phase — push heading to cameras in mode 1 but skip
         # vision measurement fusion until the LL4 IMU is properly seeded.
-        if not self._imuSeeded:
-            elapsed = wpilib.Timer.getFPGATimestamp() - self._seedStartTime
-            wpilib.SmartDashboard.putNumber("IMU Seed Elapsed", elapsed)
+        if self._imuSeeding:
+            print("Seeding IMU")
             for c in self.cameras.values():
                 c.camera.robotOrientationSetRequest.set(
                     [heading.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0]
                 )
-            if elapsed >= IMU_SEED_DURATION:
+            if self._finishSeeding:
                 for c in self.cameras.values():
                     c.camera.imuModeRequest.set(4)
-                self._imuSeeded = True
-                print(f"LL4 IMU seeding complete after {elapsed:.2f}s, switching to mode 4")
+                self._imuSeeding = False
+                self._finishSeeding = False
+                print(f"LL4 IMU seeding complete after, switching to mode 4")
             return
 
         for c in self.cameras.values():
