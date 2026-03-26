@@ -81,7 +81,7 @@ class VisionLocalizer(commands2.Subsystem):
         if len(self.cameras) == 0:
             return
 
-        heading = self.drivetrain.getHeading()
+        heading = self.drivetrain.getPose().rotation()
         rotationSpeed = self.drivetrain.getRotationSpeed()
 
         # IMU seeding phase — push heading to cameras in mode 1 but skip

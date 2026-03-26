@@ -1,4 +1,5 @@
 from commands.climb_lift import ClimbLift
+from commands.resetpose import ResetRotation
 from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
 import wpilib
@@ -115,6 +116,8 @@ class RobotContainer:
         self.climbSubsystem.setDefaultCommand(
             ClimbManual(self.climbSubsystem, self.operatorController)
         )
+
+        self.driverController.a().onTrue(ResetRotation(self.driveSubsystem, Rotation2d.fromDegrees(180)))
 
         # self.fuelSubsystem.setDefaultCommand(
             # ChangeLaunchSpeed(self.fuelSubsystem, self.operatorController)

@@ -166,8 +166,8 @@ class CANDriveSubsystem(commands2.Subsystem):
         wpilib.SmartDashboard.putNumber("y", pose.y)
         wpilib.SmartDashboard.putNumber("leftPosition", leftPosition)
         wpilib.SmartDashboard.putNumber("rightPosition", rightPosition)
-        wpilib.SmartDashboard.putNumber("pose heading", pose.rotation().degrees())
-        wpilib.SmartDashboard.putNumber("raw gyro heading", self._getGyroRotation().degrees())
+        wpilib.SmartDashboard.putNumber("pose heading", self.getPose().rotation().degrees())
+        wpilib.SmartDashboard.putNumber("raw gyro heading", self.getHeading().degrees())
 
         self.field.setRobotPose(pose)
 
