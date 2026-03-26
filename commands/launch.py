@@ -34,6 +34,7 @@ class Launch(commands2.Command):
 
     def initialize(self) -> None:
         wpilib.SmartDashboard.putString("Current command", "Launch")
+        print("Current command: launch")
 
         # data = self.camera.getHubData(self.tag)
         # distance = data["dist"]

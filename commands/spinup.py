@@ -19,6 +19,7 @@ class SpinUp(commands2.Command):
 
     def initialize(self) -> None:
         wpilib.SmartDashboard.putString("Current command", "Spin Up")
+        print("Current command: spin up")
 
         self.fuelSubsystem.setIntakeLauncherRoller(
             FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE
