@@ -63,7 +63,7 @@ class RobotContainer:
             pitchAngleDegrees=0.0
         )
 
-        NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, self.frontVisionCamera, launchTimeout=5))
+        NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, launchTimeout=5))
         NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
         NamedCommands.registerCommand("Eject", Eject(self.fuelSubsystem))
         NamedCommands.registerCommand("Climb", ClimbUp(self.climbSubsystem))
@@ -85,7 +85,7 @@ class RobotContainer:
         # While the Y button on the operator controller is held, run the launch
         # sequence command on the fuel subsystem.
         self.operatorController.y().onTrue(
-            LaunchSequence(self.fuelSubsystem, self.frontVisionCamera)
+            LaunchSequence(self.fuelSubsystem)
         )
 
         self.operatorController.x().onTrue(StopLaunch(self.fuelSubsystem))
