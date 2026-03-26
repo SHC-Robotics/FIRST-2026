@@ -117,7 +117,7 @@ class RobotContainer:
             ClimbManual(self.climbSubsystem, self.operatorController)
         )
 
-        self.driverController.a().onTrue(ResetRotation(self.driveSubsystem, Rotation2d.fromDegrees(180)))
+        self.driverController.a().onTrue(ResetRotation(self.driveSubsystem, Rotation2d.fromDegrees(0)))
 
         # self.fuelSubsystem.setDefaultCommand(
             # ChangeLaunchSpeed(self.fuelSubsystem, self.operatorController)
