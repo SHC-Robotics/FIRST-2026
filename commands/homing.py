@@ -29,7 +29,7 @@ class ClimberHoming(commands2.Command):
         print("ClimberHoming: starting driving arms down slowly")
         self._leftTarget = self.climbSubsystem.leftArm.get_position().value
         #._rightTarget = self._leftTarget  # mirror start position for right arm
-        self._rightTarget = self.climbSubsystem.rightArm.get_position().value
+        # self._rightTarget = self.climbSubsystem.rightArm.get_position().value
 
     def execute(self) -> None:
         # Creep left arm down only if its switch hasn't triggered yet
@@ -41,14 +41,14 @@ class ClimberHoming(commands2.Command):
         else:
             self.climbSubsystem.stopLeft()
 
-        # Creep right arm down only if its switch hasn't triggered yet
-        if not self.climbSubsystem.isRightAtBottom():
-            self._rightTarget += ClimberConstants.HOMING_STEP
-            self.climbSubsystem.rightArm.set_control(
-                self.climbSubsystem.motion_magic_position_request.with_position(self._rightTarget)
-            )
-        else:
-            self.climbSubsystem.stopRight()
+        # # Creep right arm down only if its switch hasn't triggered yet
+        # if not self.climbSubsystem.isRightAtBottom():
+        #     self._rightTarget += ClimberConstants.HOMING_STEP
+        #     self.climbSubsystem.rightArm.set_control(
+        #         self.climbSubsystem.motion_magic_position_request.with_position(self._rightTarget)
+        #     )
+        # else:
+        #     self.climbSubsystem.stopRight()
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()
@@ -56,7 +56,7 @@ class ClimberHoming(commands2.Command):
         if not interrupted:
             # Zero both encoders at their current physical positions
             self.climbSubsystem.leftArm.set_position(0)
-            self.climbSubsystem.rightArm.set_position(0)
+            # self.climbSubsystem.rightArm.set_position(0)
 
             # Set home as 0 so all future targets are relative to this zeroed point
             self.climbSubsystem.homePosition = 0.0
@@ -81,5 +81,5 @@ class ClimbHomeManual(commands2.Command):
 
     def initialize(self) -> None:
         self.climbSubsystem.leftArm.set_position(0)
-        self.climbSubsystem.rightArm.set_position(0)
+        # self.climbSubsystem.rightArm.set_position(0)
         self.climbSubsystem.homePosition = 0
