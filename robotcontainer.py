@@ -1,3 +1,4 @@
+from commands.aim import Aim
 from commands.climb_lift import ClimbLift
 from commands.resetpose import ResetRotation
 from subsystems.vision_camera import VisionCamera
@@ -107,8 +108,6 @@ class RobotContainer:
         # factory with the values provided by the joystick axes on the driver
         # controller.
 
-        # self.driverController.a().whileTrue(Aim(self.driveSubsystem, self.driverController, self.frontVisionCamera))
-
         self.driveSubsystem.setDefaultCommand(
             Drive(self.driveSubsystem, self.driverController)
         )
@@ -118,6 +117,8 @@ class RobotContainer:
         )
 
         self.driverController.a().onTrue(ResetRotation(self.driveSubsystem, Rotation2d.fromDegrees(0)))
+
+        self.driverController.x().whileTrue(Aim(self.driveSubsystem))
 
         # self.fuelSubsystem.setDefaultCommand(
             # ChangeLaunchSpeed(self.fuelSubsystem, self.operatorController)
