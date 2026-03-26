@@ -116,7 +116,7 @@ class RobotContainer:
             ClimbManual(self.climbSubsystem, self.operatorController)
         )
 
-        self.driverController.a().onTrue(ResetRotation(self.driveSubsystem, Rotation2d.fromDegrees(0)))
+        self.driverController.a().whileTrue(ResetRotation(self.driveSubsystem, Rotation2d.fromDegrees(0)))
 
         self.driverController.x().whileTrue(Aim(self.driveSubsystem))
 

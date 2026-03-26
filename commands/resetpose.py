@@ -13,3 +13,6 @@ class ResetRotation(commands2.Command):
 
     def initialize(self) -> None:
         self.driveSubsystem.poseEstimator.resetRotation(self.rot)
+
+    def end(self, interrupted: bool) -> None:
+        pass

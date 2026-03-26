@@ -1,3 +1,5 @@
+from wpimath.geometry import Translation2d
+
 class DriveConstants:
     # Motor controller IDs for drivetrain motors
     LEFT_LEADER_ID = 4
@@ -96,3 +98,6 @@ class ClimberConstants:
     MM_KI = 0.0   # Integral gain — leave at 0
     MM_KD = 0.0   # Derivative gain — leave at 0
 
+class FieldConstants:
+    RED_HUB_POSITION = Translation2d(11.915394, 4.03479) # 469.11 in, 158.85 in
+    BLUE_HUB_POSITION = Translation2d(4.625594, 4.03479) # 182.11 in, 158.85 in
