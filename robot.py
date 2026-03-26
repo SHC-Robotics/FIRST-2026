@@ -25,10 +25,17 @@ class Robot(commands2.TimedCommandRobot):
         # Track usage of Kitbot code
         hal.report(hal.tResourceType.kResourceType_Framework, 10)
 
+    def disabledInit(self) -> None:
+        # Continuously seed the LL4 internal IMU from the NavX while disabled
+        # so it has an accurate heading reference before the match starts.
+        self.container.visionLocalizer.onDisabled()
+
     def autonomousInit(self) -> None:
+        # Start IMU seeding sequence before switching to mode 4
+        self.container.visionLocalizer.onEnabled()
+
         self.autonomousCommand = self.container.getAutonomousCommand()
 
-        # Schedule the autonomous command
         if self.autonomousCommand is not None:
             self.autonomousCommand.schedule()
 
@@ -36,6 +43,9 @@ class Robot(commands2.TimedCommandRobot):
         # Ensure autonomous stops running when teleop starts
         if self.autonomousCommand is not None:
             self.autonomousCommand.cancel()
+
+        # Start IMU seeding sequence before switching to mode 4
+        self.container.visionLocalizer.onEnabled()
 
     def testInit(self) -> None:
         # Cancel all running commands when testing starts

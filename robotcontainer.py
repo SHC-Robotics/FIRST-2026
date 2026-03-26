@@ -1,4 +1,5 @@
 from commands.climb_lift import ClimbLift
+from commands.resetpose import ResetRotation
 from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
 import wpilib
@@ -47,14 +48,14 @@ class RobotContainer:
         self.climbSubsystem = CANClimbSubsystem()
 
         self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
-        # self.frontVisionCamera = VisionCamera("limelight-front")
+        self.frontVisionCamera = VisionCamera("limelight-front")
         self.backVisionCamera = VisionCamera("limelight-back")
-        # self.visionLocalizer.addCamera(
-        #     self.frontVisionCamera,
-        #     poseOnRobot=Translation3d(0.3066, 0.1056, 0.66), # Forward: +X, Right: +Y, Up: +Z
-        #     headingOnRobot=Rotation2d(0.0), # yaw
-        #     pitchAngleDegrees=0.0,
-        # )
+        self.visionLocalizer.addCamera(
+            self.frontVisionCamera,
+            poseOnRobot=Translation3d(0.3066, 0.1056, 0.66), # Forward: +X, Right: +Y, Up: +Z
+            headingOnRobot=Rotation2d(0.0), # yaw
+            pitchAngleDegrees=0.0,
+        )
         self.visionLocalizer.addCamera(
             self.backVisionCamera,
             poseOnRobot=Translation3d(0.264, 0.094, 0.58),
@@ -62,10 +63,10 @@ class RobotContainer:
             pitchAngleDegrees=0.0
         )
 
-        # NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, self.frontVisionCamera, launchTimeout=5))
-        # NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
-        # NamedCommands.registerCommand("Eject", Eject(self.fuelSubsystem))
-        # NamedCommands.registerCommand("Climb", ClimbUp(self.climbSubsystem))  # fixed: was fuelSubsystem
+        NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, self.frontVisionCamera, launchTimeout=5))
+        NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
+        NamedCommands.registerCommand("Eject", Eject(self.fuelSubsystem))
+        NamedCommands.registerCommand("Climb", ClimbUp(self.climbSubsystem))
 
         # Run the homing routine immediately on startup to zero the climber encoders
         #ClimberHoming(self.climbSubsystem).schedule()
@@ -84,7 +85,7 @@ class RobotContainer:
         # While the Y button on the operator controller is held, run the launch
         # sequence command on the fuel subsystem.
         self.operatorController.y().onTrue(
-            LaunchSequence(self.fuelSubsystem)
+            LaunchSequence(self.fuelSubsystem, self.frontVisionCamera)
         )
 
         self.operatorController.x().onTrue(StopLaunch(self.fuelSubsystem))
@@ -115,6 +116,8 @@ class RobotContainer:
         self.climbSubsystem.setDefaultCommand(
             ClimbManual(self.climbSubsystem, self.operatorController)
         )
+
+        self.driverController.a().onTrue(ResetRotation(self.driveSubsystem, Rotation2d.fromDegrees(0)))
 
         # self.fuelSubsystem.setDefaultCommand(
             # ChangeLaunchSpeed(self.fuelSubsystem, self.operatorController)

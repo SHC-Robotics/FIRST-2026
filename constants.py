@@ -1,9 +1,11 @@
 class DriveConstants:
     # Motor controller IDs for drivetrain motors
-    LEFT_LEADER_ID = 1
-    LEFT_FOLLOWER_ID = 2
-    RIGHT_LEADER_ID = 3
-    RIGHT_FOLLOWER_ID = 4
+    LEFT_LEADER_ID = 4
+    LEFT_FOLLOWER_ID = 3
+    RIGHT_LEADER_ID = 2
+    RIGHT_FOLLOWER_ID = 1
+
+    DRIVE_SPEED_MULT = 0.6
 
     DRIVE_SPEED_MULT = 0.6
 

@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.168445078459343,
-        "y": 7.560784593437946
+        "x": 3.2627389443651924,
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.190599144079885,
-        "y": 7.651355206847361
+        "x": 3.5127389443651924,
+        "y": 4.0
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.2535235378031384,
-        "y": 6.046961483594864
+        "x": 2.150014265335235,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 3.2093669757489294,
-        "y": 6.951050285306704
+        "x": 1.9000142653352352,
+        "y": 4.0
       },
       "nextControl": {
-        "x": 1.297680099857348,
-        "y": 5.142872681883024
+        "x": 2.400014265335235,
+        "y": 4.0
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.379186875891583,
-        "y": 3.912082738944366
+        "x": 1.8,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 1.2443081312410849,
-        "y": 3.950898716119831
+        "x": 1.55,
+        "y": 4.0
       },
       "nextControl": null,
       "isLocked": false,
@@ -50,7 +50,31 @@
   "eventMarkers": [
     {
       "name": "Shoot",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 1.0101282916947993,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 5.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Shoot"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Climb",
+      "waypointRelativePos": 1.847400405131653,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -67,11 +91,11 @@
     "velocity": 0,
     "rotation": 0.0
   },
-  "reversed": false,
+  "reversed": true,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -10.954062643398633
   },
   "useDefaultConstraints": true
 }
