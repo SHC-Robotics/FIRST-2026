@@ -12,7 +12,8 @@ class ResetRotation(commands2.Command):
         self.addRequirements(self.driveSubsystem)
 
     def initialize(self) -> None:
-        self.driveSubsystem.poseEstimator.resetRotation(self.rot)
+        gyro_rot = self.driveSubsystem.getHeading()
+        self.driveSubsystem.poseEstimator.resetRotation(gyro_rot.rotateBy(self.rot))
 
     def end(self, interrupted: bool) -> None:
         pass
