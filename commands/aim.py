@@ -15,13 +15,20 @@ class Aim(commands2.Command):
         self.addRequirements(self.driveSubsystem)
         self.finished = False
 
+        # Distance (m) -> Multiplier
+        # Sorted least to greatest distance
+        self.speeds = {
+            5.5: 0.7,
+        }
+
     def initialize(self) -> None:
         self.finished = False
 
     def execute(self) -> None:
-        delta_rot = self.compute_delta_rot()
+        (distance, delta_rot) = self.compute_distance_delta_rot()
 
         wpilib.SmartDashboard.putNumber("delta rot degrees", delta_rot)
+        wpilib.SmartDashboard.putNumber("hub distance", distance)
 
         if abs(delta_rot) < 1.0:
             self.finished = True
@@ -37,7 +44,7 @@ class Aim(commands2.Command):
     def end(self, interrupted: bool) -> None:
         self.driveSubsystem.driveArcade(0, 0)
 
-    def compute_delta_rot(self):
+    def compute_distance_delta_rot(self):
         if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
             hub_position = FieldConstants.RED_HUB_POSITION
         else:
@@ -49,9 +56,26 @@ class Aim(commands2.Command):
         target_rot = (to_hub / hub_distance).angle()
         delta_rot = target_rot.degrees() - bot_pose.rotation().degrees()
 
-        wpilib.SmartDashboard.putNumber("hub distance", hub_distance)
-
         if delta_rot > 180:
             delta_rot -= 360
 
-        return delta_rot
+        return (hub_distance, delta_rot)
+
+    def find_speed(self, dist):
+        distances = sorted(self.speeds.keys())
+
+        if dist < distances[0]:
+            return self.speeds[distances[0]]
+
+        for i, d in enumerate(distances):
+            if dist < d:
+                d1 = distances[i - 1]
+                d2 = d
+                speed1 = self.speeds[d1]
+                speed2 = self.speeds[d2]
+
+                t = (dist - d1) / (d2 - d1)
+                s = speed1 + (speed2 - speed1) * t
+                return s
+
+        return self.speeds[distances[-1]]
