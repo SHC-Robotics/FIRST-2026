@@ -16,7 +16,7 @@ class Aim(commands2.Command):
         self.finished = False
 
     def initialize(self) -> None:
-        pass
+        self.finished = False
 
     def execute(self) -> None:
         delta_rot = self.compute_delta_rot()
@@ -48,6 +48,8 @@ class Aim(commands2.Command):
         hub_distance = math.sqrt(to_hub.dot(to_hub))
         target_rot = (to_hub / hub_distance).angle()
         delta_rot = target_rot.degrees() - bot_pose.rotation().degrees()
+
+        wpilib.SmartDashboard.putNumber("hub distance", hub_distance)
 
         if delta_rot > 180:
             delta_rot -= 360
