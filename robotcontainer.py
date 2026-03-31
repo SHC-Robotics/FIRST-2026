@@ -63,11 +63,6 @@ class RobotContainer:
         NamedCommands.registerCommand("ClimbLift", ClimbLift(self.climbSubsystem))
         NamedCommands.registerCommand("Aim", Aim(self.driveSubsystem))
 
-        # Run the homing routine immediately on startup to zero the climber encoders
-        #ClimberHoming(self.climbSubsystem).schedule()
-
-        # NamedCommands.registerCommand("Aim", Aim(self.driveSubsystem, self.driverController, self.frontVisionCamera))
-
         # The autonomous chooser
         self.autoChooser = AutoBuilder.buildAutoChooser()
 
@@ -113,10 +108,6 @@ class RobotContainer:
         self.driverController.a().whileTrue(ResetRotation(self.driveSubsystem, Rotation2d.fromDegrees(0)))
 
         self.driverController.x().whileTrue(Aim(self.driveSubsystem))
-
-        # self.fuelSubsystem.setDefaultCommand(
-            # ChangeLaunchSpeed(self.fuelSubsystem, self.operatorController)
-        # )
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
 
