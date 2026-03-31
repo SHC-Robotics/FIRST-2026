@@ -15,7 +15,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "back up right"
+                        "pathName": "back up left"
                       }
                     },
                     {
@@ -27,7 +27,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "climb right 1"
+                        "pathName": "climb left 1"
                       }
                     }
                   ]
@@ -45,7 +45,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "climb right finish"
+            "pathName": "climb left finish"
           }
         },
         {
