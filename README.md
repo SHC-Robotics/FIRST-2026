@@ -20,15 +20,14 @@ py -3 -m robotpy deploy
 
 ### Driver Controller
 
-- Left joystick: translation
-- Right joystick: rotation
+![Driver Controls](./images/driver-controls.png)
 
 ### Operator Controller
 
-- Left bumper: intake fuel
-- Right bumper: launch fuel
-- Button A: eject fuel
+![Operator Controls](./images/operator-controls.png)
 
 ## References
 
 - [The RobotPy Documentation](https://robotpy.readthedocs.io/en/stable/index.html)
+- [Phoenix6 Documentation](https://api.ctr-electronics.com/phoenix6/2024/python/autoapi/phoenix6/index.html)
+- [Limelight Documentation](https://docs.limelightvision.io/docs/docs-limelight/getting-started/summary)
