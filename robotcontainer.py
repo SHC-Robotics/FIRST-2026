@@ -67,7 +67,9 @@ class RobotContainer:
         NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, launchTimeout=5))
         NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
         NamedCommands.registerCommand("Eject", Eject(self.fuelSubsystem))
-        NamedCommands.registerCommand("Climb", ClimbUp(self.climbSubsystem))
+        NamedCommands.registerCommand("ClimbUp", ClimbUp(self.climbSubsystem))
+        NamedCommands.registerCommand("ClimbLift", ClimbLift(self.climbSubsystem))
+        NamedCommands.registerCommand("Aim", Aim(self.driveSubsystem))
 
         # Run the homing routine immediately on startup to zero the climber encoders
         #ClimberHoming(self.climbSubsystem).schedule()
