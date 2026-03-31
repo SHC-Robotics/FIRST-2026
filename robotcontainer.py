@@ -51,18 +51,10 @@ class RobotContainer:
         self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
         self.frontVisionCamera = VisionCamera("limelight-front")
         self.backVisionCamera = VisionCamera("limelight-back")
-        self.visionLocalizer.addCamera(
-            self.frontVisionCamera,
-            poseOnRobot=Translation3d(0.3066, 0.1056, 0.66), # Forward: +X, Right: +Y, Up: +Z
-            headingOnRobot=Rotation2d(0.0), # yaw
-            pitchAngleDegrees=0.0,
-        )
-        self.visionLocalizer.addCamera(
-            self.backVisionCamera,
-            poseOnRobot=Translation3d(0.264, 0.094, 0.58),
-            headingOnRobot=Rotation2d(180.0),
-            pitchAngleDegrees=0.0
-        )
+        # LL Forward: 0.29, LL Right: 0.11, LL Up: 0.5, LL Yaw: 0
+        self.visionLocalizer.addCamera(self.frontVisionCamera)
+        # LL Forward: -0.34, LL Right: -0.18, LL Up: 0.51, LL Yaw: 180
+        self.visionLocalizer.addCamera(self.backVisionCamera)
 
         NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, launchTimeout=5))
         NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))

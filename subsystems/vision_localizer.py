@@ -13,9 +13,6 @@ IMU_SEED_DURATION = 2.0  # seconds to spend in mode 1 seeding before switching t
 @dataclass
 class CameraState:
     camera: VisionCamera
-    poseOnRobot: Translation3d
-    headingOnRobot: Rotation2d
-    pitchAngleDegrees: float
     minPercentFrame: float
     maxRotationSpeed: float
 
@@ -34,17 +31,11 @@ class VisionLocalizer(commands2.Subsystem):
     def addCamera(
         self,
         camera: VisionCamera,
-        poseOnRobot: Translation3d,
-        headingOnRobot: Rotation2d,
-        pitchAngleDegrees: float,
         minPercentFrame: float = 0.07,
         maxRotationSpeed: float = 120,
     ) -> None:
         self.cameras[camera.cameraName] = CameraState(
             camera,
-            poseOnRobot,
-            headingOnRobot,
-            pitchAngleDegrees,
             minPercentFrame,
             maxRotationSpeed,
         )
