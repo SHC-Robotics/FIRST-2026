@@ -14,10 +14,6 @@ class ClimbDown(commands2.Command):
         self.addRequirements(self.climbSubsystem)
 
     def initialize(self) -> None:
-        # if self.climbSubsystem.isAtBottom():
-        #     print("ClimbDown: already at bottom, not starting")
-        #     return
-
         self.targetPosition = self.climbSubsystem.homePosition
         print(f"ClimbDown: moving to home position {self.targetPosition:.2f} rotations")
         self.climbSubsystem.setMotionMagicPosition(self.targetPosition)
@@ -37,18 +33,10 @@ class ClimbDown(commands2.Command):
         if interrupted:
             print("ClimbDown: interrupted")
         else:
-            # self.climbSubsystem.leftArm.set_position(0)
-            # self.climbSubsystem.leftArm.set_position(0)
-
             print("ClimbDown: reached home position")
 
     def isFinished(self) -> bool:
-        # Primary stop: both limit switches physically confirm arms are fully down
-        # if self.climbSubsystem.isAtBottom():
-        #     print("ClimbDown: both limit switches triggered arms fully retracted, stopping")
-        #     return True
-
-        # Fallback: both encoders reached home within tolerance
+        # Stop: both encoders reached home within tolerance
         if self.climbSubsystem.isAtPosition(self.targetPosition, ClimberConstants.POSITION_TOLERANCE):
             print("ClimbDown: home position reached")
             return True

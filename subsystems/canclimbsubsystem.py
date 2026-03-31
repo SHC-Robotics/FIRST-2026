@@ -12,10 +12,6 @@ class CANClimbSubsystem(commands2.Subsystem):
         self.leftArm = hardware.TalonFX(ClimberConstants.LEFT_ARM_ID)
         self.rightArm = hardware.TalonFX(ClimberConstants.RIGHT_ARM_ID)
 
-        # Limit switch wired to a DIO port — triggers when arms are fully retracted (down)
-        self.limitSwitchLeft = wpilib.DigitalInput(ClimberConstants.LIMIT_SWITCH_LEFT_PORT)
-        self.limitSwitchRight = wpilib.DigitalInput(ClimberConstants.LIMIT_SWITCH_RIGHT_PORT)
-
         # Motion Magic position request (units: rotations, voltage-based)
         # Cruise velocity in the Motion Magic config caps how fast it moves to the target
         # Upgrade path: swap to MotionMagicTorqueCurrentFOC if Phoenix Pro is available
@@ -65,23 +61,11 @@ class CANClimbSubsystem(commands2.Subsystem):
         self.rightArm.configurator.apply(config)
 
         # homePosition is set to 0 after homing completes.
-        # Until ClimberHoming runs, this is a best-guess fallback from boot position.
+        # Until ClimbHomeManual runs, this is a best-guess fallback from boot position.
         # Do not rely on this value for accurate positioning until homing has been run.
         self.homePosition = self.leftArm.get_position().value
 
         self.duty_cycle_request = controls.DutyCycleOut(0)
-
-    def isLeftAtBottom(self) -> bool:
-        """Returns True when the left arm limit switch is triggered."""
-        return self.limitSwitchLeft.get()
-
-    def isRightAtBottom(self) -> bool:
-        """Returns True when the right arm limit switch is triggered."""
-        return self.limitSwitchRight.get()
-
-    def isAtBottom(self) -> bool:
-        """Returns True when both arm limit switches are triggered."""
-        return self.isLeftAtBottom() and self.isRightAtBottom()
 
     def isLeftAtPosition(self, targetPosition: float, toleranceRotations: float = 0.5) -> bool:
         """Returns True when the left arm is within tolerance of the target position."""
@@ -131,9 +115,5 @@ class CANClimbSubsystem(commands2.Subsystem):
         self.stopRight()
 
     def periodic(self) -> None:
-        """Safety: if limit switch is hit, stop the arms regardless of active command."""
         wpilib.SmartDashboard.putNumber("leftArm position", self.leftArm.get_position().value)
-        wpilib.SmartDashboard.putBoolean("left switch", self.limitSwitchLeft.get())
-        wpilib.SmartDashboard.putBoolean("right switch", self.limitSwitchRight.get())
-        # if self.isAtBottom():
-        #     self.stop()
+        wpilib.SmartDashboard.putNumber("rightArm position", self.rightArm.get_position().value)

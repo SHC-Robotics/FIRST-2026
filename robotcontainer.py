@@ -15,7 +15,7 @@ from commands.intake import Intake
 from commands.climb_down import ClimbDown
 from commands.climb_up import ClimbUp
 from commands.climb_manual import ClimbManual
-from commands.homing import ClimbHomeManual, ClimberHoming
+from commands.homing import ClimbHomeManual
 from commands.launchsequence import LaunchSequence
 from commands.launch import StopLaunch
 from subsystems.candrivesubsystem import CANDriveSubsystem
