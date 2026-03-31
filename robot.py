@@ -50,3 +50,7 @@ class Robot(commands2.TimedCommandRobot):
     def testInit(self) -> None:
         # Cancel all running commands when testing starts
         commands2.CommandScheduler.getInstance().cancelAll()
+
+    def robotPeriodic(self) -> None:
+        wpilib.SmartDashboard.putNumber("Match Time", wpilib.DriverStation.getMatchTime())
+        wpilib.SmartDashboard.putString("Game Message", wpilib.DriverStation.getGameSpecificMessage())
