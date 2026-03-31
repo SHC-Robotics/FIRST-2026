@@ -1,84 +1,81 @@
-# import commands2
-# import wpilib
-
-# from constants import AprilTagIds, FuelConstants
-# from subsystems.candrivesubsystem import CANDriveSubsystem
-
-# ALIGNED_THRESHOLD = 0.05
-
-# # All tag IDs that are part of each alliance's hub
-# RED_HUB_TAGS  = AprilTagIds.RED_HUB_TAGS   # e.g. [1, 2, 3, 4]  — update to match your constants
-# BLUE_HUB_TAGS = AprilTagIds.BLUE_HUB_TAGS  # e.g. [5, 6, 7, 8]
+from constants import FieldConstants
+from subsystems.candrivesubsystem import CANDriveSubsystem
+from subsystems.vision_localizer import VisionLocalizer
+import commands2
+import math
+import wpilib
+from wpimath.geometry import Translation2d, Rotation2d, Pose2d
 
 
-# class Aim(commands2.Command):
-#     """
-#     Rotates the robot toward the closest visible hub AprilTag on its alliance side.
-#     Uses rawfiducials area (larger area = closer tag) to pick the best target.
-#     """
+class Aim(commands2.Command):
+    def __init__(self, driveSubsystem: CANDriveSubsystem) -> None:
+        super().__init__()
 
-#     def __init__(self, driveSubsystem: CANDriveSubsystem, driverController, visionCamera) -> None:
-#         super().__init__()
+        self.driveSubsystem = driveSubsystem
+        self.addRequirements(self.driveSubsystem)
+        self.finished = False
 
-#         self.driveSubsystem = driveSubsystem
-#         self.controller = driverController
-#         self.camera = visionCamera
-#         self.addRequirements(self.driveSubsystem)
+        # Distance (m) -> Multiplier
+        # Sorted least to greatest distance
+        self.speeds = {
+            5.5: 0.7,
+        }
 
-#     # ------------------------------------------------------------------
-#     # Helpers
-#     # ------------------------------------------------------------------
+    def initialize(self) -> None:
+        self.finished = False
 
-#     def _getAllianceTags(self) -> list[int]:
-#         if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
-#             return RED_HUB_TAGS
-#         return BLUE_HUB_TAGS
+    def execute(self) -> None:
+        (distance, delta_rot) = self.compute_distance_delta_rot()
 
-#     def _getBestTagData(self) -> dict | None:
-#         best = None
-#         best_dist = float("inf")
+        wpilib.SmartDashboard.putNumber("delta rot degrees", delta_rot)
+        wpilib.SmartDashboard.putNumber("hub distance", distance)
 
-#         for tag_id in self._getAllianceTags():
-#             data = self.camera.getHubData(tag_id)
-#             if data["dist"] is not None and data["dist"] < best_dist:
-#                 best_dist = data["dist"]
-#                 best = {"id": tag_id, **data}
+        if abs(delta_rot) < 1.0:
+            self.finished = True
+            return
 
-#         return best
+        rotation_output = self.driveSubsystem.orientationController.calculate(delta_rot, 0)
+        rotation_output = max(min(rotation_output, 0.15), -0.15)
+        self.driveSubsystem.driveArcade(0, rotation_output)
 
-#     # ------------------------------------------------------------------
-#     # Command lifecycle
-#     # ------------------------------------------------------------------
+    def isFinished(self) -> bool:
+        return self.finished
 
-#     def initialize(self) -> None:
-#         wpilib.SmartDashboard.putString("Current command", "Aim")
-#         print(f"Aim started -- targeting closest of tags {self._getAllianceTags()}")
+    def end(self, interrupted: bool) -> None:
+        self.driveSubsystem.driveArcade(0, 0)
 
-#     def execute(self) -> None:
-#         best = self._getBestTagData()
+    def compute_distance_delta_rot(self):
+        if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
+            hub_position = FieldConstants.RED_HUB_POSITION
+        else:
+            hub_position = FieldConstants.BLUE_HUB_POSITION
 
-#         if best is None:
-#             self.driveSubsystem.driveArcade(0, 0)
-#             wpilib.SmartDashboard.putString("Aim Target", "NONE")
-#             return
+        bot_pose = self.driveSubsystem.getPose()
+        to_hub = hub_position - bot_pose.translation()
+        hub_distance = math.sqrt(to_hub.dot(to_hub))
+        target_rot = (to_hub / hub_distance).angle()
+        delta_rot = target_rot.degrees() - bot_pose.rotation().degrees()
 
-#         wpilib.SmartDashboard.putString(
-#             "Aim Target", f"id={best['id']} tx={best['tx']:.2f} area={best['area']:.3f}"
-#         )
+        if delta_rot > 180:
+            delta_rot -= 360
 
-#         rotation_output = self.driveSubsystem.orientationController.calculate(best["tx"], 0)
-#         rotation_output = max(min(rotation_output, 0.15), -0.15)
-#         self.driveSubsystem.driveArcade(0, rotation_output)
+        return (hub_distance, delta_rot)
 
-#     def isFinished(self) -> bool:
-#         best = self._getBestTagData()
+    def find_speed(self, dist):
+        distances = sorted(self.speeds.keys())
 
-#         # No tag visible — bail out
-#         if best is None:
-#             return True
+        if dist < distances[0]:
+            return self.speeds[distances[0]]
 
-#         return -ALIGNED_THRESHOLD < best["tx"] < ALIGNED_THRESHOLD
+        for i, d in enumerate(distances):
+            if dist < d:
+                d1 = distances[i - 1]
+                d2 = d
+                speed1 = self.speeds[d1]
+                speed2 = self.speeds[d2]
 
-#     def end(self, interrupted: bool) -> None:
-#         self.driveSubsystem.driveArcade(0, 0)
-#         print(f"Aim ended (interrupted={interrupted})")
+                t = (dist - d1) / (d2 - d1)
+                s = speed1 + (speed2 - speed1) * t
+                return s
+
+        return self.speeds[distances[-1]]
