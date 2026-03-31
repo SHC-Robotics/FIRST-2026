@@ -7,13 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "new right trench shoot"
+            "pathName": "back up right"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "climb right 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "climb right 2"
           }
         }
       ]
