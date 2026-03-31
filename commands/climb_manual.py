@@ -17,11 +17,11 @@ class ClimbManual(commands2.Command):
         else:
             self.climbSubsystem.setVoltageLeft(leftY)
 
-        # rightY = self.controller.getRightY()
-        # if rightY < 0.1 and rightY > -0.1:
-        #     self.climbSubsystem.stopRight()
-        # else:
-        #     self.climbSubsystem.setVoltageRight(rightY)
+        rightY = self.controller.getRightY()
+        if rightY < 0.1 and rightY > -0.1:
+            self.climbSubsystem.stopRight()
+        else:
+            self.climbSubsystem.setVoltageRight(rightY)
 
     def end(self, interrupted: bool) -> None:
         self.climbSubsystem.stop()

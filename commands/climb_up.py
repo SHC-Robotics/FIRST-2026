@@ -24,8 +24,8 @@ class ClimbUp(commands2.Command):
         if self.climbSubsystem.isLeftAtPosition(self.targetPosition, ClimberConstants.POSITION_TOLERANCE):
             self.climbSubsystem.stopLeft()
 
-        # if self.climbSubsystem.isRightAtPosition(self.targetPosition, ClimberConstants.POSITION_TOLERANCE):
-        #     self.climbSubsystem.stopRight()
+        if self.climbSubsystem.isRightAtPosition(self.targetPosition, ClimberConstants.POSITION_TOLERANCE):
+            self.climbSubsystem.stopRight()
 
     def end(self, interrupted: bool) -> None:
         if interrupted:
