@@ -25,6 +25,10 @@ class FuelConstants:
     FEEDER_MOTOR_CURRENT_LIMIT = 60
     LAUNCHER_MOTOR_CURRENT_LIMIT = 60
 
+    INITIAL_SHOOT_MULT = 0.65
+    SHOOT_MULT_LOWER = 0.5
+    SHOOT_MULT_UPPER = 0.85
+
     # Voltage values for various fuel operations. These values may need to be tuned
     # based on exact robot construction.
     # See the Software Guide for tuning information
