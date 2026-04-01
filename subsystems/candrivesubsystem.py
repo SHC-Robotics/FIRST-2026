@@ -244,11 +244,6 @@ class CANDriveSubsystem(commands2.Subsystem):
         left_target_rps  = left_percent  * self.MAX_RPS
         right_target_rps = right_percent * self.MAX_RPS
 
-        if left_target_rps:
-            wpilib.SmartDashboard.putNumber("Left Robot Velocity", self.velocity_request.with_velocity(left_target_rps))
-        if right_target_rps:
-            wpilib.SmartDashboard.putNumber("Right Robot Velocity", self.velocity_request.with_velocity(right_target_rps))
-
         self.leftLeader.set_control(
             self.velocity_request.with_velocity(left_target_rps)
         )
