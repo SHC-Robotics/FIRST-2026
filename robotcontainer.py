@@ -11,6 +11,7 @@ import commands2.cmd
 from constants import OperatorConstants
 from commands.drive import Drive
 from commands.eject import Eject
+from commands.autolaunch import AutoLaunch
 from commands.intake import Intake
 from commands.climb_down import ClimbDown
 from commands.climb_up import ClimbUp
@@ -64,9 +65,14 @@ class RobotContainer:
         NamedCommands.registerCommand("Aim", Aim(self.driveSubsystem))
 
         # The autonomous chooser
-        self.autoChooser = AutoBuilder.buildAutoChooser()
+        self.autoChooser = wpilib.SendableChooser()
 
         self.configureBindings()
+
+        self.autoChooser.setDefaultOption("None", commands2.cmd.none())
+        self.autoChooser.addOption(
+            "Shoot in place", AutoLaunch(self.fuelSubsystem),
+        )
 
         # Set the options to show up in the Dashboard for selecting auto modes
         wpilib.SmartDashboard.putData("Auto Chooser", self.autoChooser)
