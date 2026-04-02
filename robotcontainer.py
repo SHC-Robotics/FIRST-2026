@@ -61,7 +61,7 @@ class RobotContainer:
         NamedCommands.registerCommand("Eject", Eject(self.fuelSubsystem))
         NamedCommands.registerCommand("ClimbUp", ClimbUp(self.climbSubsystem))
         NamedCommands.registerCommand("ClimbLift", ClimbLift(self.climbSubsystem))
-        NamedCommands.registerCommand("Aim", Aim(self.driveSubsystem))
+        NamedCommands.registerCommand("Aim", Aim(self.driveSubsystem, self.fuelSubsystem))
 
         # The autonomous chooser
         self.autoChooser = AutoBuilder.buildAutoChooser()
@@ -107,7 +107,7 @@ class RobotContainer:
 
         self.driverController.a().whileTrue(ResetRotation(self.driveSubsystem, Rotation2d.fromDegrees(0)))
 
-        self.driverController.x().whileTrue(Aim(self.driveSubsystem))
+        self.driverController.x().whileTrue(Aim(self.driveSubsystem, self.fuelSubsystem))
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
 

@@ -38,7 +38,6 @@ class ClimbDown(commands2.Command):
     def isFinished(self) -> bool:
         # Stop: both encoders reached home within tolerance
         if self.climbSubsystem.isAtPosition(self.targetPosition, ClimberConstants.POSITION_TOLERANCE):
-            print("ClimbDown: home position reached")
             return True
 
         return False

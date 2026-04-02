@@ -81,8 +81,8 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.leftLeader.get_position().refresh()
         self.rightLeader.get_position().refresh()
 
-        left_position_meters  =  self.leftLeader.get_position().value * METERS_PER_ROTATION
-        right_position_meters = -self.rightLeader.get_position().value * METERS_PER_ROTATION
+        left_position_meters  = self.leftLeader.get_position().value * METERS_PER_ROTATION
+        right_position_meters = self.rightLeader.get_position().value * METERS_PER_ROTATION
 
         # NavX calibrates in background — no sleep needed.
         # Check gyro.isCalibrating() in disabledPeriodic() if needed.

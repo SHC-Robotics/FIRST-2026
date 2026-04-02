@@ -1,5 +1,6 @@
 from constants import FieldConstants
 from subsystems.candrivesubsystem import CANDriveSubsystem
+from subsystems.canfuelsubsystem import CANFuelSubsystem
 from subsystems.vision_localizer import VisionLocalizer
 import commands2
 import math
@@ -8,17 +9,22 @@ from wpimath.geometry import Translation2d, Rotation2d, Pose2d
 
 
 class Aim(commands2.Command):
-    def __init__(self, driveSubsystem: CANDriveSubsystem) -> None:
+    def __init__(self, driveSubsystem: CANDriveSubsystem, fuelSubsystem: CANFuelSubsystem) -> None:
         super().__init__()
 
         self.driveSubsystem = driveSubsystem
+        self.fuelSubsystem = fuelSubsystem
         self.addRequirements(self.driveSubsystem)
         self.finished = False
 
         # Distance (m) -> Multiplier
         # Sorted least to greatest distance
         self.speeds = {
-            5.5: 0.7,
+            5: 0.7,
+            4: 0.675,
+            3: 0.64,
+            2.5: 0.6,
+            2: 0.55,
         }
 
     def initialize(self) -> None:
@@ -26,9 +32,13 @@ class Aim(commands2.Command):
 
     def execute(self) -> None:
         (distance, delta_rot) = self.compute_distance_delta_rot()
+        speed = self.find_speed(distance)
 
         wpilib.SmartDashboard.putNumber("delta rot degrees", delta_rot)
         wpilib.SmartDashboard.putNumber("hub distance", distance)
+        wpilib.SmartDashboard.putNumber("aim shoot mult", speed)
+
+        # self.fuelSubsystem.multiplier = speed
 
         if abs(delta_rot) < 1.0:
             self.finished = True

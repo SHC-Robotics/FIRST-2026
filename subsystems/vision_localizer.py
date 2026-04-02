@@ -78,7 +78,6 @@ class VisionLocalizer(commands2.Subsystem):
         # IMU seeding phase — push heading to cameras in mode 1 but skip
         # vision measurement fusion until the LL4 IMU is properly seeded.
         if self._imuSeeding:
-            print("Seeding IMU")
             for c in self.cameras.values():
                 c.camera.robotOrientationSetRequest.set(
                     [heading.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -88,7 +87,7 @@ class VisionLocalizer(commands2.Subsystem):
                     c.camera.imuModeRequest.set(4)
                 self._imuSeeding = False
                 self._finishSeeding = False
-                print(f"LL4 IMU seeding complete after, switching to mode 4")
+                print(f"LL4 IMU seeding complete; switching to mode 4")
             return
 
         for c in self.cameras.values():
