@@ -1,3 +1,4 @@
+from commands.aim import Aim
 from commands.launchsequence import LaunchSequence
 import commands2
 from constants import FuelConstants
@@ -38,9 +39,10 @@ class AutoBackUpLaunch(commands2.SequentialCommandGroup):
         super().__init__()
 
         self.addCommands(
-            AutoDrive(driveSubsystem, -0.1, 0.1).withTimeout(3),
+            AutoDrive(driveSubsystem, 0.1, 0.0).withTimeout(3),
             commands2.cmd.runOnce(lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem),
-            LaunchSequence(fuelSubsystem, launchTimeout=15)
+            Aim(driveSubsystem, fuelSubsystem),
+            LaunchSequence(fuelSubsystem, launchTimeout=10)
         )
 
 def configureLaunchSpeed(fuelSubsystem: CANFuelSubsystem):

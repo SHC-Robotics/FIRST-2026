@@ -11,7 +11,7 @@ import commands2.cmd
 from constants import OperatorConstants
 from commands.drive import Drive
 from commands.eject import Eject
-from commands.autolaunch import AutoLaunch
+from commands.autolaunch import AutoBackUpLaunch, AutoLaunch
 from commands.intake import Intake
 from commands.climb_down import ClimbDown
 from commands.climb_up import ClimbUp
@@ -72,6 +72,9 @@ class RobotContainer:
         self.autoChooser.setDefaultOption("None", commands2.cmd.none())
         self.autoChooser.addOption(
             "Shoot in place", AutoLaunch(self.fuelSubsystem),
+        )
+        self.autoChooser.addOption(
+            "Back up shoot", AutoBackUpLaunch(self.driveSubsystem, self.fuelSubsystem),
         )
 
         # Set the options to show up in the Dashboard for selecting auto modes
