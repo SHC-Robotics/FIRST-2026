@@ -114,7 +114,7 @@ class RobotContainer:
             ClimbManual(self.climbSubsystem, self.operatorController)
         )
 
-        self.driverController.a().whileTrue(ZeroRotation(self.driveSubsystem))
+        # self.driverController.a().whileTrue(ZeroRotation(self.driveSubsystem))
 
         self.driverController.x().whileTrue(Aim(self.driveSubsystem, self.fuelSubsystem))
 
