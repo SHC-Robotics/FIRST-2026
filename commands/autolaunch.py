@@ -1,5 +1,6 @@
 from commands.aim import Aim
 from commands.launchsequence import LaunchSequence
+from commands.resetpose import ZeroRotation
 import commands2
 from constants import FuelConstants
 from subsystems.candrivesubsystem import CANDriveSubsystem
@@ -39,6 +40,7 @@ class AutoBackUpLaunch(commands2.SequentialCommandGroup):
         super().__init__()
 
         self.addCommands(
+            ZeroRotation(driveSubsystem),
             AutoDrive(driveSubsystem, 0.1, 0.0).withTimeout(3),
             commands2.cmd.runOnce(lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem),
             Aim(driveSubsystem, fuelSubsystem),

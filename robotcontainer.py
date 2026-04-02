@@ -1,6 +1,6 @@
 from commands.aim import Aim
 from commands.climb_lift import ClimbLift
-from commands.resetpose import ResetRotation
+from commands.resetpose import ResetRotation, ZeroRotation
 from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
 import wpilib
@@ -114,7 +114,7 @@ class RobotContainer:
             ClimbManual(self.climbSubsystem, self.operatorController)
         )
 
-        self.driverController.a().whileTrue(ResetRotation(self.driveSubsystem, Rotation2d.fromDegrees(0)))
+        self.driverController.a().whileTrue(ZeroRotation(self.driveSubsystem))
 
         self.driverController.x().whileTrue(Aim(self.driveSubsystem, self.fuelSubsystem))
 
