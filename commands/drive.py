@@ -35,7 +35,7 @@ class Drive(commands2.Command):
 
         self.driveSubsystem.driveArcade(
             -leftY * DriveConstants.DRIVE_SPEED_MULT * mult,
-            -rightX * DriveConstants.DRIVE_SPEED_MULT * mult,
+            rightX * DriveConstants.DRIVE_SPEED_MULT * mult,
         )
 
     def end(self, interrupted: bool) -> None:
