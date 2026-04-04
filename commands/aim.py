@@ -20,11 +20,11 @@ class Aim(commands2.Command):
         # Distance (m) -> Multiplier
         # Sorted least to greatest distance
         self.speeds = {
-            5: 0.7,
-            4: 0.675,
-            3: 0.64,
-            2.5: 0.6,
-            2: 0.55,
+            5: 0.67,
+            4: 0.65,
+            3: 0.61,
+            2.5: 0.58,
+            2: 0.56,
         }
 
     def initialize(self) -> None:
@@ -38,9 +38,9 @@ class Aim(commands2.Command):
         wpilib.SmartDashboard.putNumber("hub distance", distance)
         wpilib.SmartDashboard.putNumber("aim shoot mult", speed)
 
-        # self.fuelSubsystem.multiplier = speed
+        self.fuelSubsystem.multiplier = speed
 
-        if abs(delta_rot) < 1.0:
+        if abs(delta_rot) < 1.5:
             self.finished = True
             return
 

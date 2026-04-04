@@ -6,18 +6,22 @@ from constants import FuelConstants
 from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
 
+
 class AutoLaunch(commands2.SequentialCommandGroup):
     def __init__(self, fuelSubsystem: CANFuelSubsystem) -> None:
         super().__init__()
 
         self.addCommands(
-            commands2.cmd.runOnce(lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem),
-            LaunchSequence(fuelSubsystem, launchTimeout=15)
+            commands2.cmd.runOnce(
+                lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem
+            ),
+            LaunchSequence(fuelSubsystem, launchTimeout=15),
         )
+
 
 class AutoDrive(commands2.Command):
     def __init__(
-            self, driveSubsystem: CANDriveSubsystem, xSpeed: float, zRotation: float
+        self, driveSubsystem: CANDriveSubsystem, xSpeed: float, zRotation: float
     ) -> None:
         super().__init__()
 
@@ -35,17 +39,23 @@ class AutoDrive(commands2.Command):
     def isFinished(self) -> bool:
         return False
 
+
 class AutoBackUpLaunch(commands2.SequentialCommandGroup):
-    def __init__(self, driveSubsystem: CANDriveSubsystem, fuelSubsystem: CANFuelSubsystem) -> None:
+    def __init__(
+        self, driveSubsystem: CANDriveSubsystem, fuelSubsystem: CANFuelSubsystem
+    ) -> None:
         super().__init__()
 
         self.addCommands(
             ZeroRotation(driveSubsystem),
             AutoDrive(driveSubsystem, 0.1, 0.0).withTimeout(3),
-            commands2.cmd.runOnce(lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem),
-            Aim(driveSubsystem, fuelSubsystem),
-            LaunchSequence(fuelSubsystem, launchTimeout=10)
+            commands2.cmd.runOnce(
+                lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem
+            ),
+            Aim(driveSubsystem, fuelSubsystem).withTimeout(7),
+            LaunchSequence(fuelSubsystem, launchTimeout=10),
         )
+
 
 def configureLaunchSpeed(fuelSubsystem: CANFuelSubsystem):
     fuelSubsystem.multiplier = FuelConstants.AUTO_SHOOTING_MULTIPLIER

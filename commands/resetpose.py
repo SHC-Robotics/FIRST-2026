@@ -13,8 +13,9 @@ class ResetRotation(commands2.Command):
         self.addRequirements(self.driveSubsystem)
 
     def initialize(self) -> None:
-        self.driveSubsystem.gyro.setAngleAdjustment(self.rot.degrees())
         self.driveSubsystem.gyro.zeroYaw()
+        self.driveSubsystem.gyro.setAngleAdjustment(self.rot.degrees())
+
 
     def end(self, interrupted: bool) -> None:
         pass
@@ -27,9 +28,13 @@ class ZeroRotation(commands2.Command):
         self.addRequirements(self.driveSubsystem)
 
     def initialize(self) -> None:
+        self.driveSubsystem.gyro.zeroYaw()
         if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
             self.driveSubsystem.gyro.setAngleAdjustment(180)
         else:
             self.driveSubsystem.gyro.setAngleAdjustment(0)
 
-        self.driveSubsystem.gyro.zeroYaw()
+    def isFinished(self) -> bool:
+        return True
+
+

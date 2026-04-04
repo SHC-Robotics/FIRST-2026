@@ -7,8 +7,6 @@ import wpilib
 import commands2
 from wpimath.geometry import Rotation2d, Translation3d, Pose2d, Translation2d
 
-IMU_SEED_DURATION = 2.0  # seconds to spend in mode 1 seeding before switching to mode 4
-
 
 @dataclass
 class CameraState:
@@ -25,8 +23,7 @@ class VisionLocalizer(commands2.Subsystem):
         self.allowed = True
         self.cameras: Dict[str, CameraState] = dict()
 
-        self._imuSeeding = False
-        self._finishSeeding = False
+        self._enabled = False
 
     def addCamera(
         self,
@@ -45,23 +42,22 @@ class VisionLocalizer(commands2.Subsystem):
         """
         Call from teleopInit() and autonomousInit() in robot.py.
 
-        Starts the IMU seeding sequence — mode 1 seeds the LL4 internal IMU
-        from the NavX heading for IMU_SEED_DURATION seconds, then switches
-        to mode 4 (external IMU assisted convergence) for the rest of the match.
-        Vision measurements are blocked during the seeding window.
+        Switches LL4 to mode 4 (external IMU assisted convergence).
+        IMU is already seeded from the disabled period — no seeding window needed.
         """
-        self._finishSeeding = True
+        self._enabled = True
         for c in self.cameras.values():
-            c.camera.imuModeRequest.set(1)
+            c.camera.imuModeRequest.set(4)
 
     def onDisabled(self) -> None:
         """
-        Call from disabledInit() in robot.py.
+        Call from disabledPeriodic() in robot.py once alliance is confirmed.
 
         Keeps the LL4 internal IMU continuously seeded from the NavX while
         disabled so it has an accurate heading reference before the match starts.
+        Vision measurement fusion is blocked while disabled.
         """
-        self._imuSeeding = True
+        self._enabled = False
         for c in self.cameras.values():
             c.camera.imuModeRequest.set(1)
 
@@ -75,30 +71,18 @@ class VisionLocalizer(commands2.Subsystem):
         heading = self.drivetrain.getPose().rotation()
         rotationSpeed = self.drivetrain.getRotationSpeed()
 
-        # IMU seeding phase — push heading to cameras in mode 1 but skip
-        # vision measurement fusion until the LL4 IMU is properly seeded.
-        if self._imuSeeding:
-            for c in self.cameras.values():
-                c.camera.robotOrientationSetRequest.set(
-                    [heading.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0]
-                )
-            if self._finishSeeding:
-                for c in self.cameras.values():
-                    c.camera.imuModeRequest.set(4)
-                self._imuSeeding = False
-                self._finishSeeding = False
-                print(f"LL4 IMU seeding complete; switching to mode 4")
+        # Always feed heading — required in both mode 1 (seeding) and mode 4
+        for c in self.cameras.values():
+            c.camera.robotOrientationSetRequest.set(
+                [heading.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0]
+            )
+
+        # Don't fuse vision measurements until enabled
+        if not self._enabled or not self.allowed:
             return
 
         for c in self.cameras.values():
             camera = c.camera
-
-            # Feed current robot heading to MT2 every loop.
-            # MT2 requires this to eliminate pose ambiguity.
-            # Do NOT push camerapose_robotspace_set here — set in web UI instead.
-            camera.robotOrientationSetRequest.set(
-                [heading.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0]
-            )
 
             # Skip if rotating too fast — rapid turns smear tag corners
             if abs(rotationSpeed) > c.maxRotationSpeed:
@@ -120,12 +104,11 @@ class VisionLocalizer(commands2.Subsystem):
             latency_sec = visionPoseArray[6] / 1000.0
             timestamp = wpilib.Timer.getFPGATimestamp() - latency_sec
 
-            visionX   = visionPoseArray[0]
-            visionY   = visionPoseArray[1]   # index 1 is field Y, not index 2 (height)
+            visionX = visionPoseArray[0]
+            visionY = visionPoseArray[1]  # index 1 is field Y, not index 2 (height)
             visionYaw = visionPoseArray[5]
             visionPose = Pose2d(
-                Translation2d(visionX, visionY),
-                Rotation2d.fromDegrees(visionYaw)
+                Translation2d(visionX, visionY), Rotation2d.fromDegrees(visionYaw)
             )
 
             # Tighter std devs for multi-tag detections.
@@ -136,5 +119,6 @@ class VisionLocalizer(commands2.Subsystem):
             )
 
             wpilib.SmartDashboard.putString(
-                "Vision Pose", f"x: {visionX:.2f}, y: {visionY:.2f}, yaw: {visionYaw:.1f}, tags: {tagCount}"
+                "Vision Pose",
+                f"x: {visionX:.2f}, y: {visionY:.2f}, yaw: {visionYaw:.1f}, tags: {tagCount}",
             )

@@ -22,16 +22,37 @@ class Robot(commands2.TimedCommandRobot):
         self.container = robotcontainer.RobotContainer()
         # wpilib.CameraServer.launch()
 
+        #keeps track so only zeroes gyro once per match and not every time we enter autonomous or teleop
+        self.matchStarted = False
+        self.gyroZeroed = False
+
         # Track usage of Kitbot code
         hal.report(hal.tResourceType.kResourceType_Framework, 10)
 
     def disabledInit(self) -> None:
         # Continuously seed the LL4 internal IMU from the NavX while disabled
         # so it has an accurate heading reference before the match starts.
-        self.container.visionLocalizer.onDisabled()
+
+
+        #reminds to zero  gyro before match starts, but only once per match
+        self.gyroZeroed = False
+
+    def disabledPeriodic(self) -> None:
+        if not self.gyroZeroed and not self.matchStarted:
+            alliance = wpilib.DriverStation.getAlliance()
+            if alliance is not None:
+                self.container.driveSubsystem.gyro.zeroYaw()
+                if alliance == wpilib.DriverStation.Alliance.kRed:
+                    self.container.driveSubsystem.gyro.setAngleAdjustment(180)
+                else:
+                    self.container.driveSubsystem.gyro.setAngleAdjustment(0)
+                self.container.visionLocalizer.onDisabled()
+                self.gyroZeroed = True
+
 
     def autonomousInit(self) -> None:
         # Start IMU seeding sequence before switching to mode 4
+        self.matchStarted = True
         self.container.visionLocalizer.onEnabled()
 
         self.autonomousCommand = self.container.getAutonomousCommand()
@@ -45,6 +66,7 @@ class Robot(commands2.TimedCommandRobot):
             self.autonomousCommand.cancel()
 
         # Start IMU seeding sequence before switching to mode 4
+        self.matchStarted = True
         self.container.visionLocalizer.onEnabled()
 
         # Zero climbers
