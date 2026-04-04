@@ -43,7 +43,7 @@ class AutoBackUpLaunch(commands2.SequentialCommandGroup):
             ZeroRotation(driveSubsystem),
             AutoDrive(driveSubsystem, 0.1, 0.0).withTimeout(3),
             commands2.cmd.runOnce(lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem),
-            Aim(driveSubsystem, fuelSubsystem),
+            Aim(driveSubsystem, fuelSubsystem).withTimeout(7),
             LaunchSequence(fuelSubsystem, launchTimeout=10)
         )
 

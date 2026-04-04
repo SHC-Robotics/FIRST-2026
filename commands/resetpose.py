@@ -33,3 +33,6 @@ class ZeroRotation(commands2.Command):
             self.driveSubsystem.gyro.setAngleAdjustment(0)
 
         self.driveSubsystem.gyro.zeroYaw()
+
+    def isFinished(self) -> None:
+        return True
