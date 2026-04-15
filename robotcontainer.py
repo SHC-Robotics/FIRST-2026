@@ -79,9 +79,8 @@ class RobotContainer:
         self.operatorController.leftBumper().whileTrue(Intake(self.fuelSubsystem))
 
         # While the right bumper is held on the operator controller, run the eject command
-        # on the fuel subsystem. self.operatorController.rightBumper().whileTrue(Eject(self.fuelSubsystem))
-
-        # self.driverController.a().whileTrue(ZeroRotation(self.driveSubsystem))
+        # on the fuel subsystem.
+        self.operatorController.rightBumper().whileTrue(Eject(self.fuelSubsystem))
 
         self.driverController.x().whileTrue(Aim(self.driveSubsystem, self.fuelSubsystem))
 
