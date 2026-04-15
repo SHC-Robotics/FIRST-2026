@@ -1,5 +1,7 @@
 from commands.aim import Aim
+from commands.hopper import ShrinkHopper
 from commands.resetpose import ResetRotation, ZeroRotation
+from subsystems.canhoppersubsystem import CANHopperSubsystem
 from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
 import wpilib
@@ -40,6 +42,7 @@ class RobotContainer:
         # A Subsystem is a collection of motors, sensors, and other hardware objects that are operated on by a Command.
         self.driveSubsystem = CANDriveSubsystem()
         self.fuelSubsystem = CANFuelSubsystem(self.operatorController)
+        self.hopperSubsystem = CANHopperSubsystem()
 
         self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
         self.frontVisionCamera = VisionCamera("limelight-front")
