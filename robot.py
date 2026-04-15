@@ -33,6 +33,7 @@ class Robot(commands2.TimedCommandRobot):
         # Continuously seed the LL4 internal IMU from the NavX while disabled
         # so it has an accurate heading reference before the match starts.
 
+        self.container.hopperSubsystem.setExtensionPosition(0)
 
         #reminds to zero  gyro before match starts, but only once per match
         self.gyroZeroed = False
