@@ -1,5 +1,5 @@
 from commands.aim import Aim
-from commands.hopper import ShrinkHopper
+from commands.hopper import GrowHopper, ShrinkHopper
 from commands.resetpose import ResetRotation, ZeroRotation
 from subsystems.canhoppersubsystem import CANHopperSubsystem
 from subsystems.vision_camera import VisionCamera
@@ -86,6 +86,10 @@ class RobotContainer:
         self.operatorController.rightBumper().whileTrue(Eject(self.fuelSubsystem))
 
         self.driverController.x().whileTrue(Aim(self.driveSubsystem, self.fuelSubsystem))
+
+        # FOR TESTING PURPOSES ONLY
+        self.driverController.leftBumper().onTrue(ShrinkHopper(self.hopperSubsystem))
+        self.driverController.rightBumper().onTrue(GrowHopper(self.hopperSubsystem))
 
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
 
