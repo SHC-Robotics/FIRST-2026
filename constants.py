@@ -65,3 +65,8 @@ class AprilTagIds:
 class FieldConstants:
     RED_HUB_POSITION = Translation2d(11.915394, 4.03479) # 469.11 in, 158.85 in
     BLUE_HUB_POSITION = Translation2d(4.625594, 4.03479) # 182.11 in, 158.85 in
+
+
+class HopperConstants:
+    EXTENSION_MOTOR_ID = 7
+    EXTENSION_MOTOR_CURRENT_LIMIT = 60
