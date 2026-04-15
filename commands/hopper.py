@@ -1,7 +1,11 @@
+from commands.intake import Intake
+from commands.launch import Launch
+from commands.spinup import SpinUp
 import commands2
+from subsystems.canfuelsubsystem import CANFuelSubsystem
 import wpilib
 
-from constants import HopperConstants
+from constants import FuelConstants, HopperConstants
 from subsystems.canhoppersubsystem import CANHopperSubsystem
 
 
@@ -42,3 +46,36 @@ class ShrinkHopper(commands2.Command):
             return True
 
         return False
+
+class IntakeGrowHopper(commands2.ParallelCommandGroup):
+    def __init__(self, fuelSubsystem: CANFuelSubsystem, hopperSubsystem: CANHopperSubsystem) -> None:
+        super().__init__()
+
+        self.addCommands(
+            GrowHopper(hopperSubsystem),
+            Intake(fuelSubsystem)
+        )
+
+class LaunchShrinkHopper(commands2.ParallelCommandGroup):
+    def __init__(self, fuelSubsystem: CANFuelSubsystem, hopperSubsystem: CANHopperSubsystem) -> None:
+        super().__init__()
+
+        self.addCommands(
+            ShrinkHopper(hopperSubsystem),
+            Launch(fuelSubsystem)
+        )
+
+class LaunchSequenceShrinkHopper(commands2.SequentialCommandGroup):
+    def __init__(self, fuelSubsystem: CANFuelSubsystem, hopperSubsystem: CANHopperSubsystem, launchTimeout=None) -> None:
+        super().__init__()
+
+        if launchTimeout:
+            self.addCommands(
+                SpinUp(fuelSubsystem).withTimeout(FuelConstants.SPIN_UP_SECONDS),
+                LaunchShrinkHopper(fuelSubsystem, hopperSubsystem).withTimeout(launchTimeout),
+            )
+        else: 
+            self.addCommands(
+                SpinUp(fuelSubsystem).withTimeout(FuelConstants.SPIN_UP_SECONDS),
+                LaunchShrinkHopper(fuelSubsystem, hopperSubsystem),
+            )
