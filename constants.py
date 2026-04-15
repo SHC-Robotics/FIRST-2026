@@ -70,3 +70,4 @@ class FieldConstants:
 class HopperConstants:
     EXTENSION_MOTOR_ID = 7
     EXTENSION_MOTOR_CURRENT_LIMIT = 60
+    EXTENSION_MOTOR_VOLTAGE = 1.0
