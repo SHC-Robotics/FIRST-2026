@@ -23,6 +23,8 @@ class GrowHopper(commands2.Command):
         self.hopperSubsystem.stop()
 
     def isFinished(self) -> bool:
+        wpilib.SmartDashboard.putNumber("Hopper position", self.hopperSubsystem.getExtensionPosition())
+
         if abs(self.hopperSubsystem.getExtensionPosition()) > HopperConstants.EXTENSION_NUM_ROTATIONS:
             return True
 
@@ -42,6 +44,8 @@ class ShrinkHopper(commands2.Command):
         self.hopperSubsystem.stop()
 
     def isFinished(self) -> bool:
+        wpilib.SmartDashboard.putNumber("Hopper position", self.hopperSubsystem.getExtensionPosition())
+
         if abs(self.hopperSubsystem.getExtensionPosition()) < 0.1:
             return True
 
