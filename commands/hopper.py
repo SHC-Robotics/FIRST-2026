@@ -17,6 +17,9 @@ class GrowHopper(commands2.Command):
         self.addRequirements(self.hopperSubsystem)
 
     def initialize(self) -> None:
+        if self.hopperSubsystem.getExtensionPosition() > HopperConstants.EXTENSION_NUM_ROTATIONS:
+            return
+
         self.hopperSubsystem.setExtension(HopperConstants.EXTENSION_MOTOR_VOLTAGE)
 
     def end(self, interrupted: bool) -> None:
@@ -25,7 +28,7 @@ class GrowHopper(commands2.Command):
     def isFinished(self) -> bool:
         wpilib.SmartDashboard.putNumber("Hopper position", self.hopperSubsystem.getExtensionPosition())
 
-        if abs(self.hopperSubsystem.getExtensionPosition()) > HopperConstants.EXTENSION_NUM_ROTATIONS:
+        if self.hopperSubsystem.getExtensionPosition() > HopperConstants.EXTENSION_NUM_ROTATIONS:
             return True
 
         return False
@@ -38,6 +41,9 @@ class ShrinkHopper(commands2.Command):
         self.addRequirements(self.hopperSubsystem)
 
     def initialize(self) -> None:
+        if self.hopperSubsystem.getExtensionPosition() < 0.1:
+            return
+
         self.hopperSubsystem.setExtension(-HopperConstants.EXTENSION_MOTOR_VOLTAGE)
 
     def end(self, interrupted: bool) -> None:
@@ -46,7 +52,7 @@ class ShrinkHopper(commands2.Command):
     def isFinished(self) -> bool:
         wpilib.SmartDashboard.putNumber("Hopper position", self.hopperSubsystem.getExtensionPosition())
 
-        if abs(self.hopperSubsystem.getExtensionPosition()) < 0.1:
+        if self.hopperSubsystem.getExtensionPosition() < 0.1:
             return True
 
         return False
