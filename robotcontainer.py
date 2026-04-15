@@ -24,7 +24,6 @@ from subsystems.canfuelsubsystem import CANFuelSubsystem
 from subsystems.canclimbsubsystem import CANClimbSubsystem
 
 from wpimath.geometry import Translation3d, Rotation2d
-from pathplannerlib.auto import AutoBuilder, NamedCommands
 
 class RobotContainer:
     """
@@ -56,13 +55,6 @@ class RobotContainer:
         self.visionLocalizer.addCamera(self.frontVisionCamera)
         # LL Forward: -0.34, LL Right: -0.18, LL Up: 0.51, LL Yaw: 180
         self.visionLocalizer.addCamera(self.backVisionCamera)
-
-        NamedCommands.registerCommand("Shoot", LaunchSequence(self.fuelSubsystem, launchTimeout=5))
-        NamedCommands.registerCommand("Intake", Intake(self.fuelSubsystem))
-        NamedCommands.registerCommand("Eject", Eject(self.fuelSubsystem))
-        NamedCommands.registerCommand("ClimbUp", ClimbUp(self.climbSubsystem))
-        NamedCommands.registerCommand("ClimbLift", ClimbLift(self.climbSubsystem))
-        NamedCommands.registerCommand("Aim", Aim(self.driveSubsystem, self.fuelSubsystem))
 
         # The autonomous chooser
         self.autoChooser = wpilib.SendableChooser()

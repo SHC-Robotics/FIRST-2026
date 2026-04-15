@@ -7,9 +7,6 @@ from wpimath.estimator import DifferentialDrivePoseEstimator
 from wpimath.kinematics import DifferentialDriveKinematics, DifferentialDriveWheelSpeeds, ChassisSpeeds
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.controller import PIDController
-from pathplannerlib.auto import AutoBuilder
-from pathplannerlib.controller import PPLTVController
-from pathplannerlib.config import RobotConfig
 import wpilib
 
 import navx
@@ -103,19 +100,6 @@ class CANDriveSubsystem(commands2.Subsystem):
         self.field = wpilib.Field2d()
         wpilib.SmartDashboard.putData("Field", self.field)
 
-        config = RobotConfig.fromGUISettings()
-
-        AutoBuilder.configure(
-            self.getPose,
-            self.resetPose,
-            self.getRobotRelativeSpeeds,
-            lambda speeds, feedforwards: self.driveRobotRelative(speeds),
-            PPLTVController(0.02),
-            config,
-            shouldFlipPath,
-            self
-        )
-
         # kP needs to be tuned. Start small (0.01 - 0.05).
         self.orientationController = PIDController(0.005, 0, 0)
         # Tell the controller that -180 and 180 are the same point so it takes the shortest path
@@ -179,9 +163,6 @@ class CANDriveSubsystem(commands2.Subsystem):
         return self.poseEstimator.getEstimatedPosition()
 
     def resetPose(self, pose: Pose2d) -> None:
-        # Do NOT call gyro.reset() here — PathPlanner provides the correct
-        # heading baked into pose. Resetting the gyro would zero it and
-        # contradict the pose's rotation from the very first loop of auto.
         self.poseEstimator.resetPosition(
             self._getGyroRotation(),
             self._getLeftPositionMeters(),
