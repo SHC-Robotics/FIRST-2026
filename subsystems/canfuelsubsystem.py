@@ -32,6 +32,7 @@ class CANFuelSubsystem(commands2.Subsystem):
         # apply the config to the controller
         feederConfig = rev.SparkMaxConfig()
         feederConfig.smartCurrentLimit(FuelConstants.FEEDER_MOTOR_CURRENT_LIMIT)
+        feederConfig.inverted(True)
         self.feederRoller.configure(
             feederConfig,
             rev.ResetMode.kResetSafeParameters,
@@ -43,7 +44,6 @@ class CANFuelSubsystem(commands2.Subsystem):
         # intaking and launching, and apply the config to the controller
         launcherConfig = rev.SparkMaxConfig()
         launcherConfig.smartCurrentLimit(FuelConstants.LAUNCHER_MOTOR_CURRENT_LIMIT)
-        launcherConfig.inverted(True)
         self.intakeLauncherRoller.configure(
             launcherConfig,
             rev.ResetMode.kResetSafeParameters,
