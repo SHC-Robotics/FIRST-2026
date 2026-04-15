@@ -1,5 +1,4 @@
 from commands.aim import Aim
-from commands.climb_lift import ClimbLift
 from commands.resetpose import ResetRotation, ZeroRotation
 from subsystems.vision_camera import VisionCamera
 from subsystems.vision_localizer import VisionLocalizer
@@ -13,15 +12,10 @@ from commands.drive import Drive
 from commands.eject import Eject
 from commands.autolaunch import AutoBackUpLaunch, AutoLaunch
 from commands.intake import Intake
-from commands.climb_down import ClimbDown
-from commands.climb_up import ClimbUp
-from commands.climb_manual import ClimbManual
-from commands.homing import ClimbHomeManual
 from commands.launchsequence import LaunchSequence
 from commands.launch import StopLaunch
 from subsystems.candrivesubsystem import CANDriveSubsystem
 from subsystems.canfuelsubsystem import CANFuelSubsystem
-from subsystems.canclimbsubsystem import CANClimbSubsystem
 
 from wpimath.geometry import Translation3d, Rotation2d
 
@@ -46,7 +40,6 @@ class RobotContainer:
         # A Subsystem is a collection of motors, sensors, and other hardware objects that are operated on by a Command.
         self.driveSubsystem = CANDriveSubsystem()
         self.fuelSubsystem = CANFuelSubsystem(self.operatorController)
-        self.climbSubsystem = CANClimbSubsystem()
 
         self.visionLocalizer = VisionLocalizer(self.driveSubsystem)
         self.frontVisionCamera = VisionCamera("limelight-front")
@@ -81,30 +74,12 @@ class RobotContainer:
 
         self.operatorController.x().onTrue(StopLaunch(self.fuelSubsystem))
 
-        self.operatorController.a().onTrue(ClimbHomeManual(self.climbSubsystem))
-
         # While the left bumper on operator controller is held, run the intake command
         # on the fuel subsystem.
         self.operatorController.leftBumper().whileTrue(Intake(self.fuelSubsystem))
 
         # While the right bumper is held on the operator controller, run the eject command
-        # on the fuel subsystem.
-        self.operatorController.rightBumper().whileTrue(Eject(self.fuelSubsystem))
-
-        self.driverController.leftBumper().onTrue(ClimbLift(self.climbSubsystem))
-        self.driverController.rightBumper().onTrue(ClimbUp(self.climbSubsystem))
-
-        # Set the default command for the drive subsystem to the command provided by
-        # factory with the values provided by the joystick axes on the driver
-        # controller.
-
-        self.driveSubsystem.setDefaultCommand(
-            Drive(self.driveSubsystem, self.driverController)
-        )
-
-        self.climbSubsystem.setDefaultCommand(
-            ClimbManual(self.climbSubsystem, self.operatorController)
-        )
+        # on the fuel subsystem. self.operatorController.rightBumper().whileTrue(Eject(self.fuelSubsystem))
 
         # self.driverController.a().whileTrue(ZeroRotation(self.driveSubsystem))
 

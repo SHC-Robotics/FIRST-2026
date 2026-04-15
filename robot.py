@@ -69,11 +69,6 @@ class Robot(commands2.TimedCommandRobot):
         self.matchStarted = True
         self.container.visionLocalizer.onEnabled()
 
-        # Zero climbers
-        self.container.climbSubsystem.leftArm.set_position(0)
-        self.container.climbSubsystem.rightArm.set_position(0)
-        self.container.climbSubsystem.homePosition = 0
-
     def testInit(self) -> None:
         # Cancel all running commands when testing starts
         commands2.CommandScheduler.getInstance().cancelAll()
