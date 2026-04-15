@@ -21,8 +21,20 @@ class CANHopperSubsystem(commands2.Subsystem):
             rev.PersistMode.kPersistParameters,
         )
 
+        self.extensionEncoder = self.extensionMotor.getEncoder()
+
+        self.setExtensionPosition(0)
+
     def setExtension(self, voltage: float) -> None:
         self.extensionMotor.setVoltage(voltage)
+
+    def getExtensionPosition(self) -> float:
+        """Get the relative encoder position of the extension motor, in rotations."""
+        return self.extensionEncoder.getPosition()
+
+    def setExtensionPosition(self, rotations) -> None:
+        """Set the relative encoder position of the extension motor, in rotations."""
+        return self.extensionEncoder.setPosition(rotations)
 
     def stop(self) -> None:
         self.extensionMotor.set(0)

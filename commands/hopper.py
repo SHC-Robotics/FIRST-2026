@@ -19,6 +19,9 @@ class GrowHopper(commands2.Command):
         self.hopperSubsystem.stop()
 
     def isFinished(self) -> bool:
+        if abs(self.hopperSubsystem.getExtensionPosition()) > HopperConstants.EXTENSION_NUM_ROTATIONS:
+            return True
+
         return False
 
 class ShrinkHopper(commands2.Command):
@@ -35,4 +38,7 @@ class ShrinkHopper(commands2.Command):
         self.hopperSubsystem.stop()
 
     def isFinished(self) -> bool:
+        if abs(self.hopperSubsystem.getExtensionPosition()) < 0.1:
+            return True
+
         return False
