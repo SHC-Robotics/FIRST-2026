@@ -26,6 +26,7 @@ class CANHopperSubsystem(commands2.Subsystem):
         self.setExtensionPosition(0)
 
     def setExtension(self, voltage: float) -> None:
+        """Set voltage of extension motor, where positive direction is growing the hopper."""
         self.extensionMotor.setVoltage(voltage)
 
     def getExtensionPosition(self) -> float:
