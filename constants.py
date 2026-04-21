@@ -63,16 +63,8 @@ class AprilTagIds:
 
 
 class FieldConstants:
-    FIELD_LENGTH = 16.540988 # 651.22 in
-
-    BLUE_HUB_POSITION = Translation2d(4.625594, 4.03479) # 182.11 in, 158.85 in
     RED_HUB_POSITION = Translation2d(11.915394, 4.03479) # 469.11 in, 158.85 in
-
-    NEUTRAL_ZONE_LOWER = 5.222494 # 205.61 in
-    NEUTRAL_ZONE_UPPER = 11.318494 # 445.61 in
-
-    BLUE_ALLIANCE_ZONE_TARGET = 3.048 # 120 in
-    RED_ALLIANCE_ZONE_TARGET = 13.492988 # 531.22 in
+    BLUE_HUB_POSITION = Translation2d(4.625594, 4.03479) # 182.11 in, 158.85 in
 
 
 class HopperConstants:

@@ -61,15 +61,7 @@ class Aim(commands2.Command):
             hub_position = FieldConstants.BLUE_HUB_POSITION
 
         bot_pose = self.driveSubsystem.getPose()
-
-        if bot_pose.X() > FieldConstants.NEUTRAL_ZONE_LOWER and bot_pose.X() < FieldConstants.NEUTRAL_ZONE_UPPER:
-            if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
-                to_hub = Translation2d(FieldConstants.RED_ALLIANCE_ZONE_TARGET - bot_pose.X(), 0.0)
-            else:
-                to_hub = Translation2d(bot_pose.X() - FieldConstants.BLUE_ALLIANCE_ZONE_TARGET, 0.0)
-        else:
-            to_hub = hub_position - bot_pose.translation()
-
+        to_hub = hub_position - bot_pose.translation()
         hub_distance = math.sqrt(to_hub.dot(to_hub))
         target_rot = (to_hub / hub_distance).angle()
         delta_rot = target_rot.degrees() - bot_pose.rotation().degrees()
