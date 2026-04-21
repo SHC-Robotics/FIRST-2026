@@ -124,3 +124,27 @@ class LaunchSequenceShrinkHopper(commands2.SequentialCommandGroup):
                 SpinUp(fuelSubsystem).withTimeout(FuelConstants.SPIN_UP_SECONDS),
                 LaunchShrinkHopper(fuelSubsystem, hopperSubsystem),
             )
+
+class LaunchShrinkJostleHopper(commands2.ParallelCommandGroup):
+    def __init__(self, fuelSubsystem: CANFuelSubsystem, hopperSubsystem: CANHopperSubsystem) -> None:
+        super().__init__()
+
+        self.addCommands(
+            ShrinkThenJostleHopper(hopperSubsystem),
+            Launch(fuelSubsystem)
+        )
+
+class LaunchSequenceShrinkJostleHopper(commands2.SequentialCommandGroup):
+    def __init__(self, fuelSubsystem: CANFuelSubsystem, hopperSubsystem: CANHopperSubsystem, launchTimeout=None) -> None:
+        super().__init__()
+
+        if launchTimeout:
+            self.addCommands(
+                SpinUp(fuelSubsystem).withTimeout(FuelConstants.SPIN_UP_SECONDS),
+                LaunchShrinkJostleHopper(fuelSubsystem, hopperSubsystem).withTimeout(launchTimeout),
+            )
+        else: 
+            self.addCommands(
+                SpinUp(fuelSubsystem).withTimeout(FuelConstants.SPIN_UP_SECONDS),
+                LaunchShrinkJostleHopper(fuelSubsystem, hopperSubsystem),
+            )
