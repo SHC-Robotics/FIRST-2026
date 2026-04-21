@@ -1,5 +1,5 @@
 from commands.aim import Aim
-from commands.hopper import GrowHopper, JostleHopper, ShrinkHopper
+from commands.hopper import GrowHopper, IntakeGrowHopper, JostleHopper, LaunchSequenceShrinkHopper, ShrinkHopper
 from commands.resetpose import ResetRotation, ZeroRotation
 from subsystems.canhoppersubsystem import CANHopperSubsystem
 from subsystems.vision_camera import VisionCamera
@@ -72,14 +72,14 @@ class RobotContainer:
         # While the Y button on the operator controller is held, run the launch
         # sequence command on the fuel subsystem.
         self.operatorController.y().onTrue(
-            LaunchSequence(self.fuelSubsystem)
+            LaunchSequenceShrinkHopper(self.fuelSubsystem, self.hopperSubsystem)
         )
 
         self.operatorController.x().onTrue(StopLaunch(self.fuelSubsystem))
 
         # While the left bumper on operator controller is held, run the intake command
         # on the fuel subsystem.
-        self.operatorController.leftBumper().whileTrue(Intake(self.fuelSubsystem))
+        self.operatorController.leftBumper().whileTrue(IntakeGrowHopper(self.fuelSubsystem, self.hopperSubsystem))
 
         # While the right bumper is held on the operator controller, run the eject command
         # on the fuel subsystem.

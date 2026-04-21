@@ -106,7 +106,7 @@ class LaunchShrinkHopper(commands2.ParallelCommandGroup):
         super().__init__()
 
         self.addCommands(
-            ShrinkThenJostleHopper(hopperSubsystem),
+            ShrinkHopper(hopperSubsystem),
             Launch(fuelSubsystem)
         )
 
