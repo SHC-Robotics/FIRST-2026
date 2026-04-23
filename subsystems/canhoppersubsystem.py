@@ -1,11 +1,14 @@
 import commands2
+import math
 from constants import HopperConstants
 import rev
 import wpilib
 
 class CANHopperSubsystem(commands2.Subsystem):
-    def __init__(self) -> None:
+    def __init__(self, operatorController) -> None:
         super().__init__()
+
+        self.controller = operatorController
 
         self.extensionMotor = rev.SparkMax(
             HopperConstants.EXTENSION_MOTOR_ID,
@@ -42,5 +45,12 @@ class CANHopperSubsystem(commands2.Subsystem):
         self.extensionMotor.set(0)
 
     def periodic(self):
+        leftY = self.controller.getLeftY()
+        if leftY < 0.5 and leftY > -0.5:
+            leftY = 0
+
+        if self.getExtensionPosition() < HopperConstants.EXTENSION_NUM_ROTATIONS and self.getExtensionPosition() > 0.1:
+            self.setExtension(math.copysign(HopperConstants.EXTENSION_MOTOR_VOLTAGE, leftY))
+        
         wpilib.SmartDashboard.putNumber("Hopper position", self.getExtensionPosition())
 

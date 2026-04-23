@@ -67,17 +67,20 @@ class CANFuelSubsystem(commands2.Subsystem):
         self.intakeLauncherRoller.set(0)
 
     def periodic(self) -> None:
-        leftTrigger = self.controller.getLeftTriggerAxis()
-        rightTrigger = self.controller.getRightTriggerAxis()
+        rightY = self.controller.getRightY()
+        if rightY < 0.1 and rightY > -0.1:
+            rightY = 0
 
-        if leftTrigger < 0.1:
-            leftTrigger = 0
+        self.multiplier += rightY * 0.002
 
-        if rightTrigger < 0.1:
-            rightTrigger = 0
+        leftTrigger = self.controller.leftTrigger()
+        rightTrigger = self.controller.rightTrigger()
 
-        self.multiplier -= leftTrigger * 0.001
-        self.multiplier += rightTrigger * 0.001
+        if leftTrigger:
+            self.multiplier = 0.64
+
+        if rightTrigger:
+            self.multiplier = 0.85
 
         self.multiplier = max(min(self.multiplier, FuelConstants.SHOOT_MULT_UPPER), FuelConstants.SHOOT_MULT_LOWER)
 
