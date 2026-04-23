@@ -20,11 +20,12 @@ class Aim(commands2.Command):
         # Distance (m) -> Multiplier
         # Sorted least to greatest distance
         self.speeds = {
-            5: 0.67,
-            4: 0.65,
-            3: 0.61,
-            2.5: 0.58,
-            2: 0.56,
+            4: 0.725,
+            3.5: 0.675,
+            3: 0.665,
+            2.5: 0.64,
+            2: 0.615,
+            1.5: 0.57,
         }
 
     def initialize(self) -> None:
