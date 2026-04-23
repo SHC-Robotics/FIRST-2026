@@ -50,6 +50,9 @@ class CANFuelSubsystem(commands2.Subsystem):
             rev.PersistMode.kPersistParameters,
         )
 
+        self.intakeLauncherEncoder = self.intakeLauncherRoller.getEncoder()
+        self.feederEncoder = self.feederRoller.getEncoder()
+
     # A method to set the voltage of the intake roller
     def setIntakeLauncherRoller(self, voltage: float) -> None:
         self.intakeLauncherRoller.setVoltage(voltage)
@@ -79,3 +82,5 @@ class CANFuelSubsystem(commands2.Subsystem):
         self.multiplier = max(min(self.multiplier, FuelConstants.SHOOT_MULT_UPPER), FuelConstants.SHOOT_MULT_LOWER)
 
         wpilib.SmartDashboard.putNumber("Shooting multiplier", self.multiplier)
+        wpilib.SmartDashboard.putNumber("Intake launcher rpm", self.intakeLauncherEncoder.getVelocity())
+        wpilib.SmartDashboard.putNumber("Feeder rpm", self.feederEncoder.getVelocity())

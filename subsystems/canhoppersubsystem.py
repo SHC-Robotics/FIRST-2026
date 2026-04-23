@@ -41,3 +41,6 @@ class CANHopperSubsystem(commands2.Subsystem):
     def stop(self) -> None:
         self.extensionMotor.set(0)
 
+    def periodic(self):
+        wpilib.SmartDashboard.putNumber("Hopper position", self.getExtensionPosition())
+
