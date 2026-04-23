@@ -32,6 +32,10 @@ class FuelConstants:
     # Voltage values for various fuel operations. These values may need to be tuned
     # based on exact robot construction.
     # See the Software Guide for tuning information
+    INTAKING_FEEDER_RPS = -80
+    INTAKING_INTAKE_RPS = 30
+    LAUNCHING_FEEDER_RPS = 73
+    LAUNCHING_LAUNCHER_RPS = 58
     INTAKING_FEEDER_VOLTAGE = -10.0
     INTAKING_INTAKE_VOLTAGE = 4.0
     LAUNCHING_FEEDER_VOLTAGE = 9.0
