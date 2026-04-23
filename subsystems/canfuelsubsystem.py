@@ -71,7 +71,7 @@ class CANFuelSubsystem(commands2.Subsystem):
         if rightY < 0.1 and rightY > -0.1:
             rightY = 0
 
-        self.multiplier += rightY * 0.002
+        self.multiplier -= rightY * 0.002
 
         leftTrigger = self.controller.leftTrigger()
         rightTrigger = self.controller.rightTrigger()

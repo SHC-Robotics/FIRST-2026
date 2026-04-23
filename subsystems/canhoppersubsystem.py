@@ -45,12 +45,15 @@ class CANHopperSubsystem(commands2.Subsystem):
         self.extensionMotor.set(0)
 
     def periodic(self):
-        leftY = self.controller.getLeftY()
-        if leftY < 0.5 and leftY > -0.5:
+        leftY = -self.controller.getLeftY()
+        if leftY < 0.2 and leftY > -0.2:
             leftY = 0
 
-        if self.getExtensionPosition() < HopperConstants.EXTENSION_NUM_ROTATIONS and self.getExtensionPosition() > 0.1:
-            self.setExtension(math.copysign(HopperConstants.EXTENSION_MOTOR_VOLTAGE, leftY))
+        if self.getExtensionPosition() < HopperConstants.EXTENSION_NUM_ROTATIONS and leftY > 0:
+            self.setExtension(HopperConstants.EXTENSION_MOTOR_VOLTAGE)
+
+        if self.getExtensionPosition() > 0.1 and leftY < 0:
+            self.setExtension(-HopperConstants.EXTENSION_MOTOR_VOLTAGE)
         
         wpilib.SmartDashboard.putNumber("Hopper position", self.getExtensionPosition())
 
