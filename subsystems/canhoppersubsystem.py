@@ -54,6 +54,9 @@ class CANHopperSubsystem(commands2.Subsystem):
 
             if self.getExtensionPosition() > 0.1 and leftY < 0:
                 self.setExtension(-HopperConstants.EXTENSION_MOTOR_VOLTAGE)
+
+        if self.getExtensionPosition() > HopperConstants.EXTENSION_NUM_ROTATIONS or self.getExtensionPosition() < 0.1:
+            self.stop()
         
         wpilib.SmartDashboard.putNumber("Hopper position", self.getExtensionPosition())
 
