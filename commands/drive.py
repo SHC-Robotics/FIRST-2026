@@ -1,4 +1,5 @@
 import commands2
+import wpilib
 
 from constants import DriveConstants, OperatorConstants
 from subsystems.candrivesubsystem import CANDriveSubsystem
@@ -17,7 +18,11 @@ class Drive(commands2.Command):
 
         self.driveSubsystem = driveSubsystem
         self.controller = driverController
+        self.lastCall = 0
         self.addRequirements(self.driveSubsystem)
+
+    def initialize(self) -> None:
+        self.lastCall = wpilib.Timer.getFPGATimestamp()
 
     def execute(self) -> None:
         leftTrigger = self.controller.leftTrigger()
@@ -33,9 +38,18 @@ class Drive(commands2.Command):
         if rightX < ZERO_THRESHOLD and rightX > -ZERO_THRESHOLD:
             rightX = 0
 
-        self.driveSubsystem.driveArcade(
-            -leftY * DriveConstants.DRIVE_SPEED_MULT * mult,
-            rightX * DriveConstants.DRIVE_SPEED_MULT * mult,
+        now = wpilib.Timer.getFPGATimestamp()
+        dt = now - self.lastCall
+
+        if dt < -1000:
+            dt += 4260 # FPGA clock rolls over after 71 minutes (4260 seconds)
+
+        self.lastCall = now
+
+        self.driveSubsystem.applyImpulses(
+            -leftY * DriveConstants.DRIVE_VELOCITY_MULT * mult,
+            rightX * DriveConstants.DRIVE_ANGULAR_VELOCITY_MULT * mult,
+            dt
         )
 
     def end(self, interrupted: bool) -> None:

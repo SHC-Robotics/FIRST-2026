@@ -45,6 +45,9 @@ class CANDriveSubsystem(commands2.Subsystem):
 
         self.MAX_RPS = 70
 
+        self.velocity = 0
+        self.angular_velocity = 0
+
         # Apply base config to all leaders first
         self.leftLeader.configurator.apply(config, 0.1)
         self.rightLeader.configurator.apply(config, 0.1)
@@ -215,6 +218,19 @@ class CANDriveSubsystem(commands2.Subsystem):
         # Uses VoltageOut request, not VelocityVoltage which has no with_output()
         self.leftLeader.set_control(self.voltage_request.with_output(leftVolts))
         self.rightLeader.set_control(self.voltage_request.with_output(rightVolts))
+
+    def applyImpulses(self, impulse: float, angular_impulse: float, dt: float) -> None:
+        self.velocity += impulse * dt
+        self.angular_velocity += angular_impulse * dt
+
+        self.velocity = max(
+            min(self.velocity, DriveConstants.MAX_DRIVE_VELOCITY),
+            -DriveConstants.MAX_DRIVE_VELOCITY)
+        self.angular_velocity = max(
+            min(self.angular_velocity, DriveConstants.MAX_DRIVE_ANGULAR_VELOCITY),
+            -DriveConstants.MAX_DRIVE_ANGULAR_VELOCITY)
+
+        self.driveArcade(self.velocity, self.angular_velocity)
 
     def driveArcade(self, xSpeed: float, zRotation: float) -> None:
         # xSpeed and zRotation are already negated by the Drive command
