@@ -52,7 +52,7 @@ class AutoBackUpLaunch(commands2.SequentialCommandGroup):
             commands2.cmd.runOnce(
                 lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem
             ),
-            Aim(driveSubsystem, fuelSubsystem).withTimeout(7),
+            # Aim(driveSubsystem, fuelSubsystem).withTimeout(7),
             LaunchSequence(fuelSubsystem, launchTimeout=10),
         )
 
