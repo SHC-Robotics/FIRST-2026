@@ -7,9 +7,9 @@ class DriveConstants:
     RIGHT_LEADER_ID = 2
     RIGHT_FOLLOWER_ID = 1
 
-    DRIVE_SPEED_MULT = 0.6
+    DRIVE_SPEED_MULT = 0.5
 
-    DRIVE_SPEED_MULT = 0.6
+    #DRIVE_SPEED_MULT = 0.6
 
     # Current limit for drivetrain motors. 60A is a reasonable maximum to reduce
     # likelihood of tripping breakers or damaging CIM motors
@@ -39,7 +39,7 @@ class FuelConstants:
     SPIN_UP_FEEDER_VOLTAGE = -6.0 
     SPIN_UP_SECONDS = 1.0
 
-    AUTO_SHOOTING_MULTIPLIER = 0.6
+    AUTO_SHOOTING_MULTIPLIER = 0.55
 
 
 class OperatorConstants:
