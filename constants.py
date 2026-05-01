@@ -34,12 +34,14 @@ class FuelConstants:
     # See the Software Guide for tuning information
     INTAKING_FEEDER_VOLTAGE = -10.0
     INTAKING_INTAKE_VOLTAGE = 6.0
-    LAUNCHING_FEEDER_VOLTAGE = 9.0
+    LAUNCHING_FEEDER_VOLTAGE = 6.0
+    AUTO_LAUNCHING_FEEDER_VOLTAGE = 3.0
     LAUNCHING_LAUNCHER_VOLTAGE = 12.0
     SPIN_UP_FEEDER_VOLTAGE = -6.0 
-    SPIN_UP_SECONDS = 1.0
+    SPIN_UP_SECONDS = 6
+    AUTO_SPIN_UP_SECONDS = 6
 
-    AUTO_SHOOTING_MULTIPLIER = 0.55
+    AUTO_SHOOTING_MULTIPLIER = 0.57
 
 
 class OperatorConstants:
@@ -47,6 +49,7 @@ class OperatorConstants:
     # values in the Joystick tab of the Driver Station software
     DRIVER_CONTROLLER_PORT = 0
     OPERATOR_CONTROLLER_PORT = 1
+
 
     # This value is multiplied by the joystick value when rotating the robot to
     # help avoid turning too fast and being difficult to control

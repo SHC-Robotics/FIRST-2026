@@ -15,7 +15,7 @@ class AutoLaunch(commands2.SequentialCommandGroup):
             commands2.cmd.runOnce(
                 lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem
             ),
-            LaunchSequence(fuelSubsystem, launchTimeout=15),
+            LaunchSequence(fuelSubsystem, launchTimeout=15, auto=True),
         )
 
 
@@ -53,8 +53,24 @@ class AutoBackUpLaunch(commands2.SequentialCommandGroup):
                 lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem
             ),
             # Aim(driveSubsystem, fuelSubsystem).withTimeout(7),
-            LaunchSequence(fuelSubsystem, launchTimeout=10),
+            LaunchSequence(fuelSubsystem, launchTimeout=10, auto=True),
         )
+
+class AutoLocalizedLaunch(commands2.SequentialCommandGroup):
+    def __init__(
+        self, driveSubsystem: CANDriveSubsystem, fuelSubsystem: CANFuelSubsystem
+    ) -> None:
+        super().__init__()
+
+        self.addCommands(
+            ZeroRotation(driveSubsystem),
+            AutoDrive(driveSubsystem, 0.1, 0.0).withTimeout(3),
+            commands2.cmd.runOnce(
+                lambda: configureLaunchSpeed(fuelSubsystem), fuelSubsystem
+            ),
+            Aim(driveSubsystem, fuelSubsystem).withTimeout(7),
+            LaunchSequence(fuelSubsystem, launchTimeout=10, auto=True),
+        ) 
 
 
 def configureLaunchSpeed(fuelSubsystem: CANFuelSubsystem):

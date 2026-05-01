@@ -17,7 +17,7 @@ class CANHopperSubsystem(commands2.Subsystem):
 
         extensionConfig = rev.SparkMaxConfig()
         extensionConfig.smartCurrentLimit(HopperConstants.EXTENSION_MOTOR_CURRENT_LIMIT)
-        extensionConfig.setIdleMode(rev.SparkBaseConfig.IdleMode.kCoast)
+        extensionConfig.setIdleMode(rev.SparkBaseConfig.IdleMode.kBrake)
         # extensionConfig.inverted(True)
         self.extensionMotor.configure(
             extensionConfig,

@@ -91,6 +91,9 @@ class RobotContainer:
             Drive(self.driveSubsystem, self.driverController)
         )
 
+        self.operatorController.b().onTrue(GrowHopper(self.hopperSubsystem))
+        self.operatorController.a().onTrue(ShrinkHopper(self.hopperSubsystem))
+
         self.fuelSubsystem.run(lambda: self.fuelSubsystem.stop())
 
     def getAutonomousCommand(self) -> commands2.Command:

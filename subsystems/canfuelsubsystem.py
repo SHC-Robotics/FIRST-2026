@@ -9,7 +9,6 @@ class CANFuelSubsystem(commands2.Subsystem):
     def __init__(self, operatorController) -> None:
         super().__init__()
 
-
         #current distance from target
         self.distance = None
 
